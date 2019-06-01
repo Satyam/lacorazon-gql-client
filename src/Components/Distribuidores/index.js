@@ -1,6 +1,6 @@
 import React from 'react';
 import useReactRouter from 'use-react-router';
-import { useQuery } from 'graphql-hooks';
+import { useQuery, useMutation } from 'graphql-hooks';
 
 import { Table } from 'reactstrap';
 import { ButtonIconAdd } from 'Components/Icons';
@@ -9,17 +9,23 @@ import Loading from 'Components/Loading';
 import Page from 'Components/Page';
 import RowDistr from './RowDistr';
 
-import { DISTRIBUIDORES_QUERY } from 'Gql/distribuidores';
+import { DISTRIBUIDORES_QUERY, DELETE_DISTRIBUIDOR } from 'Gql/distribuidores';
+
 export default function Distribuidores() {
   const { history } = useReactRouter();
-  const { loading, error, data } = useQuery(DISTRIBUIDORES_QUERY);
+  const { loading, error, data, refetch } = useQuery(DISTRIBUIDORES_QUERY);
+  const [delDistribuidor, delStatus] = useMutation(DELETE_DISTRIBUIDOR);
 
-  if (loading) return <Loading title="Distribuidores" />;
-  if (error)
-    return `Something Bad Happened:
-     ${error}`;
+  if (loading || delStatus.loading) return <Loading title="Distribuidores" />;
+  if (error || delStatus.error) return 'Something Bad Happened';
 
-  const deleteDistribuidor = id => alert(`delete distribuidor ${id}`);
+  const distribuidores = data ? data.distribuidores : [];
+  const deleteDistribuidor = id => {
+    delDistribuidor({ variables: { id } }).then(() => {
+      refetch();
+    });
+  };
+
   return (
     <Page wide title="Distribuidores" heading="Distribuidores">
       <Table striped hover size="sm" responsive>
@@ -36,7 +42,7 @@ export default function Distribuidores() {
           </tr>
         </thead>
         <tbody>
-          {data.distribuidores.map(distribuidor =>
+          {distribuidores.map(distribuidor =>
             RowDistr(distribuidor, history, deleteDistribuidor)
           )}
         </tbody>

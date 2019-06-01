@@ -1,21 +1,45 @@
 import React from 'react';
+import { useQuery } from 'graphql-hooks';
+
 import { LabeledText } from '../Form';
 import Page from '../Page';
+import Loading from 'Components/Loading';
+import { Alert } from 'reactstrap';
 
-export default function ShowDistribuidor({ distribuidor }) {
-  return (
-    distribuidor && (
-      <Page
-        title={`Distribuidor - ${distribuidor.nombre}`}
-        heading={`Distribuidor`}
-      >
-        <LabeledText label="Nombre" value={distribuidor.nombre} />
-        <LabeledText label="eMail" value={distribuidor.email} />
-        <LabeledText label="Localidad" value={distribuidor.localidad} />
-        <LabeledText label="Dirección" value={distribuidor.direccion} pre />
-        <LabeledText label="Contacto" value={distribuidor.contacto} />
-        <LabeledText label="Teléfono" value={distribuidor.telefono} />
+import { DISTRIBUIDOR_QUERY } from 'Gql/distribuidores';
+
+export default function ShowDistribuidor({ id }) {
+  const { loading, error, data } = useQuery(DISTRIBUIDOR_QUERY, {
+    variables: {
+      id,
+    },
+  });
+  if (loading) return <Loading title="Distribuidor" />;
+  if (error) {
+    return 'Something Bad Happened';
+  }
+  if (data.distribuidor) {
+    const {
+      nombre,
+      email,
+      localidad,
+      direccion,
+      contacto,
+      telefono,
+    } = data.distribuidor;
+    return (
+      <Page title={`Distribuidor - ${nombre}`} heading={`Distribuidor`}>
+        <LabeledText label="Nombre" value={nombre} />
+        <LabeledText label="eMail" value={email} />
+        <LabeledText label="Localidad" value={localidad} />
+        <LabeledText label="Dirección" value={direccion} pre />
+        <LabeledText label="Contacto" value={contacto} />
+        <LabeledText label="Teléfono" value={telefono} />
       </Page>
-    )
-  );
+    );
+  } else {
+    return (
+      <Alert color="danger">El distribuidor no existe o fue borrado</Alert>
+    );
+  }
 }
