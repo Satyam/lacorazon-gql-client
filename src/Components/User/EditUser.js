@@ -33,11 +33,13 @@ export default function EditUser({ id }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const error =
+  if (
     queryStatus.error ||
     createStatus.error ||
     updateStatus.error ||
-    deleteStatus.error;
+    deleteStatus.error
+  )
+    return 'Something Bad Happened';
 
   if (
     queryStatus.loading ||
@@ -47,7 +49,6 @@ export default function EditUser({ id }) {
   ) {
     return <Loading title="Usuarios" />;
   }
-  if (error) return `Something Bad Happened`;
 
   if (user) {
     return (
@@ -57,7 +58,7 @@ export default function EditUser({ id }) {
       >
         <Form
           values={user}
-          onSubmit={(values, { setFieldError }) => {
+          onSubmit={values => {
             if (id) {
               updateUser({ variables: { id, ...values } }).then(({ data }) => {
                 setUser(data.updateUser);
