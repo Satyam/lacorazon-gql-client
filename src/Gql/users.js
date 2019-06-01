@@ -11,6 +11,7 @@ query  {
 export const USER_QUERY = `
 query ($id: ID!) {
   user(id:$id) {
+    id
     nombre
     email
   }

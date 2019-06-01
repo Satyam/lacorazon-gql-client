@@ -1,6 +1,6 @@
 import React from 'react';
 import useReactRouter from 'use-react-router';
-import { useQuery } from 'graphql-hooks';
+import { useQuery, useMutation } from 'graphql-hooks';
 
 import { Table } from 'reactstrap';
 import { ButtonIconAdd } from 'Components/Icons';
@@ -8,19 +8,24 @@ import Loading from 'Components/Loading';
 import Page from 'Components/Page';
 import UserRow from './UserRow';
 
-import { USERS_QUERY } from 'Gql/users';
+import { USERS_QUERY, DELETE_USER } from 'Gql/users';
 
 export default function Users() {
   const { history } = useReactRouter();
-  const { loading, error, data } = useQuery(USERS_QUERY);
+  const { loading, error, data, refetch } = useQuery(USERS_QUERY);
+  const [delUser, delStatus] = useMutation(DELETE_USER);
 
-  if (loading) return <Loading title="Usuarios" />;
-  if (error)
-    return `Something Bad Happened:
-     ${error}`;
+  const users = data ? data.users : [];
 
-  const deleteUser = id => alert(`delete user ${id}`);
+  const deleteUser = id => {
+    console.log('delUser', id);
+    delUser({ variables: { id } }).then(() => {
+      refetch();
+    });
+  };
 
+  if (loading || delStatus.loading) return <Loading title="Usuarios" />;
+  if (error || delStatus.error) return `Something Bad Happened`;
   return (
     <Page title="Vendedores" heading="Vendedores">
       <Table striped hover size="sm" responsive>
@@ -32,7 +37,7 @@ export default function Users() {
           </tr>
         </thead>
         <tbody>
-          {data.users.map(user =>
+          {users.map(user =>
             UserRow({
               user,
               history,
