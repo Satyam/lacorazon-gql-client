@@ -73,7 +73,7 @@ export default function EditDistribuidor({ id }) {
             } else {
               createDistribuidor({ variables: values }).then(({ data }) => {
                 history.replace(
-                  `/user/${data.createDistribuidor.id}?edit=true`
+                  `/distribuidor/${data.createDistribuidor.id}?edit=true`
                 );
               });
             }
