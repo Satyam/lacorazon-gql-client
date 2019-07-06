@@ -18,7 +18,7 @@ import './index.css';
 import App from 'Components/App';
 import * as serviceWorker from './serviceWorker';
 import { GraphQLClient, ClientContext } from 'graphql-hooks';
-// import { AuthProvider } from './Components/Auth';
+import { AuthProvider } from './Components/Auth';
 
 library.add(
   faTrashAlt,
@@ -33,12 +33,17 @@ library.add(
 );
 
 const client = new GraphQLClient({
-  url: 'http://localhost:8000/graphql',
+  url: '/graphql',
+  fetchOptions: {
+    credentials: 'include',
+  },
 });
 
 ReactDOM.render(
   <ClientContext.Provider value={client}>
-    <App />
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </ClientContext.Provider>,
   document.getElementById('root')
 );
