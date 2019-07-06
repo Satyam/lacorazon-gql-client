@@ -21,9 +21,7 @@ export default function Distribuidores() {
 
   const distribuidores = data ? data.distribuidores : [];
   const deleteDistribuidor = id => {
-    delDistribuidor({ variables: { id } }).then(() => {
-      refetch();
-    });
+    delDistribuidor({ variables: { id } }).then(refetch);
   };
 
   return (

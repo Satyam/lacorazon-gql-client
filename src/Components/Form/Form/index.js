@@ -8,7 +8,7 @@ export default function Form({
   onSubmit,
   children,
   enableReinitialize = true,
-  isInitialValid = false,
+  initialErrors = {},
   onReset,
   validate,
   validateOnBlur = true,
@@ -19,29 +19,29 @@ export default function Form({
     <Formik
       validationSchema={schema}
       initialValues={schema ? Object.assign(schema.default(), values) : values}
-      onSubmit={(values, formik) => {
-        const result = onSubmit(schema ? schema.cast(values) : values, formik);
+      onSubmit={(values, { setStatus, setSubmitting }) => {
+        const result = onSubmit(schema ? schema.cast(values) : values);
         if (result && typeof result.then === 'function') {
-          result.then(
-            () => {
-              formik.setSubmitting(false);
-            },
-            err => {
-              formik.setFieldError('*', err);
-            }
-          );
+          return result.catch(err => {
+            setStatus(err);
+          });
+          // .finally(() => {
+          //   console.log('onSubmit unset isSubmitting');
+          //   setSubmitting(false);
+          // });
         }
+        return result;
       }}
       enableReinitialize={enableReinitialize}
-      isInitialValid={isInitialValid}
+      initialErrors={initialErrors}
       onReset={onReset}
       validate={validate}
       validateOnBlur={validateOnBlur}
       validateOnChange={validateOnChange}
     >
-      {({ errors }) => (
+      {({ status }) => (
         <BSForm tag={KForm} {...rest}>
-          {errors['*'] && <Alert color="danger">{errors['*']}</Alert>}
+          {status && <Alert color="danger">{status}</Alert>}
           {children}
         </BSForm>
       )}

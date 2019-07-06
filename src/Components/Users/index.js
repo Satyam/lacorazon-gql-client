@@ -20,9 +20,7 @@ export default function Users() {
 
   const users = data ? data.users : [];
   const deleteUser = id => {
-    delUser({ variables: { id } }).then(() => {
-      refetch();
-    });
+    delUser({ variables: { id } }).then(refetch);
   };
 
   return (

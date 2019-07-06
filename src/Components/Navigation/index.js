@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Collapse,
@@ -16,13 +16,13 @@ import {
 
 import laCorazon from '../../La Corazon.png';
 
-import { UserContext, signIn, signOut } from 'Components/Auth';
+import { useAuth } from 'Components/Auth';
 
 import styles from './styles.module.css';
 
 export function Navigation() {
   const [isOpen, setOpen] = useState(false);
-  const user = useContext(UserContext);
+  const { currentUser, logout } = useAuth();
   function toggle() {
     setOpen(!isOpen);
   }
@@ -48,21 +48,20 @@ export function Navigation() {
             </NavItem>
             <UncontrolledDropdown nav inNavbar>
               <DropdownToggle nav caret className={styles.user}>
-                {user ? (
-                  <>
-                    <img alt={user.displayName} src={user.photoURL} />
-                    {user.displayName}
-                  </>
-                ) : (
-                    'guest'
-                  )}
+                {currentUser ? currentUser.nombre : 'guest'}
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem onClick={() => (user ? signOut() : signIn())}>
-                  {user ? 'Logout' : 'Login'}
-                </DropdownItem>
+                {currentUser ? (
+                  <DropdownItem onClick={logout}>Logout</DropdownItem>
+                ) : (
+                  <DropdownItem tag={Link} to="/login">
+                    Login
+                  </DropdownItem>
+                )}
                 <DropdownItem divider />
-                <DropdownItem>Create Account</DropdownItem>
+                <DropdownItem tag={Link} to="/login/register">
+                  Register
+                </DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>
           </Nav>

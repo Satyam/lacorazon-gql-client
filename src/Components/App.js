@@ -8,6 +8,7 @@ import Users from 'Components/Users';
 import User from 'Components/User';
 import Distribuidores from 'Components/Distribuidores';
 import Distribuidor from 'Components/Distribuidor';
+import Login from 'Components/Login';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/user/:id?" component={User} />
         <Route path="/distribuidores" component={Distribuidores} />
         <Route path="/distribuidor/:id?" component={Distribuidor} />
+        <Route path="/login/:register?" component={Login} /> 
       </ErrorBoundary>
     </Router>
   );

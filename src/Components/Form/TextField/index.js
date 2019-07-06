@@ -36,7 +36,7 @@ export default function TextField({
       </Label>
       <Col xs={12} lg={8}>
         <KField
-          component={rows ? 'textarea' : 'input'}
+          as={rows ? 'textarea' : 'input'}
           className={classNames('form-control', {
             'is-invalid': invalid,
           })}
