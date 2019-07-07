@@ -8,13 +8,23 @@ export default function Form({
   onSubmit,
   children,
   enableReinitialize = true,
-  initialErrors = {},
+  initialErrors,
   onReset,
   validate,
   validateOnBlur = true,
   validateOnChange = true,
   ...rest
 }) {
+  let requiredFields = {};
+  if (schema && typeof initialErrors === 'undefined') {
+    const { fields } = schema.describe();
+    requiredFields = Object.keys(fields).reduce((req, name) => {
+      if (fields[name].tests.some(t => t.name === 'required')) {
+        req[name] = '';
+      }
+      return req;
+    }, requiredFields);
+  }
   return (
     <Formik
       validationSchema={schema}
@@ -33,7 +43,7 @@ export default function Form({
         return result;
       }}
       enableReinitialize={enableReinitialize}
-      initialErrors={initialErrors}
+      initialErrors={initialErrors || requiredFields}
       onReset={onReset}
       validate={validate}
       validateOnBlur={validateOnBlur}

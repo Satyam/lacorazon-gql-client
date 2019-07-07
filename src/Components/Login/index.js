@@ -80,11 +80,6 @@ export default function Login() {
           }
         }}
         schema={loginSchema}
-        values={{
-          nombre: '',
-          password: '',
-          confirmPassword: '',
-        }}
       >
         <TextField name="nombre" label="Nombre" />
         <TextField type="password" name="password" label="Contraseña" />
