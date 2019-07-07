@@ -18,6 +18,7 @@ import './index.css';
 import App from 'Components/App';
 import * as serviceWorker from './serviceWorker';
 import { GraphQLClient, ClientContext } from 'graphql-hooks';
+import memCache from 'graphql-hooks-memcache';
 import { AuthProvider } from './Components/Auth';
 
 library.add(
@@ -37,6 +38,7 @@ const client = new GraphQLClient({
   fetchOptions: {
     credentials: 'include',
   },
+  cache: memCache(),
 });
 
 ReactDOM.render(
