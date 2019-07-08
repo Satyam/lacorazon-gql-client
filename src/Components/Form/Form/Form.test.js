@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Yup from 'yup';
-import { render, fireEvent, cleanup } from '@testing-library/react';
+import { render, fireEvent, cleanup, wait } from '@testing-library/react';
 
 import Form from '.';
 import TextField from '../TextField';
@@ -10,7 +10,7 @@ afterEach(cleanup);
 
 function TestForm(props) {
   return (
-    <Form values={{ one: 1 }} isInitialValid={true} {...props}>
+    <Form values={{ one: 1 }} {...props}>
       <TextField label="one" name="one" />
       <SubmitButton>Submit</SubmitButton>
     </Form>
@@ -18,9 +18,10 @@ function TestForm(props) {
 }
 describe('Form / Form', () => {
   describe('with no validationSchema', () => {
-    it('should submit form', done => {
+    it('should submit form', () => {
       const submitHandler = jest.fn();
       const validate = jest.fn(() => ({}));
+
       const { getByText, getByLabelText } = render(
         <TestForm onSubmit={submitHandler} validate={validate} />
       );
@@ -33,18 +34,17 @@ describe('Form / Form', () => {
       jest.clearAllMocks();
       fireEvent.click(getByText('Submit'));
 
-      expect(validate).toBeCalledWith({ one: '2' });
-      expect(validate.mock.calls).toEqual([[{ one: '2' }]]);
+      expect(validate).toBeCalledWith({ one: '2' }, undefined);
+      expect(validate.mock.calls).toEqual([[{ one: '2' }, undefined]]);
       expect(validate.mock.results[0].value).toEqual({});
       // validation is always async, so we have to wait for it
-      setImmediate(() => {
+      return wait(() => {
         expect(submitHandler).toBeCalled();
         expect(submitHandler.mock.calls[0][0]).toEqual({ one: '2' });
-        done();
       });
     });
 
-    it('should not submit form on validation error', done => {
+    it('should not submit form on validation error', () => {
       const submitHandler = jest.fn();
       const validate = jest.fn(() => ({ one: 'some error' }));
       const { getByText, getByLabelText } = render(
@@ -61,18 +61,17 @@ describe('Form / Form', () => {
       jest.clearAllMocks();
       fireEvent.click(getByText('Submit'));
 
-      expect(validate).toBeCalledWith({ one: '2' });
-      expect(validate.mock.calls).toEqual([[{ one: '2' }]]);
+      expect(validate).toBeCalledWith({ one: '2' }, undefined);
+      expect(validate.mock.calls).toEqual([[{ one: '2' }, undefined]]);
       expect(validate.mock.results[0].value).toEqual({ one: 'some error' });
       // validation is always async, so we have to wait for it
       // however, since it fails, it is not going to happen
-      setImmediate(() => {
+      return wait(() => {
         expect(getByText('Submit')).toBeDisabled();
         expect(submitHandler).not.toBeCalled();
-        done();
       });
     });
-    it('should submit form asynchronously (with Promise)', done => {
+    it('should submit form asynchronously (with Promise)', () => {
       const submitHandler = jest.fn(() => Promise.resolve());
       const validate = jest.fn(() => ({}));
       const { getByText, getByLabelText } = render(
@@ -87,14 +86,13 @@ describe('Form / Form', () => {
       jest.clearAllMocks();
       fireEvent.click(getByText('Submit'));
 
-      expect(validate).toBeCalledWith({ one: '2' });
-      expect(validate.mock.calls).toEqual([[{ one: '2' }]]);
+      expect(validate).toBeCalledWith({ one: '2' }, undefined);
+      expect(validate.mock.calls).toEqual([[{ one: '2' }, undefined]]);
       expect(validate.mock.results[0].value).toEqual({});
       // validation is always async, so we have to wait for it
-      setImmediate(() => {
+      return wait(() => {
         expect(submitHandler).toBeCalled();
         expect(submitHandler.mock.calls[0][0]).toEqual({ one: '2' });
-        done();
       });
     });
   });
@@ -105,7 +103,7 @@ describe('Form / Form', () => {
         .truncate()
         .default(99),
     });
-    it('should submit form', done => {
+    it('should submit form', () => {
       const submitHandler = jest.fn();
       const { getByText, getByLabelText } = render(
         <TestForm onSubmit={submitHandler} schema={schema} />
@@ -119,11 +117,10 @@ describe('Form / Form', () => {
       fireEvent.click(getByText('Submit'));
 
       // validation is always async, so we have to wait for it
-      setImmediate(() => {
+      return wait(() => {
         expect(submitHandler).toBeCalled();
         // Notice value '2.5' is cast to number and truncated to an integer: 2
         expect(submitHandler.mock.calls[0][0]).toEqual({ one: 2 });
-        done();
       });
     });
     it('should take default values from schema', () => {
