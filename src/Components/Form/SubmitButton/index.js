@@ -1,10 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Button } from 'reactstrap';
-import { FormikConsumer } from 'formik';
-
-function useFormik() {
-  return useContext(FormikConsumer._context);
-}
+import { useFormik } from '../shared';
 
 export default function SubmitButton({
   component: Component = Button,

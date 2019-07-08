@@ -1,15 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormGroup, Label, FormFeedback, FormText, Col } from 'reactstrap';
-import { FormikConsumer, ErrorMessage } from 'formik';
+import { ErrorMessage } from 'formik';
 import invariant from 'invariant';
 import DatePicker from 'react-datepicker';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import classNames from 'classnames';
 
-function useFormik() {
-  return useContext(FormikConsumer._context);
-}
+import { useFormik } from '../shared';
 
 let counter = 0;
 

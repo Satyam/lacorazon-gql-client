@@ -1,13 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { FormGroup, Label, FormFeedback, FormText, Col } from 'reactstrap';
-import { Field as KField, FormikConsumer, ErrorMessage } from 'formik';
+import { Field as KField, ErrorMessage } from 'formik';
 import classNames from 'classnames';
 import invariant from 'invariant';
 
-function useFormik() {
-  return useContext(FormikConsumer._context);
-}
+import { useFormik } from '../shared';
 
 let counter = 0;
 /**
