@@ -13,18 +13,10 @@ let counter = 0;
 /**
  * Produces a labeled input box within form
  */
-export default function TextField({
-  name,
-  label,
-  id,
-  rows,
-  help,
-  validate,
-  ...rest
-}) {
+export default function TextField({ name, label, id, rows, help, ...rest }) {
   invariant(name, 'TextField: name argument is mandatory');
 
-  const { errors, touched, validationSchema } = useFormik();
+  const { errors, touched } = useFormik();
   const invalid = errors[name] && touched[name];
   const [actualId] = useState(id || `F_TF_${counter}`);
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
@@ -43,16 +35,6 @@ export default function TextField({
           rows={rows}
           name={name}
           id={actualId}
-          validate={
-            validate
-              ? value =>
-                  validate(
-                    validationSchema
-                      ? validationSchema.fields[name].cast(value)
-                      : value
-                  )
-              : void 0
-          }
           {...rest}
         />
         {help && <FormText>{help}</FormText>}
@@ -88,13 +70,6 @@ TextField.propTypes = {
    * An optional help text to be shown below the input field
    */
   help: PropTypes.string,
-  /**
-   * A validation function.
-   * It will be called with the value of the field and
-   * it should return a text with an error message, if any,
-   * or nothing if Ok.
-   */
-  validate: PropTypes.func,
   /**
    * Any other properties will be passed on to the `<input>` or `<textarea>` elements
    */

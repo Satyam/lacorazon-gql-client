@@ -7,50 +7,26 @@ export default function Form({
   values,
   onSubmit,
   children,
-  enableReinitialize = true,
-  initialErrors,
-  onReset,
-  validate,
-  validateOnBlur = true,
-  validateOnChange = true,
+  formProps,
   ...rest
 }) {
-  let requiredFields = {};
-  if (schema && typeof initialErrors === 'undefined') {
-    const { fields } = schema.describe();
-    requiredFields = Object.keys(fields).reduce((req, name) => {
-      if (fields[name].tests.some(t => t.name === 'required')) {
-        req[name] = '';
-      }
-      return req;
-    }, requiredFields);
-  }
   return (
     <Formik
       validationSchema={schema}
       initialValues={schema ? Object.assign(schema.default(), values) : values}
-      onSubmit={(values, { setStatus, setSubmitting }) => {
+      onSubmit={(values, { setStatus }) => {
         const result = onSubmit(schema ? schema.cast(values) : values);
         if (result && typeof result.then === 'function') {
           return result.catch(err => {
             setStatus(err);
           });
-          // .finally(() => {
-          //   console.log('onSubmit unset isSubmitting');
-          //   setSubmitting(false);
-          // });
         }
         return result;
       }}
-      enableReinitialize={enableReinitialize}
-      initialErrors={initialErrors || requiredFields}
-      onReset={onReset}
-      validate={validate}
-      validateOnBlur={validateOnBlur}
-      validateOnChange={validateOnChange}
+      {...rest}
     >
       {({ status }) => (
-        <BSForm tag={KForm} {...rest}>
+        <BSForm tag={KForm} {...formProps}>
           {status && <Alert color="danger">{status}</Alert>}
           {children}
         </BSForm>
