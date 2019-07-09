@@ -27,7 +27,7 @@ query {
   }
 }`;
 
-export const CREATE_USER = `mutation ($nombre: String!, $email: String, $password: String) {
+export const CREATE_USER = `mutation ($nombre: String!, $email: String, $password: String!) {
   createUser(nombre: $nombre, email: $email, password: $password) {
     id
     nombre
