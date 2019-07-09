@@ -44,39 +44,35 @@ export default function Login() {
         onSubmit={values => {
           if (register) {
             if (values.password === values.confirmPassword) {
-              return createUser(
-                {
-                  variables: {
-                    nombre: values.nombre,
-                    password: values.password,
-                  },
-                }.then(({ error, data }) => {
-                  if (error) {
-                    return Promise.reject('Server error');
-                  }
-                  return data.createUser
-                    ? refreshCurrentUser().then(() => {
-                        history.goBack();
-                      })
-                    : Promise.reject('Duplicate user name');
-                })
-              );
+              return createUser({
+                variables: {
+                  nombre: values.nombre,
+                  password: values.password,
+                },
+              }).then(({ error, data }) => {
+                if (error) {
+                  return Promise.reject('Server error');
+                }
+                return data.createUser
+                  ? refreshCurrentUser().then(() => {
+                      history.goBack();
+                    })
+                  : Promise.reject('Duplicate user name');
+              });
             } else {
               return Promise.reject('Confirmación no coincide');
             }
           } else {
-            return login({ variables: values }).then(
-              ({ error, loading, data }) => {
-                if (error) {
-                  return Promise.reject('Server error');
-                }
-                return data.login
-                  ? refreshCurrentUser().then(() => {
-                      history.goBack();
-                    })
-                  : Promise.reject('User name or password do not exist');
+            return login({ variables: values }).then(({ error, data }) => {
+              if (error) {
+                return Promise.reject('Server error');
               }
-            );
+              return data.login
+                ? refreshCurrentUser().then(() => {
+                    history.goBack();
+                  })
+                : Promise.reject('User name or password do not exist');
+            });
           }
         }}
         schema={loginSchema}
