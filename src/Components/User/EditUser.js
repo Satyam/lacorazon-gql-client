@@ -31,10 +31,13 @@ export default function EditUser({ id }) {
             id,
           },
         })
-        .then(({ data }) => {
-          setQueryLoading(false);
-          setUser(data.user);
-        });
+        .then(
+          ({ data }) => setUser(data.user),
+          error => {
+            console.error(error);
+          }
+        )
+        .finally(() => setQueryLoading(false));
     }
   }, [id, client]);
 

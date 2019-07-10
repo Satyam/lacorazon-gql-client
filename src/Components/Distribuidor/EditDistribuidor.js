@@ -37,10 +37,13 @@ export default function EditDistribuidor({ id }) {
             id,
           },
         })
-        .then(({ data }) => {
-          setQueryLoading(true);
-          setDistribuidor(data.distribuidor);
-        });
+        .then(
+          ({ data }) => setDistribuidor(data.distribuidor),
+          error => {
+            console.error(error);
+          }
+        )
+        .finally(() => setQueryLoading(false));
     }
   }, [id, client]);
 
