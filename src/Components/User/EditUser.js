@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useReactRouter from 'use-react-router';
-import { useMutation, useManualQuery } from 'graphql-hooks';
+import { useMutation, useApolloClient } from '@apollo/react-hooks';
 
 import { Alert } from 'reactstrap';
 import Loading from 'Components/Loading';
@@ -13,36 +13,36 @@ import userSchema from 'ValidationSchemas/user';
 
 export default function EditUser({ id }) {
   const { history } = useReactRouter();
-  const [fetchUser, queryStatus] = useManualQuery(USER_QUERY);
+  const client = useApolloClient();
   const [createUser, createStatus] = useMutation(CREATE_USER);
   const [updateUser, updateStatus] = useMutation(UPDATE_USER);
   const [deleteUser, deleteStatus] = useMutation(DELETE_USER);
 
   const [user, setUser] = useState({});
+  const [queryLoading, setQueryLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
-      fetchUser({
-        variables: {
-          id,
-        },
-      }).then(({ data }) => setUser(data.user));
+      setQueryLoading(true);
+      client
+        .query({
+          query: USER_QUERY,
+          variables: {
+            id,
+          },
+        })
+        .then(({ data }) => {
+          setQueryLoading(false);
+          setUser(data.user);
+        });
     }
-    // useManualQuery always return a new fetchUser
-    // https://github.com/nearform/graphql-hooks/issues/234
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [id, client]);
 
-  if (
-    queryStatus.error ||
-    createStatus.error ||
-    updateStatus.error ||
-    deleteStatus.error
-  )
+  if (createStatus.error || updateStatus.error || deleteStatus.error)
     return 'Something Bad Happened';
 
   if (
-    queryStatus.loading ||
+    queryLoading ||
     createStatus.loading ||
     updateStatus.loading ||
     deleteStatus.loading

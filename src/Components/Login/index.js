@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMutation } from 'graphql-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import useReactRouter from 'use-react-router';
 import { object, string } from 'yup';
 

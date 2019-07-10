@@ -1,6 +1,6 @@
 import React from 'react';
 import useReactRouter from 'use-react-router';
-import { useQuery, useMutation } from 'graphql-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import { Table } from 'reactstrap';
 import { ButtonIconAdd } from 'Components/Icons';

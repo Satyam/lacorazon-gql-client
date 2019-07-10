@@ -1,5 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+import ApolloClient from 'apollo-client';
+import { ApolloProvider } from '@apollo/react-hooks';
+import { createHttpLink } from 'apollo-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
@@ -17,9 +23,7 @@ import {
 import './index.css';
 import App from 'Components/App';
 import * as serviceWorker from './serviceWorker';
-import { GraphQLClient, ClientContext } from 'graphql-hooks';
-import memCache from 'graphql-hooks-memcache';
-import { AuthProvider } from './Components/Auth';
+import { AuthProvider } from 'Components/Auth';
 
 library.add(
   faTrashAlt,
@@ -33,20 +37,20 @@ library.add(
   faCalendarAlt
 );
 
-const client = new GraphQLClient({
-  url: '/graphql',
-  fetchOptions: {
-    credentials: 'include',
-  },
-  cache: memCache(),
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: createHttpLink({
+    uri: '/graphql',
+    credentials: 'same-origin',
+  }),
 });
 
 ReactDOM.render(
-  <ClientContext.Provider value={client}>
+  <ApolloProvider client={client}>
     <AuthProvider>
       <App />
     </AuthProvider>
-  </ClientContext.Provider>,
+  </ApolloProvider>,
   document.getElementById('root')
 );
 

@@ -5,7 +5,7 @@ import React, {
   useState,
   useCallback,
 } from 'react';
-import { useQuery, useMutation } from 'graphql-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import { CURRENT_USER_QUERY, LOGOUT } from 'Gql/users';
 import Loading from 'Components/Loading';

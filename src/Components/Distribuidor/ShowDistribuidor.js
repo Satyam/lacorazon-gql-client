@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQuery } from 'graphql-hooks';
+import { useQuery } from '@apollo/react-hooks';
 
 import { LabeledText } from '../Form';
 import Page from '../Page';

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useReactRouter from 'use-react-router';
-import { useMutation, useManualQuery } from 'graphql-hooks';
+import { useMutation, useApolloClient } from '@apollo/react-hooks';
 
 import { Alert } from 'reactstrap';
 import { Form, TextField, SubmitButton } from 'Components/Form';
@@ -19,36 +19,36 @@ import distribuidorSchema from 'ValidationSchemas/distribuidor';
 
 export default function EditDistribuidor({ id }) {
   const { history } = useReactRouter();
-  const [fetchDistribuidor, queryStatus] = useManualQuery(DISTRIBUIDOR_QUERY);
+  const client = useApolloClient();
   const [createDistribuidor, createStatus] = useMutation(CREATE_DISTRIBUIDOR);
   const [updateDistribuidor, updateStatus] = useMutation(UPDATE_DISTRIBUIDOR);
   const [deleteDistribuidor, deleteStatus] = useMutation(DELETE_DISTRIBUIDOR);
 
   const [distribuidor, setDistribuidor] = useState({});
+  const [queryLoading, setQueryLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
-      fetchDistribuidor({
-        variables: {
-          id,
-        },
-      }).then(({ data }) => setDistribuidor(data.distribuidor));
+      setQueryLoading(true);
+      client
+        .query({
+          query: DISTRIBUIDOR_QUERY,
+          variables: {
+            id,
+          },
+        })
+        .then(({ data }) => {
+          setQueryLoading(true);
+          setDistribuidor(data.distribuidor);
+        });
     }
-    // useManualQuery always return a new fetchUser
-    // https://github.com/nearform/graphql-hooks/issues/234
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [id, client]);
 
-  if (
-    queryStatus.error ||
-    createStatus.error ||
-    updateStatus.error ||
-    deleteStatus.error
-  )
+  if (createStatus.error || updateStatus.error || deleteStatus.error)
     return 'Something Bad Happened';
 
   if (
-    queryStatus.loading ||
+    queryLoading ||
     createStatus.loading ||
     updateStatus.loading ||
     deleteStatus.loading
