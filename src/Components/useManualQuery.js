@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useApolloClient } from '@apollo/react-hooks';
 
+const IDLE = {
+  loading: false,
+  error: undefined,
+  data: {},
+};
+
 export default function useManualQuery(query) {
   const client = useApolloClient();
-  const IDLE = {
-    loading: false,
-    error: undefined,
-    data: {},
-  };
+
   const [status, setStatus] = useState(IDLE);
   const [variables, setVariables] = useState();
 
@@ -36,7 +38,7 @@ export default function useManualQuery(query) {
           }
         );
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, variables]);
   return [setVariables, status];
 }
