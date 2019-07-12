@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import useReactRouter from 'use-react-router';
-import { useMutation } from '@apollo/react-hooks';
-import useManualQuery from 'Components/useManualQuery';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 
 import { Alert } from 'reactstrap';
 import { Form, TextField, SubmitButton } from 'Components/Form';
@@ -21,25 +20,21 @@ import distribuidorSchema from 'ValidationSchemas/distribuidor';
 
 export default function EditDistribuidor({ id }) {
   const { history } = useReactRouter();
-  const [queryDistribuidor, queryStatus] = useManualQuery(DISTRIBUIDOR_QUERY);
+  const { loading, error, data } = useQuery(DISTRIBUIDOR_QUERY, {
+    variables: {
+      id,
+    },
+    skip: !id,
+  });
   const [createDistribuidor, createStatus] = useMutation(CREATE_DISTRIBUIDOR);
   const [updateDistribuidor, updateStatus] = useMutation(UPDATE_DISTRIBUIDOR);
   const [deleteDistribuidor, deleteStatus] = useMutation(DELETE_DISTRIBUIDOR);
 
-  useEffect(() => {
-    if (id) queryDistribuidor({ id });
-  }, [id, queryDistribuidor]);
-
-  if (
-    queryStatus.error ||
-    createStatus.error ||
-    updateStatus.error ||
-    deleteStatus.error
-  )
+  if (error || createStatus.error || updateStatus.error || deleteStatus.error)
     return 'Something Bad Happened';
 
   if (
-    queryStatus.loading ||
+    loading ||
     createStatus.loading ||
     updateStatus.loading ||
     deleteStatus.loading
@@ -47,7 +42,7 @@ export default function EditDistribuidor({ id }) {
     return <Loading title="Distribuidores" />;
   }
 
-  const { distribuidor } = queryStatus.data;
+  const distribuidor = (data && data.distribuidor) || {};
   if (id && !distribuidor) {
     return (
       <Alert color="danger">El distribuidor no existe o fue borrado</Alert>
@@ -64,7 +59,7 @@ export default function EditDistribuidor({ id }) {
           if (id) {
             updateDistribuidor({
               variables: { id, ...values },
-            }).then(() => queryDistribuidor({ id }));
+            });
           } else {
             createDistribuidor({
               variables: values,
