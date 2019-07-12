@@ -6,6 +6,7 @@ import { Table } from 'reactstrap';
 import { ButtonIconAdd } from 'Components/Icons';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
+import GqlError from 'Components/GqlError';
 import UserRow from './UserRow';
 
 import { USERS_QUERY, DELETE_USER } from 'Gql/users';
@@ -17,7 +18,6 @@ export default function Users() {
 
   if (loading) return <Loading>Cargando usuarios</Loading>;
   if (delStatus.loading) return <Loading>Borrando usuario</Loading>;
-  if (error || delStatus.error) return 'Something Bad Happened';
 
   const users = data ? data.users : [];
   const deleteUser = id => {
@@ -26,33 +26,35 @@ export default function Users() {
 
   return (
     <Page title="Vendedores" heading="Vendedores">
-      <Table striped hover size="sm" responsive>
-        <thead>
-          <tr>
-            <th>Alias</th>
-            <th>Nombre</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {users.map(user =>
-            UserRow({
-              user,
-              history,
-              deleteUser,
-            })
-          )}
-        </tbody>
-      </Table>
-      <ButtonIconAdd
-        outline
-        onClick={() => {
-          history.push(`/user`);
-        }}
-        label="Agregar"
-      >
-        Agregar
-      </ButtonIconAdd>
+      <GqlError error={[error, delStatus]}>
+        <Table striped hover size="sm" responsive>
+          <thead>
+            <tr>
+              <th>Alias</th>
+              <th>Nombre</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {users.map(user =>
+              UserRow({
+                user,
+                history,
+                deleteUser,
+              })
+            )}
+          </tbody>
+        </Table>
+        <ButtonIconAdd
+          outline
+          onClick={() => {
+            history.push(`/user`);
+          }}
+          label="Agregar"
+        >
+          Agregar
+        </ButtonIconAdd>
+      </GqlError>
     </Page>
   );
 }

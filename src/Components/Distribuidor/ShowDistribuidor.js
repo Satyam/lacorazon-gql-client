@@ -5,6 +5,7 @@ import { LabeledText } from '../Form';
 import Page from '../Page';
 import Loading from 'Components/Loading';
 import { Alert } from 'reactstrap';
+import GqlError from 'Components/GqlError';
 
 import { DISTRIBUIDOR_QUERY } from 'Gql/distribuidores';
 
@@ -15,9 +16,7 @@ export default function ShowDistribuidor({ id }) {
     },
   });
   if (loading) return <Loading>Cargando distribuidor</Loading>;
-  if (error) {
-    return 'Something Bad Happened';
-  }
+
   if (data.distribuidor) {
     const {
       nombre,
@@ -29,17 +28,21 @@ export default function ShowDistribuidor({ id }) {
     } = data.distribuidor;
     return (
       <Page title={`Distribuidor - ${nombre}`} heading={`Distribuidor`}>
-        <LabeledText label="Nombre" value={nombre} />
-        <LabeledText label="eMail" value={email} />
-        <LabeledText label="Localidad" value={localidad} />
-        <LabeledText label="Dirección" value={direccion} pre />
-        <LabeledText label="Contacto" value={contacto} />
-        <LabeledText label="Teléfono" value={telefono} />
+        <GqlError error={error}>
+          <LabeledText label="Nombre" value={nombre} />
+          <LabeledText label="eMail" value={email} />
+          <LabeledText label="Localidad" value={localidad} />
+          <LabeledText label="Dirección" value={direccion} pre />
+          <LabeledText label="Contacto" value={contacto} />
+          <LabeledText label="Teléfono" value={telefono} />
+        </GqlError>
       </Page>
     );
   } else {
     return (
-      <Alert color="danger">El distribuidor no existe o fue borrado</Alert>
+      <GqlError error={error}>
+        <Alert color="danger">El distribuidor no existe o fue borrado</Alert>
+      </GqlError>
     );
   }
 }

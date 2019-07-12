@@ -9,6 +9,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import { CURRENT_USER_QUERY, LOGOUT } from 'Gql/users';
 import Loading from 'Components/Loading';
+import GqlError from 'Components/GqlError';
 
 export const UserContext = createContext({});
 
@@ -39,13 +40,14 @@ export function AuthProvider({ children }) {
     return doLogout().then(refreshCurrentUser);
   }
 
-  if (error || logoutStatus.error) return 'Something Bad Happened';
   if (loading) return <Loading>Current User</Loading>;
   if (logoutStatus.loading) return <Loading>Logging out</Loading>;
   return (
-    <UserContext.Provider value={{ currentUser, refreshCurrentUser, logout }}>
-      {children}
-    </UserContext.Provider>
+    <GqlError error={[error, logoutStatus]}>
+      <UserContext.Provider value={{ currentUser, refreshCurrentUser, logout }}>
+        {children}
+      </UserContext.Provider>
+    </GqlError>
   );
 }
 

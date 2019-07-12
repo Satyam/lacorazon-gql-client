@@ -6,6 +6,8 @@ import { object, string } from 'yup';
 import Loading from 'Components/Loading';
 import { Form, TextField, SubmitButton } from 'Components/Form';
 import Page from 'Components/Page';
+import GqlError from 'Components/GqlError';
+
 import { LOGIN, CREATE_USER } from 'Gql/users';
 import { useAuth } from 'Components/Auth';
 
@@ -30,66 +32,66 @@ export default function Login() {
   const [createUser, createUserStatus] = useMutation(CREATE_USER);
   const register = match.params.register;
 
-  if (loginStatus.error || createUserStatus.error)
-    return 'Something Bad Happened';
   return (
     <Page
       title={register ? 'Registro' : 'Login'}
       heading={register ? 'Registro' : 'Login'}
     >
-      {(loginStatus.loading || createUserStatus.loading) && (
-        <Loading>{register ? 'Registrando' : 'Confirmando'} usuario</Loading>
-      )}
-      <Form
-        onSubmit={values => {
-          if (register) {
-            if (values.password === values.confirmPassword) {
-              return createUser({
-                variables: {
-                  nombre: values.nombre,
-                  password: values.password,
-                },
-              }).then(({ error, data }) => {
+      <GqlError error={[loginStatus, createUserStatus]}>
+        {(loginStatus.loading || createUserStatus.loading) && (
+          <Loading>{register ? 'Registrando' : 'Confirmando'} usuario</Loading>
+        )}
+        <Form
+          onSubmit={values => {
+            if (register) {
+              if (values.password === values.confirmPassword) {
+                return createUser({
+                  variables: {
+                    nombre: values.nombre,
+                    password: values.password,
+                  },
+                }).then(({ error, data }) => {
+                  if (error) {
+                    return Promise.reject('Server error');
+                  }
+                  return data.createUser
+                    ? refreshCurrentUser().then(() => {
+                        history.goBack();
+                      })
+                    : Promise.reject('Duplicate user name');
+                });
+              } else {
+                return Promise.reject('Confirmación no coincide');
+              }
+            } else {
+              return login({ variables: values }).then(({ error, data }) => {
                 if (error) {
                   return Promise.reject('Server error');
                 }
-                return data.createUser
+                return data.login
                   ? refreshCurrentUser().then(() => {
                       history.goBack();
                     })
-                  : Promise.reject('Duplicate user name');
+                  : Promise.reject('User name or password do not exist');
               });
-            } else {
-              return Promise.reject('Confirmación no coincide');
             }
-          } else {
-            return login({ variables: values }).then(({ error, data }) => {
-              if (error) {
-                return Promise.reject('Server error');
-              }
-              return data.login
-                ? refreshCurrentUser().then(() => {
-                    history.goBack();
-                  })
-                : Promise.reject('User name or password do not exist');
-            });
-          }
-        }}
-        schema={loginSchema}
-      >
-        <TextField name="nombre" label="Nombre" />
-        <TextField type="password" name="password" label="Contraseña" />
-        {register && (
-          <TextField
-            type="password"
-            name="confirmPassword"
-            label="Confirmar contraseña"
-          />
-        )}
-        <SubmitButton color="primary">
-          {register ? 'Crear' : 'Entrar'}
-        </SubmitButton>
-      </Form>
+          }}
+          schema={loginSchema}
+        >
+          <TextField name="nombre" label="Nombre" />
+          <TextField type="password" name="password" label="Contraseña" />
+          {register && (
+            <TextField
+              type="password"
+              name="confirmPassword"
+              label="Confirmar contraseña"
+            />
+          )}
+          <SubmitButton color="primary">
+            {register ? 'Crear' : 'Entrar'}
+          </SubmitButton>
+        </Form>
+      </GqlError>
     </Page>
   );
 }

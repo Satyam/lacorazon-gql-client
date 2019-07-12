@@ -7,6 +7,7 @@ import { Form, TextField, SubmitButton } from 'Components/Form';
 import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
+import GqlError from 'Components/GqlError';
 
 import {
   DISTRIBUIDOR_QUERY,
@@ -30,9 +31,6 @@ export default function EditDistribuidor({ id }) {
   const [updateDistribuidor, updateStatus] = useMutation(UPDATE_DISTRIBUIDOR);
   const [deleteDistribuidor, deleteStatus] = useMutation(DELETE_DISTRIBUIDOR);
 
-  if (error || createStatus.error || updateStatus.error || deleteStatus.error)
-    return 'Something Bad Happened';
-
   if (loading) return <Loading>Cargando distribuidor</Loading>;
   if (createStatus.loading) return <Loading>Creando distribuidor</Loading>;
   if (updateStatus.loading) return <Loading>Actualizando distribuidor</Loading>;
@@ -41,7 +39,9 @@ export default function EditDistribuidor({ id }) {
   const distribuidor = (data && data.distribuidor) || {};
   if (id && !distribuidor) {
     return (
-      <Alert color="danger">El distribuidor no existe o fue borrado</Alert>
+      <GqlError error={[error, createStatus, updateStatus, deleteStatus]}>
+        <Alert color="danger">El distribuidor no existe o fue borrado</Alert>
+      </GqlError>
     );
   }
   return (
@@ -49,80 +49,82 @@ export default function EditDistribuidor({ id }) {
       title={`Distribuidor - ${distribuidor ? distribuidor.nombre : 'nuevo'}`}
       heading={`${id ? 'Edit' : 'Add'} Distribuidor`}
     >
-      <Form
-        values={distribuidor}
-        onSubmit={values => {
-          if (id) {
-            updateDistribuidor({
-              variables: { id, ...values },
-            });
-          } else {
-            createDistribuidor({
-              variables: values,
-              update: (cache, { data }) => {
-                const cached = cache.readQuery({
-                  query: DISTRIBUIDORES_QUERY,
-                });
-                cached.distribuidores.push({
-                  entregados: 0,
-                  existencias: 0,
-                  ...data.createDistribuidor,
-                });
-                cached.distribuidores.sort((a, b) => {
-                  if (a.nombre < b.nombre) return -1;
-                  if (a.nombre > b.nombre) return 1;
-                  return 0;
-                });
-                cache.writeQuery({
-                  query: DISTRIBUIDORES_QUERY,
-                  data: cached,
-                });
-              },
-            }).then(({ data }) => {
-              history.replace(
-                `/distribuidor/${data.createDistribuidor.id}?edit=true`
-              );
-            });
-          }
-        }}
-        schema={distribuidorSchema}
-      >
-        <TextField name="nombre" label="Nombre" />
-        <TextField name="email" label="eMail" />
-        <TextField name="localidad" label="Localidad" />
-        <TextField name="contacto" label="Contacto" />
-        <TextField name="telefono" label="Teléfono" />
-        <TextField name="direccion" label="Dirección" rows={5} />
-        <ButtonSet>
-          <SubmitButton component={ButtonIconAdd}>
-            {id ? 'Modificar' : 'Agregar'}
-          </SubmitButton>
-          <ButtonIconDelete
-            disabled={!id}
-            onClick={() => {
-              deleteDistribuidor({
-                variables: { id },
-                update: cache => {
+      <GqlError error={[error, createStatus, updateStatus, deleteStatus]}>
+        <Form
+          values={distribuidor}
+          onSubmit={values => {
+            if (id) {
+              updateDistribuidor({
+                variables: { id, ...values },
+              });
+            } else {
+              createDistribuidor({
+                variables: values,
+                update: (cache, { data }) => {
                   const cached = cache.readQuery({
                     query: DISTRIBUIDORES_QUERY,
                   });
-
+                  cached.distribuidores.push({
+                    entregados: 0,
+                    existencias: 0,
+                    ...data.createDistribuidor,
+                  });
+                  cached.distribuidores.sort((a, b) => {
+                    if (a.nombre < b.nombre) return -1;
+                    if (a.nombre > b.nombre) return 1;
+                    return 0;
+                  });
                   cache.writeQuery({
                     query: DISTRIBUIDORES_QUERY,
-                    data: {
-                      distribuidores: cached.distribuidores.filter(
-                        d => d.id !== id
-                      ),
-                    },
+                    data: cached,
                   });
                 },
-              }).then(() => history.replace('/distribuidores'));
-            }}
-          >
-            Borrar
-          </ButtonIconDelete>
-        </ButtonSet>
-      </Form>
+              }).then(({ data }) => {
+                history.replace(
+                  `/distribuidor/${data.createDistribuidor.id}?edit=true`
+                );
+              });
+            }
+          }}
+          schema={distribuidorSchema}
+        >
+          <TextField name="nombre" label="Nombre" />
+          <TextField name="email" label="eMail" />
+          <TextField name="localidad" label="Localidad" />
+          <TextField name="contacto" label="Contacto" />
+          <TextField name="telefono" label="Teléfono" />
+          <TextField name="direccion" label="Dirección" rows={5} />
+          <ButtonSet>
+            <SubmitButton component={ButtonIconAdd}>
+              {id ? 'Modificar' : 'Agregar'}
+            </SubmitButton>
+            <ButtonIconDelete
+              disabled={!id}
+              onClick={() => {
+                deleteDistribuidor({
+                  variables: { id },
+                  update: cache => {
+                    const cached = cache.readQuery({
+                      query: DISTRIBUIDORES_QUERY,
+                    });
+
+                    cache.writeQuery({
+                      query: DISTRIBUIDORES_QUERY,
+                      data: {
+                        distribuidores: cached.distribuidores.filter(
+                          d => d.id !== id
+                        ),
+                      },
+                    });
+                  },
+                }).then(() => history.replace('/distribuidores'));
+              }}
+            >
+              Borrar
+            </ButtonIconDelete>
+          </ButtonSet>
+        </Form>
+      </GqlError>
     </Page>
   );
 }
