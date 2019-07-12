@@ -38,7 +38,7 @@ export default function Login() {
       heading={register ? 'Registro' : 'Login'}
     >
       {(loginStatus.loading || createUserStatus.loading) && (
-        <Loading title={register ? 'Registrando' : 'Confirmando'} />
+        <Loading>{register ? 'Registrando' : 'Confirmando'} usuario</Loading>
       )}
       <Form
         onSubmit={values => {

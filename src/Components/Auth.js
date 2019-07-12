@@ -40,7 +40,8 @@ export function AuthProvider({ children }) {
   }
 
   if (error || logoutStatus.error) return 'Something Bad Happened';
-  if (loading || logoutStatus.loading) return <Loading title="Current User" />;
+  if (loading) return <Loading>Current User</Loading>;
+  if (logoutStatus.loading) return <Loading>Logging out</Loading>;
   return (
     <UserContext.Provider value={{ currentUser, refreshCurrentUser, logout }}>
       {children}

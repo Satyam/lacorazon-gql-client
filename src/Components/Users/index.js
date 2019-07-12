@@ -15,7 +15,8 @@ export default function Users() {
   const { loading, error, data, refetch } = useQuery(USERS_QUERY);
   const [delUser, delStatus] = useMutation(DELETE_USER);
 
-  if (loading || delStatus.loading) return <Loading title="Usuarios" />;
+  if (loading) return <Loading>Cargando usuarios</Loading>;
+  if (delStatus.loading) return <Loading>Borrando usuario</Loading>;
   if (error || delStatus.error) return 'Something Bad Happened';
 
   const users = data ? data.users : [];

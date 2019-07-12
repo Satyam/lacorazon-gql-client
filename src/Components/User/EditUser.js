@@ -32,14 +32,10 @@ export default function EditUser({ id }) {
   if (error || createStatus.error || updateStatus.error || deleteStatus.error)
     return 'Something Bad Happened';
 
-  if (
-    loading ||
-    createStatus.loading ||
-    updateStatus.loading ||
-    deleteStatus.loading
-  ) {
-    return <Loading title="Usuarios" />;
-  }
+  if (loading) return <Loading>Cargando usuario</Loading>;
+  if (createStatus.loading) return <Loading>Creando usuario</Loading>;
+  if (updateStatus.loading) return <Loading>Actualizando usuario</Loading>;
+  if (deleteStatus.loading) return <Loading>Borrando usuario</Loading>;
 
   const user = (data && data.user) || {};
 

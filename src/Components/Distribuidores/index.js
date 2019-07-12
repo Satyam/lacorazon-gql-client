@@ -16,7 +16,8 @@ export default function Distribuidores() {
   const { loading, error, data, refetch } = useQuery(DISTRIBUIDORES_QUERY);
   const [delDistribuidor, delStatus] = useMutation(DELETE_DISTRIBUIDOR);
 
-  if (loading || delStatus.loading) return <Loading title="Distribuidores" />;
+  if (loading) return <Loading>Cargando distribuidores</Loading>;
+  if (delStatus.loading) return <Loading>Borrando distribuidor</Loading>;
   if (error || delStatus.error) return 'Something Bad Happened';
 
   const distribuidores = data ? data.distribuidores : [];

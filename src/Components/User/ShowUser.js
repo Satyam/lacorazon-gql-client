@@ -14,7 +14,7 @@ export default function ShowUser({ id }) {
       id,
     },
   });
-  if (loading) return <Loading title="Usuario" />;
+  if (loading) return <Loading>Cargando usuario</Loading>;
   if (error) {
     return `Something Bad Happened:
      ${error}`;

@@ -4,7 +4,7 @@ import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import styles from './styles.module.css';
 
 export default function Loading({
-  title = '',
+  title = 'Cargando ....',
   children,
   noIcon,
   isOpen = true,

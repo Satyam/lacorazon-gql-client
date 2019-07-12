@@ -14,7 +14,7 @@ export default function ShowDistribuidor({ id }) {
       id,
     },
   });
-  if (loading) return <Loading title="Distribuidor" />;
+  if (loading) return <Loading>Cargando distribuidor</Loading>;
   if (error) {
     return 'Something Bad Happened';
   }

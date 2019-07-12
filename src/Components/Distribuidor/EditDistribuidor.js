@@ -33,14 +33,10 @@ export default function EditDistribuidor({ id }) {
   if (error || createStatus.error || updateStatus.error || deleteStatus.error)
     return 'Something Bad Happened';
 
-  if (
-    loading ||
-    createStatus.loading ||
-    updateStatus.loading ||
-    deleteStatus.loading
-  ) {
-    return <Loading title="Distribuidores" />;
-  }
+  if (loading) return <Loading>Cargando distribuidor</Loading>;
+  if (createStatus.loading) return <Loading>Creando distribuidor</Loading>;
+  if (updateStatus.loading) return <Loading>Actualizando distribuidor</Loading>;
+  if (deleteStatus.loading) return <Loading>Borrando distribuidor</Loading>;
 
   const distribuidor = (data && data.distribuidor) || {};
   if (id && !distribuidor) {
