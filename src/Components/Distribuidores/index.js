@@ -1,6 +1,5 @@
 import React from 'react';
 import useReactRouter from 'use-react-router';
-import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import { Table } from 'reactstrap';
 import { ButtonIconAdd } from 'Components/Icons';
@@ -11,38 +10,21 @@ import GqlError from 'Components/GqlError';
 
 import RowDistr from './RowDistr';
 
-import { DISTRIBUIDORES_QUERY, DELETE_DISTRIBUIDOR } from 'Gql/distribuidores';
+import { useListDistribuidores, useDeleteDistribuidor } from './queries';
 
 export default function Distribuidores() {
   const { history } = useReactRouter();
-  const { loading, error, data } = useQuery(DISTRIBUIDORES_QUERY);
-  const [delDistribuidor, delStatus] = useMutation(DELETE_DISTRIBUIDOR);
+  const { loading, error, data } = useListDistribuidores();
+  const [deleteDistribuidor, deleteStatus] = useDeleteDistribuidor();
 
   if (loading) return <Loading>Cargando distribuidores</Loading>;
-  if (delStatus.loading) return <Loading>Borrando distribuidor</Loading>;
+  if (deleteStatus.loading) return <Loading>Borrando distribuidor</Loading>;
 
   const distribuidores = data ? data.distribuidores : [];
-  const deleteDistribuidor = id => {
-    delDistribuidor({
-      variables: { id },
-      update: cache => {
-        const cached = cache.readQuery({
-          query: DISTRIBUIDORES_QUERY,
-        });
-
-        cache.writeQuery({
-          query: DISTRIBUIDORES_QUERY,
-          data: {
-            distribuidores: cached.distribuidores.filter(d => d.id !== id),
-          },
-        });
-      },
-    });
-  };
 
   return (
     <Page wide title="Distribuidores" heading="Distribuidores">
-      <GqlError error={[error, delStatus]}>
+      <GqlError error={[error, deleteStatus]}>
         <Table striped hover size="sm" responsive>
           <thead>
             <tr>

@@ -1,5 +1,4 @@
 import React from 'react';
-import { useQuery } from '@apollo/react-hooks';
 
 import { LabeledText } from '../Form';
 import Page from '../Page';
@@ -7,14 +6,10 @@ import Loading from 'Components/Loading';
 import { Alert } from 'reactstrap';
 import GqlError from 'Components/GqlError';
 
-import { DISTRIBUIDOR_QUERY } from 'Gql/distribuidores';
+import { useQueryDistribuidor } from '../Distribuidores/queries';
 
 export default function ShowDistribuidor({ id }) {
-  const { loading, error, data } = useQuery(DISTRIBUIDOR_QUERY, {
-    variables: {
-      id,
-    },
-  });
+  const { loading, error, data } = useQueryDistribuidor(id);
   if (loading) return <Loading>Cargando distribuidor</Loading>;
 
   if (data.distribuidor) {

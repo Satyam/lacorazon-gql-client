@@ -1,6 +1,5 @@
 import React from 'react';
 import useReactRouter from 'use-react-router';
-import { useMutation, useQuery } from '@apollo/react-hooks';
 
 import { Alert } from 'reactstrap';
 import { Form, TextField, SubmitButton } from 'Components/Form';
@@ -10,26 +9,21 @@ import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
 
 import {
-  DISTRIBUIDOR_QUERY,
-  CREATE_DISTRIBUIDOR,
-  UPDATE_DISTRIBUIDOR,
-  DELETE_DISTRIBUIDOR,
-  DISTRIBUIDORES_QUERY,
-} from 'Gql/distribuidores';
+  useCreateDistribuidor,
+  useDeleteDistribuidor,
+  useUpdateDistribuidor,
+  useQueryDistribuidor,
+} from '../Distribuidores/queries';
 
 import distribuidorSchema from 'ValidationSchemas/distribuidor';
 
 export default function EditDistribuidor({ id }) {
   const { history } = useReactRouter();
-  const { loading, error, data } = useQuery(DISTRIBUIDOR_QUERY, {
-    variables: {
-      id,
-    },
-    skip: !id,
-  });
-  const [createDistribuidor, createStatus] = useMutation(CREATE_DISTRIBUIDOR);
-  const [updateDistribuidor, updateStatus] = useMutation(UPDATE_DISTRIBUIDOR);
-  const [deleteDistribuidor, deleteStatus] = useMutation(DELETE_DISTRIBUIDOR);
+  const { loading, error, data } = useQueryDistribuidor(id);
+
+  const [createDistribuidor, createStatus] = useCreateDistribuidor();
+  const [updateDistribuidor, updateStatus] = useUpdateDistribuidor();
+  const [deleteDistribuidor, deleteStatus] = useDeleteDistribuidor();
 
   if (loading) return <Loading>Cargando distribuidor</Loading>;
   if (createStatus.loading) return <Loading>Creando distribuidor</Loading>;
@@ -54,32 +48,9 @@ export default function EditDistribuidor({ id }) {
           values={distribuidor}
           onSubmit={values => {
             if (id) {
-              updateDistribuidor({
-                variables: { id, ...values },
-              });
+              updateDistribuidor(id, values);
             } else {
-              createDistribuidor({
-                variables: values,
-                update: (cache, { data }) => {
-                  const cached = cache.readQuery({
-                    query: DISTRIBUIDORES_QUERY,
-                  });
-                  cached.distribuidores.push({
-                    entregados: 0,
-                    existencias: 0,
-                    ...data.createDistribuidor,
-                  });
-                  cached.distribuidores.sort((a, b) => {
-                    if (a.nombre < b.nombre) return -1;
-                    if (a.nombre > b.nombre) return 1;
-                    return 0;
-                  });
-                  cache.writeQuery({
-                    query: DISTRIBUIDORES_QUERY,
-                    data: cached,
-                  });
-                },
-              }).then(({ data }) => {
+              createDistribuidor(values).then(({ data }) => {
                 history.replace(
                   `/distribuidor/${data.createDistribuidor.id}?edit=true`
                 );
@@ -101,23 +72,9 @@ export default function EditDistribuidor({ id }) {
             <ButtonIconDelete
               disabled={!id}
               onClick={() => {
-                deleteDistribuidor({
-                  variables: { id },
-                  update: cache => {
-                    const cached = cache.readQuery({
-                      query: DISTRIBUIDORES_QUERY,
-                    });
-
-                    cache.writeQuery({
-                      query: DISTRIBUIDORES_QUERY,
-                      data: {
-                        distribuidores: cached.distribuidores.filter(
-                          d => d.id !== id
-                        ),
-                      },
-                    });
-                  },
-                }).then(() => history.replace('/distribuidores'));
+                deleteDistribuidor(id).then(() =>
+                  history.replace('/distribuidores')
+                );
               }}
             >
               Borrar
