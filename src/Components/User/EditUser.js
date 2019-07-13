@@ -62,8 +62,8 @@ export default function EditUser({ id }) {
                   const cached = cache.readQuery({
                     query: USERS_QUERY,
                   });
-                  cached.user.push(data.createUser);
-                  cached.user.sort((a, b) => {
+                  cached.users.push(data.createUser);
+                  cached.users.sort((a, b) => {
                     if (a.nombre < b.nombre) return -1;
                     if (a.nombre > b.nombre) return 1;
                     return 0;
