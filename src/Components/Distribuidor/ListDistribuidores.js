@@ -8,11 +8,11 @@ import Loading from 'Components/Loading';
 import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
 
-import RowDistr from './RowDistr';
+import TableRowDistribuidor from './TableRowDistribuidor';
 
 import { useListDistribuidores, useDeleteDistribuidor } from './queries';
 
-export default function Distribuidores() {
+export default function ListDistribuidores() {
   const { history } = useReactRouter();
   const { loading, error, data } = useListDistribuidores();
   const [deleteDistribuidor, deleteStatus] = useDeleteDistribuidor();
@@ -40,7 +40,7 @@ export default function Distribuidores() {
           </thead>
           <tbody>
             {distribuidores.map(distribuidor =>
-              RowDistr(distribuidor, history, deleteDistribuidor)
+              TableRowDistribuidor(distribuidor, history, deleteDistribuidor)
             )}
           </tbody>
         </Table>

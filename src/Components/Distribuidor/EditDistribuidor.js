@@ -13,7 +13,7 @@ import {
   useDeleteDistribuidor,
   useUpdateDistribuidor,
   useQueryDistribuidor,
-} from '../Distribuidores/queries';
+} from './queries';
 
 import distribuidorSchema from 'ValidationSchemas/distribuidor';
 

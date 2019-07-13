@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { LabeledText } from '../Form';
-import Page from '../Page';
+import { LabeledText } from 'Components/Form';
+import Page from 'Components/Page';
 import Loading from 'Components/Loading';
 import { Alert } from 'reactstrap';
 import GqlError from 'Components/GqlError';
 
-import { useQueryDistribuidor } from '../Distribuidores/queries';
+import { useQueryDistribuidor } from './queries';
 
 export default function ShowDistribuidor({ id }) {
   const { loading, error, data } = useQueryDistribuidor(id);
