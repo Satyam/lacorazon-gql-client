@@ -13,7 +13,7 @@ import { USERS_QUERY, DELETE_USER } from 'Gql/users';
 
 export default function Users() {
   const { history } = useReactRouter();
-  const { loading, error, data, refetch } = useQuery(USERS_QUERY);
+  const { loading, error, data } = useQuery(USERS_QUERY);
   const [delUser, delStatus] = useMutation(DELETE_USER);
 
   if (loading) return <Loading>Cargando usuarios</Loading>;
@@ -21,7 +21,21 @@ export default function Users() {
 
   const users = data ? data.users : [];
   const deleteUser = id => {
-    delUser({ variables: { id } }).then(refetch);
+    delUser({
+      variables: { id },
+      update: cache => {
+        const cached = cache.readQuery({
+          query: USERS_QUERY,
+        });
+
+        cache.writeQuery({
+          query: USERS_QUERY,
+          data: {
+            users: cached.users.filter(u => u.id !== id),
+          },
+        });
+      },
+    });
   };
 
   return (

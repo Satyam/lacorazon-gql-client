@@ -15,7 +15,7 @@ import { DISTRIBUIDORES_QUERY, DELETE_DISTRIBUIDOR } from 'Gql/distribuidores';
 
 export default function Distribuidores() {
   const { history } = useReactRouter();
-  const { loading, error, data, refetch } = useQuery(DISTRIBUIDORES_QUERY);
+  const { loading, error, data } = useQuery(DISTRIBUIDORES_QUERY);
   const [delDistribuidor, delStatus] = useMutation(DELETE_DISTRIBUIDOR);
 
   if (loading) return <Loading>Cargando distribuidores</Loading>;
@@ -23,7 +23,21 @@ export default function Distribuidores() {
 
   const distribuidores = data ? data.distribuidores : [];
   const deleteDistribuidor = id => {
-    delDistribuidor({ variables: { id } }).then(refetch);
+    delDistribuidor({
+      variables: { id },
+      update: cache => {
+        const cached = cache.readQuery({
+          query: DISTRIBUIDORES_QUERY,
+        });
+
+        cache.writeQuery({
+          query: DISTRIBUIDORES_QUERY,
+          data: {
+            distribuidores: cached.distribuidores.filter(d => d.id !== id),
+          },
+        });
+      },
+    });
   };
 
   return (
