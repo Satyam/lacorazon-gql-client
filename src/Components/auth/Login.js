@@ -8,7 +8,7 @@ import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
 
 import { useLogin } from './actions';
-import { useCreateUser } from 'Components/User/actions';
+import { useCreateUser } from 'Components/user/actions';
 import { useAuth } from './context';
 
 const loginSchema = object().shape({

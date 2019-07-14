@@ -15,7 +15,7 @@ import {
   useGetDistribuidor,
 } from './actions';
 
-import distribuidorSchema from 'Components/Distribuidor/validation';
+import distribuidorSchema from 'Components/distribuidor/validation';
 
 export default function EditDistribuidor({ match }) {
   const id = match.params.id;
