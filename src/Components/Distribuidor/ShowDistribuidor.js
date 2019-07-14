@@ -12,32 +12,27 @@ export default function ShowDistribuidor({ id }) {
   const { loading, error, data } = useGetDistribuidor(id);
   if (loading) return <Loading>Cargando distribuidor</Loading>;
 
-  if (data.distribuidor) {
-    const {
-      nombre,
-      email,
-      localidad,
-      direccion,
-      contacto,
-      telefono,
-    } = data.distribuidor;
-    return (
-      <Page title={`Distribuidor - ${nombre}`} heading={`Distribuidor`}>
-        <GqlError error={error}>
-          <LabeledText label="Nombre" value={nombre} />
-          <LabeledText label="eMail" value={email} />
-          <LabeledText label="Localidad" value={localidad} />
-          <LabeledText label="Dirección" value={direccion} pre />
-          <LabeledText label="Contacto" value={contacto} />
-          <LabeledText label="Teléfono" value={telefono} />
-        </GqlError>
-      </Page>
-    );
-  } else {
-    return (
+  const dist = data.distribuidor;
+
+  return (
+    <Page
+      title={`Distribuidor - ${dist ? dist.nombre : '??'}`}
+      heading={`Distribuidor`}
+    >
       <GqlError error={error}>
-        <Alert color="danger">El distribuidor no existe o fue borrado</Alert>
+        {dist ? (
+          <>
+            <LabeledText label="Nombre" value={dist.nombre} />
+            <LabeledText label="eMail" value={dist.email} />
+            <LabeledText label="Localidad" value={dist.localidad} />
+            <LabeledText label="Dirección" value={dist.direccion} pre />
+            <LabeledText label="Contacto" value={dist.contacto} />
+            <LabeledText label="Teléfono" value={dist.telefono} />
+          </>
+        ) : (
+          <Alert color="danger">El distribuidor no existe o fue borrado</Alert>
+        )}
       </GqlError>
-    );
-  }
+    </Page>
+  );
 }

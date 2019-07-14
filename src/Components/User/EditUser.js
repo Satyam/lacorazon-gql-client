@@ -31,50 +31,47 @@ export default function EditUser({ id }) {
 
   const user = (data && data.user) || {};
 
-  if (id && !user) {
-    return (
-      <GqlError error={[error, createStatus, updateStatus, deleteStatus]}>
-        <Alert color="danger">El usuario no existe o fue borrado</Alert>
-      </GqlError>
-    );
-  }
   return (
     <Page
       title={`Vendedor - ${user ? user.nombre : 'nuevo'}`}
       heading={`${id ? 'Edit' : 'Add'} Vendedor`}
     >
       <GqlError error={[error, createStatus, updateStatus, deleteStatus]}>
-        <Form
-          values={user}
-          onSubmit={values => {
-            if (id) {
-              updateUser(id, values);
-            } else {
-              createUser({ ...values, password: values.nombre }).then(
-                ({ data }) => {
-                  history.replace(`/user/${data.createUser.id}?edit=true`);
-                }
-              );
-            }
-          }}
-          schema={userSchema}
-        >
-          <TextField name="email" label="eMail" />
-          <TextField name="nombre" label="Nombre" />
-          <ButtonSet>
-            <SubmitButton component={ButtonIconAdd}>
-              {id ? 'Modificar' : 'Agregar'}
-            </SubmitButton>
-            <ButtonIconDelete
-              disabled={!id}
-              onClick={() => {
-                deleteUser(id).then(() => history.replace('/users'));
-              }}
-            >
-              Borrar
-            </ButtonIconDelete>
-          </ButtonSet>
-        </Form>
+        {id && !user ? (
+          <Alert color="danger">El usuario no existe o fue borrado</Alert>
+        ) : (
+          <Form
+            values={user}
+            onSubmit={values => {
+              if (id) {
+                updateUser(id, values);
+              } else {
+                createUser({ ...values, password: values.nombre }).then(
+                  ({ data }) => {
+                    history.replace(`/user/${data.createUser.id}?edit=true`);
+                  }
+                );
+              }
+            }}
+            schema={userSchema}
+          >
+            <TextField name="email" label="eMail" />
+            <TextField name="nombre" label="Nombre" />
+            <ButtonSet>
+              <SubmitButton component={ButtonIconAdd}>
+                {id ? 'Modificar' : 'Agregar'}
+              </SubmitButton>
+              <ButtonIconDelete
+                disabled={!id}
+                onClick={() => {
+                  deleteUser(id).then(() => history.replace('/users'));
+                }}
+              >
+                Borrar
+              </ButtonIconDelete>
+            </ButtonSet>
+          </Form>
+        )}
       </GqlError>
     </Page>
   );

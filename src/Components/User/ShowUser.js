@@ -12,21 +12,22 @@ export default function ShowUser({ id }) {
   const { loading, error, data } = useGetUser(id);
   if (loading) return <Loading>Cargando usuario</Loading>;
 
-  if (data.user) {
-    const { nombre, email } = data.user;
-    return (
-      <Page title={`Vendedor - ${nombre}`} heading={`Vendedor`}>
-        <GqlError error={error}>
-          <LabeledText label="Nombre" value={nombre} />
-          <LabeledText label="eMail" value={email} />
-        </GqlError>
-      </Page>
-    );
-  } else {
-    return (
+  const user = data.user;
+  return (
+    <Page
+      title={`Vendedor - ${user ? user.nombre : '??'}`}
+      heading={`Vendedor`}
+    >
       <GqlError error={error}>
-        <Alert color="danger">El usuario no existe o fue borrado</Alert>
+        {user ? (
+          <>
+            <LabeledText label="Nombre" value={user.nombre} />
+            <LabeledText label="eMail" value={user.email} />
+          </>
+        ) : (
+          <Alert color="danger">El usuario no existe o fue borrado</Alert>
+        )}
       </GqlError>
-    );
-  }
+    </Page>
+  );
 }
