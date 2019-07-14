@@ -15,7 +15,7 @@ import {
   useGetDistribuidor,
 } from './actions';
 
-import distribuidorSchema from 'ValidationSchemas/distribuidor';
+import distribuidorSchema from 'Components/Distribuidor/validation';
 
 export default function EditDistribuidor({ id }) {
   const { history } = useReactRouter();

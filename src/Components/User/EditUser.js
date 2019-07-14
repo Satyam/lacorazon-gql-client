@@ -15,7 +15,7 @@ import {
   useDeleteUser,
 } from './actions';
 
-import userSchema from 'ValidationSchemas/user';
+import userSchema from './validation';
 
 export default function EditUser({ id }) {
   const { history } = useReactRouter();
