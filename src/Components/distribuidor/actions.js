@@ -1,16 +1,42 @@
 import { useQuery, useMutation } from '@apollo/react-hooks';
 
-import {
-  LIST_DISTRIBUIDORES,
-  GET_DISTRIBUIDOR,
-  DELETE_DISTRIBUIDOR,
-  CREATE_DISTRIBUIDOR,
-  UPDATE_DISTRIBUIDOR,
-} from './gql';
+import gql from 'graphql-tag';
+
+export const LIST_DISTRIBUIDORES = gql`
+  query($offset: Int, $limit: Int) {
+    distribuidores(offset: $offset, limit: $limit) {
+      id
+      nombre
+      localidad
+      contacto
+      telefono
+      email
+      direccion
+      entregados
+      existencias
+    }
+  }
+`;
 
 export function useListDistribuidores() {
   return useQuery(LIST_DISTRIBUIDORES);
 }
+
+export const GET_DISTRIBUIDOR = gql`
+  query($id: ID!) {
+    distribuidor(id: $id) {
+      id
+      nombre
+      localidad
+      contacto
+      telefono
+      email
+      direccion
+      entregados
+      existencias
+    }
+  }
+`;
 
 export function useGetDistribuidor(id) {
   return useQuery(GET_DISTRIBUIDOR, {
@@ -21,28 +47,33 @@ export function useGetDistribuidor(id) {
   });
 }
 
-export function useDeleteDistribuidor() {
-  const [delDistribuidor, delStatus] = useMutation(DELETE_DISTRIBUIDOR);
-  return [
-    id =>
-      delDistribuidor({
-        variables: { id },
-        update: cache => {
-          const cached = cache.readQuery({
-            query: LIST_DISTRIBUIDORES,
-          });
-
-          cache.writeQuery({
-            query: LIST_DISTRIBUIDORES,
-            data: {
-              distribuidores: cached.distribuidores.filter(d => d.id !== id),
-            },
-          });
-        },
-      }),
-    delStatus,
-  ];
-}
+export const CREATE_DISTRIBUIDOR = gql`
+  mutation(
+    $nombre: String!
+    $email: String
+    $localidad: String
+    $contacto: String
+    $telefono: String
+    $direccion: String
+  ) {
+    createDistribuidor(
+      nombre: $nombre
+      email: $email
+      localidad: $localidad
+      contacto: $contacto
+      telefono: $telefono
+      direccion: $direccion
+    ) {
+      id
+      nombre
+      localidad
+      contacto
+      telefono
+      email
+      direccion
+    }
+  }
+`;
 
 export function useCreateDistribuidor() {
   const [createDistribuidor, createStatus] = useMutation(CREATE_DISTRIBUIDOR);
@@ -73,6 +104,37 @@ export function useCreateDistribuidor() {
     createStatus,
   ];
 }
+
+export const UPDATE_DISTRIBUIDOR = gql`
+  mutation(
+    $id: ID!
+    $nombre: String
+    $email: String
+    $localidad: String
+    $contacto: String
+    $telefono: String
+    $direccion: String
+  ) {
+    updateDistribuidor(
+      id: $id
+      nombre: $nombre
+      email: $email
+      localidad: $localidad
+      contacto: $contacto
+      telefono: $telefono
+      direccion: $direccion
+    ) {
+      id
+      nombre
+      localidad
+      contacto
+      telefono
+      email
+      direccion
+    }
+  }
+`;
+
 export function useUpdateDistribuidor() {
   const [updateDistribuidor, updateStatus] = useMutation(UPDATE_DISTRIBUIDOR);
   return [
@@ -81,5 +143,42 @@ export function useUpdateDistribuidor() {
         variables: { id, ...values },
       }),
     updateStatus,
+  ];
+}
+
+export const DELETE_DISTRIBUIDOR = gql`
+  mutation($id: ID!) {
+    deleteDistribuidor(id: $id) {
+      id
+      nombre
+      localidad
+      contacto
+      telefono
+      email
+      direccion
+    }
+  }
+`;
+
+export function useDeleteDistribuidor() {
+  const [delDistribuidor, delStatus] = useMutation(DELETE_DISTRIBUIDOR);
+  return [
+    id =>
+      delDistribuidor({
+        variables: { id },
+        update: cache => {
+          const cached = cache.readQuery({
+            query: LIST_DISTRIBUIDORES,
+          });
+
+          cache.writeQuery({
+            query: LIST_DISTRIBUIDORES,
+            data: {
+              distribuidores: cached.distribuidores.filter(d => d.id !== id),
+            },
+          });
+        },
+      }),
+    delStatus,
   ];
 }
