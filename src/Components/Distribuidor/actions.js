@@ -2,7 +2,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import {
   LIST_DISTRIBUIDORES,
-  QUERY_DISTRIBUIDORES,
+  GET_DISTRIBUIDOR,
   DELETE_DISTRIBUIDOR,
   CREATE_DISTRIBUIDOR,
   UPDATE_DISTRIBUIDOR,
@@ -12,8 +12,8 @@ export function useListDistribuidores() {
   return useQuery(LIST_DISTRIBUIDORES);
 }
 
-export function useQueryDistribuidor(id) {
-  return useQuery(QUERY_DISTRIBUIDORES, {
+export function useGetDistribuidor(id) {
+  return useQuery(GET_DISTRIBUIDOR, {
     variables: {
       id,
     },

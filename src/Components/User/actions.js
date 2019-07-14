@@ -2,7 +2,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import {
   LIST_USERS,
-  QUERY_USER,
+  GET_USER,
   CREATE_USER,
   UPDATE_USER,
   DELETE_USER,
@@ -12,8 +12,8 @@ export function useListUsers() {
   return useQuery(LIST_USERS);
 }
 
-export function useQueryUser(id) {
-  return useQuery(QUERY_USER, {
+export function useGetUser(id) {
+  return useQuery(GET_USER, {
     variables: {
       id,
     },

@@ -9,7 +9,7 @@ import GqlError from 'Components/GqlError';
 import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
 
 import {
-  useQueryUser,
+  useGetUser,
   useCreateUser,
   useUpdateUser,
   useDeleteUser,
@@ -19,7 +19,7 @@ import userSchema from 'ValidationSchemas/user';
 
 export default function EditUser({ id }) {
   const { history } = useReactRouter();
-  const { loading, error, data } = useQueryUser(id);
+  const { loading, error, data } = useGetUser(id);
   const [createUser, createStatus] = useCreateUser();
   const [updateUser, updateStatus] = useUpdateUser();
   const [deleteUser, deleteStatus] = useDeleteUser();

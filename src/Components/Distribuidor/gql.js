@@ -16,7 +16,7 @@ export const LIST_DISTRIBUIDORES = gql`
   }
 `;
 
-export const QUERY_DISTRIBUIDORES = gql`
+export const GET_DISTRIBUIDOR = gql`
   query($id: ID!) {
     distribuidor(id: $id) {
       id

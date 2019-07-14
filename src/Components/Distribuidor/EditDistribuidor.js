@@ -12,14 +12,14 @@ import {
   useCreateDistribuidor,
   useDeleteDistribuidor,
   useUpdateDistribuidor,
-  useQueryDistribuidor,
+  useGetDistribuidor,
 } from './actions';
 
 import distribuidorSchema from 'ValidationSchemas/distribuidor';
 
 export default function EditDistribuidor({ id }) {
   const { history } = useReactRouter();
-  const { loading, error, data } = useQueryDistribuidor(id);
+  const { loading, error, data } = useGetDistribuidor(id);
 
   const [createDistribuidor, createStatus] = useCreateDistribuidor();
   const [updateDistribuidor, updateStatus] = useUpdateDistribuidor();

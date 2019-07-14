@@ -6,10 +6,10 @@ import Loading from 'Components/Loading';
 import { Alert } from 'reactstrap';
 import GqlError from 'Components/GqlError';
 
-import { useQueryUser } from './actions';
+import { useGetUser } from './actions';
 
 export default function ShowUser({ id }) {
-  const { loading, error, data } = useQueryUser(id);
+  const { loading, error, data } = useGetUser(id);
   if (loading) return <Loading>Cargando usuario</Loading>;
 
   if (data.user) {

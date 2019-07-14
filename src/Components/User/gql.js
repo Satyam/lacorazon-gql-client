@@ -10,7 +10,7 @@ export const LIST_USERS = gql`
   }
 `;
 
-export const QUERY_USER = gql`
+export const GET_USER = gql`
   query($id: ID!) {
     user(id: $id) {
       id
