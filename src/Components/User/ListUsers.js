@@ -44,7 +44,7 @@ export default function ListUsers() {
         <ButtonIconAdd
           outline
           onClick={() => {
-            history.push(`/user`);
+            history.push(`/user/new`);
           }}
           label="Agregar"
         >

@@ -17,7 +17,8 @@ import {
 
 import distribuidorSchema from 'Components/Distribuidor/validation';
 
-export default function EditDistribuidor({ id }) {
+export default function EditDistribuidor({ match }) {
+  const id = match.params.id;
   const { history } = useReactRouter();
   const { loading, error, data } = useGetDistribuidor(id);
 

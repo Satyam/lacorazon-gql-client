@@ -8,7 +8,8 @@ import GqlError from 'Components/GqlError';
 
 import { useGetDistribuidor } from './actions';
 
-export default function ShowDistribuidor({ id }) {
+export default function ShowDistribuidor({ match }) {
+  const id = match.params.id;
   const { loading, error, data } = useGetDistribuidor(id);
   if (loading) return <Loading>Cargando distribuidor</Loading>;
 

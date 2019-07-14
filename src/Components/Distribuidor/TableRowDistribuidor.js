@@ -26,7 +26,7 @@ export default function TableRowDistribuidor(
           <ButtonIconEdit
             onClick={ev => {
               ev.stopPropagation();
-              history.push(`/distribuidor/${distribuidor.id}?edit=true`);
+              history.push(`/distribuidor/edit/${distribuidor.id}`);
             }}
           />
           <ButtonIconDelete

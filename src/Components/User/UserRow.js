@@ -13,7 +13,7 @@ export default function UserRow({ user, history, deleteUser }) {
             outline
             onClick={ev => {
               ev.stopPropagation();
-              history.push(`/user/${user.id}?edit=true`);
+              history.push(`/user/edit/${user.id}`);
             }}
           />
           <ButtonIconDelete

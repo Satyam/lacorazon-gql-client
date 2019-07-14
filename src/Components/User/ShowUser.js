@@ -8,7 +8,8 @@ import GqlError from 'Components/GqlError';
 
 import { useGetUser } from './actions';
 
-export default function ShowUser({ id }) {
+export default function ShowUser({ match }) {
+  const id = match.params.id;
   const { loading, error, data } = useGetUser(id);
   if (loading) return <Loading>Cargando usuario</Loading>;
 

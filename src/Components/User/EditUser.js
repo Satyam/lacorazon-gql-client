@@ -17,7 +17,8 @@ import {
 
 import userSchema from './validation';
 
-export default function EditUser({ id }) {
+export default function EditUser({ match }) {
+  const id = match.params.id;
   const { history } = useReactRouter();
   const { loading, error, data } = useGetUser(id);
   const [createUser, createStatus] = useCreateUser();
@@ -48,7 +49,7 @@ export default function EditUser({ id }) {
               } else {
                 createUser({ ...values, password: values.nombre }).then(
                   ({ data }) => {
-                    history.replace(`/user/${data.createUser.id}?edit=true`);
+                    history.replace(`/user/edit/${data.createUser.id}`);
                   }
                 );
               }

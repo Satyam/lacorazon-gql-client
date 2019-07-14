@@ -44,7 +44,7 @@ export default function ListDistribuidores() {
             )}
           </tbody>
         </Table>
-        <ButtonIconAdd onClick={() => history.push('/distribuidor?edit=true')}>
+        <ButtonIconAdd onClick={() => history.push('/distribuidor/new')}>
           Agregar
         </ButtonIconAdd>
       </GqlError>
