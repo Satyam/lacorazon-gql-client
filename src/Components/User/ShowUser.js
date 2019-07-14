@@ -6,7 +6,7 @@ import Loading from 'Components/Loading';
 import { Alert } from 'reactstrap';
 import GqlError from 'Components/GqlError';
 
-import { useQueryUser } from './queries';
+import { useQueryUser } from './actions';
 
 export default function ShowUser({ id }) {
   const { loading, error, data } = useQueryUser(id);

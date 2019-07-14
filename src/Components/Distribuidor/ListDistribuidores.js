@@ -10,7 +10,7 @@ import GqlError from 'Components/GqlError';
 
 import TableRowDistribuidor from './TableRowDistribuidor';
 
-import { useListDistribuidores, useDeleteDistribuidor } from './queries';
+import { useListDistribuidores, useDeleteDistribuidor } from './actions';
 
 export default function ListDistribuidores() {
   const { history } = useReactRouter();

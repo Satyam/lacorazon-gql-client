@@ -13,7 +13,7 @@ import {
   useCreateUser,
   useUpdateUser,
   useDeleteUser,
-} from './queries';
+} from './actions';
 
 import userSchema from 'ValidationSchemas/user';
 

@@ -6,7 +6,7 @@ import Loading from 'Components/Loading';
 import { Alert } from 'reactstrap';
 import GqlError from 'Components/GqlError';
 
-import { useQueryDistribuidor } from './queries';
+import { useQueryDistribuidor } from './actions';
 
 export default function ShowDistribuidor({ id }) {
   const { loading, error, data } = useQueryDistribuidor(id);

@@ -8,7 +8,7 @@ import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
 import UserRow from './UserRow';
 
-import { useListUsers, useDeleteUser } from './queries';
+import { useListUsers, useDeleteUser } from './actions';
 
 export default function ListUsers() {
   const { history } = useReactRouter();
