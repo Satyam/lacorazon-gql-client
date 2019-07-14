@@ -8,7 +8,7 @@ import Users from 'Components/user/ListUsers';
 import User from 'Components/user';
 import Distribuidores from 'Components/Distribuidor/ListDistribuidores';
 import Distribuidor from 'Components/Distribuidor';
-import Login from 'Components/Login';
+import Login from 'Components/auth/Login';
 
 function App() {
   return (

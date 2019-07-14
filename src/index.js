@@ -23,7 +23,7 @@ import {
 import './index.css';
 import App from 'Components/App';
 import * as serviceWorker from './serviceWorker';
-import { AuthProvider } from 'Components/Auth';
+import { AuthProvider } from 'Components/auth/context';
 
 library.add(
   faTrashAlt,

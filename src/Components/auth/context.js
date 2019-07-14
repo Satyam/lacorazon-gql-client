@@ -5,20 +5,22 @@ import React, {
   useState,
   useCallback,
 } from 'react';
-import { useQuery, useMutation } from '@apollo/react-hooks';
 
-import { CURRENT_USER_QUERY, LOGOUT } from 'Gql/users';
+import { useGetCurrentUser, useLogout } from './actions';
 import Loading from 'Components/Loading';
 import GqlError from 'Components/GqlError';
 
 export const UserContext = createContext({});
 
 export function AuthProvider({ children }) {
-  const { loading, error, currentUser: originalUser, refetch } = useQuery(
-    CURRENT_USER_QUERY
-  );
+  const {
+    loading,
+    error,
+    currentUser: originalUser,
+    refetch,
+  } = useGetCurrentUser();
   const [currentUser, setCurrentUser] = useState(originalUser);
-  const [doLogout, logoutStatus] = useMutation(LOGOUT);
+  const [doLogout, logoutStatus] = useLogout();
 
   const refreshCurrentUser = useCallback(
     () =>

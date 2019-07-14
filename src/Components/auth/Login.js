@@ -1,5 +1,4 @@
 import React from 'react';
-import { useMutation } from '@apollo/react-hooks';
 import useReactRouter from 'use-react-router';
 import { object, string } from 'yup';
 
@@ -8,8 +7,9 @@ import { Form, TextField, SubmitButton } from 'Components/Form';
 import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
 
-import { LOGIN, CREATE_USER } from 'Gql/users';
-import { useAuth } from 'Components/Auth';
+import { useLogin } from './actions';
+import { useCreateUser } from 'Components/user/queries';
+import { useAuth } from './context';
 
 const loginSchema = object().shape({
   nombre: string()
@@ -28,8 +28,8 @@ const loginSchema = object().shape({
 export default function Login() {
   const { history, match } = useReactRouter();
   const { refreshCurrentUser } = useAuth();
-  const [login, loginStatus] = useMutation(LOGIN);
-  const [createUser, createUserStatus] = useMutation(CREATE_USER);
+  const [login, loginStatus] = useLogin();
+  const [createUser, createUserStatus] = useCreateUser();
   const register = match.params.register;
 
   return (
@@ -46,10 +46,8 @@ export default function Login() {
             if (register) {
               if (values.password === values.confirmPassword) {
                 return createUser({
-                  variables: {
-                    nombre: values.nombre,
-                    password: values.password,
-                  },
+                  nombre: values.nombre,
+                  password: values.password,
                 }).then(({ error, data }) => {
                   if (error) {
                     return Promise.reject('Server error');
@@ -64,7 +62,7 @@ export default function Login() {
                 return Promise.reject('Confirmación no coincide');
               }
             } else {
-              return login({ variables: values }).then(({ error, data }) => {
+              return login(values).then(({ error, data }) => {
                 if (error) {
                   return Promise.reject('Server error');
                 }

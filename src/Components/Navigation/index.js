@@ -16,7 +16,7 @@ import {
 
 import laCorazon from '../../La Corazon.png';
 
-import { useAuth } from 'Components/Auth';
+import { useAuth } from 'Components/auth/context';
 
 import styles from './styles.module.css';
 
