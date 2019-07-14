@@ -1,5 +1,4 @@
 import React from 'react';
-import { useQuery } from '@apollo/react-hooks';
 
 import { LabeledText } from 'Components/Form';
 import Page from 'Components/Page';
@@ -7,14 +6,10 @@ import Loading from 'Components/Loading';
 import { Alert } from 'reactstrap';
 import GqlError from 'Components/GqlError';
 
-import { USER_QUERY } from 'Gql/users';
+import { useQueryUser } from './queries';
 
 export default function ShowUser({ id }) {
-  const { loading, error, data } = useQuery(USER_QUERY, {
-    variables: {
-      id,
-    },
-  });
+  const { loading, error, data } = useQueryUser(id);
   if (loading) return <Loading>Cargando usuario</Loading>;
 
   if (data.user) {

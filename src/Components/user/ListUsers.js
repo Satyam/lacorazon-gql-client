@@ -1,6 +1,5 @@
 import React from 'react';
 import useReactRouter from 'use-react-router';
-import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import { Table } from 'reactstrap';
 import { ButtonIconAdd } from 'Components/Icons';
@@ -9,38 +8,21 @@ import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
 import UserRow from './UserRow';
 
-import { USERS_QUERY, DELETE_USER } from 'Gql/users';
+import { useListUsers, useDeleteUser } from './queries';
 
-export default function Users() {
+export default function ListUsers() {
   const { history } = useReactRouter();
-  const { loading, error, data } = useQuery(USERS_QUERY);
-  const [delUser, delStatus] = useMutation(DELETE_USER);
+  const { loading, error, data } = useListUsers();
+  const [deleteUser, deleteStatus] = useDeleteUser();
 
   if (loading) return <Loading>Cargando usuarios</Loading>;
-  if (delStatus.loading) return <Loading>Borrando usuario</Loading>;
+  if (deleteStatus.loading) return <Loading>Borrando usuario</Loading>;
 
   const users = data ? data.users : [];
-  const deleteUser = id => {
-    delUser({
-      variables: { id },
-      update: cache => {
-        const cached = cache.readQuery({
-          query: USERS_QUERY,
-        });
-
-        cache.writeQuery({
-          query: USERS_QUERY,
-          data: {
-            users: cached.users.filter(u => u.id !== id),
-          },
-        });
-      },
-    });
-  };
 
   return (
     <Page title="Vendedores" heading="Vendedores">
-      <GqlError error={[error, delStatus]}>
+      <GqlError error={[error, deleteStatus]}>
         <Table striped hover size="sm" responsive>
           <thead>
             <tr>

@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Navigation } from 'Components/Navigation';
 import ErrorBoundary from 'Components/ErrorBoundary';
 
-import Users from 'Components/Users';
-import User from 'Components/User';
+import Users from 'Components/user/ListUsers';
+import User from 'Components/user';
 import Distribuidores from 'Components/Distribuidor/ListDistribuidores';
 import Distribuidor from 'Components/Distribuidor';
 import Login from 'Components/Login';
