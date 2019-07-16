@@ -1,13 +1,23 @@
 import React from 'react';
-import { FontAwesomeIcon as FAIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'reactstrap';
 import classNames from 'classnames/bind';
+import {
+  FaPlusCircle,
+  FaTrashAlt,
+  FaEdit,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaCalendarAlt,
+  FaExclamationCircle,
+  FaExclamationTriangle,
+} from 'react-icons/fa';
 
 import styles from './styles.module.css';
 
 const cx = classNames.bind(styles);
 
 export const Icon = ({
+  Component,
   color,
   button,
   disabled,
@@ -15,7 +25,7 @@ export const Icon = ({
   onClick,
   ...props
 }) => (
-  <FAIcon
+  <Component
     className={cx(className, {
       'active-icon': button && !disabled,
       [`icon-${color}`]: color,
@@ -27,7 +37,7 @@ export const Icon = ({
 );
 
 export const IconAdd = ({ color = 'primary', ...props }) => (
-  <Icon icon="plus-circle" color={color} {...props} />
+  <Icon Component={FaPlusCircle} {...props} />
 );
 
 export const ButtonIconAdd = ({
@@ -38,13 +48,13 @@ export const ButtonIconAdd = ({
   ...props
 }) => (
   <Button color={color} className={className} {...props}>
-    <FAIcon icon="plus-circle" />
+    <FaPlusCircle />
     <span className={styles.label}>{children}</span>
   </Button>
 );
 
 export const IconDelete = ({ color = 'danger', ...props }) => (
-  <Icon icon="trash-alt" color={color} {...props} />
+  <Icon Component={FaTrashAlt} {...props} />
 );
 
 export const ButtonIconDelete = ({
@@ -55,12 +65,12 @@ export const ButtonIconDelete = ({
   ...props
 }) => (
   <Button color={color} className={className} {...props}>
-    <FAIcon icon="trash-alt" />
+    <FaTrashAlt />
     <span className={styles.label}>{children}</span>
   </Button>
 );
 export const IconEdit = ({ color = 'secondary', ...props }) => (
-  <Icon icon="edit" color={color} {...props} />
+  <Icon Component={FaEdit} {...props} />
 );
 
 export const ButtonIconEdit = ({
@@ -71,12 +81,12 @@ export const ButtonIconEdit = ({
   ...props
 }) => (
   <Button color={color} className={className} {...props}>
-    <FAIcon icon="edit" />
+    <FaEdit />
     <span className={styles.label}>{children}</span>
   </Button>
 );
 export const IconCheck = ({ color = 'success', ...props }) => (
-  <Icon icon="check-circle" color={color} {...props} />
+  <Icon Component={FaCheckCircle} {...props} />
 );
 
 export const ButtonIconCheck = ({
@@ -87,12 +97,12 @@ export const ButtonIconCheck = ({
   ...props
 }) => (
   <Button color={color} className={className} {...props}>
-    <FAIcon icon="check-circle" />
+    <FaCheckCircle />
     <span className={styles.label}>{children}</span>
   </Button>
 );
 export const IconNotCheck = ({ color = 'danger', ...props }) => (
-  <Icon icon="times-circle" color={color} {...props} />
+  <Icon Component={FaTimesCircle} {...props} />
 );
 
 export const ButtonIconNotCheck = ({
@@ -103,12 +113,12 @@ export const ButtonIconNotCheck = ({
   ...props
 }) => (
   <Button color={color} className={className} {...props}>
-    <FAIcon icon="times-circle" />
+    <FaTimesCircle />
     <span className={styles.label}>{children}</span>
   </Button>
 );
 export const IconCalendar = ({ color = 'secondary', ...props }) => (
-  <Icon icon="calendar-alt" color={color} {...props} />
+  <Icon Component={FaCalendarAlt} {...props} />
 );
 
 export const ButtonIconCalendar = ({
@@ -119,16 +129,16 @@ export const ButtonIconCalendar = ({
   ...props
 }) => (
   <Button color={color} className={className} {...props}>
-    <FAIcon icon="calendar-alt" />
+    <FaCalendarAlt />
     <span className={styles.label}>{children}</span>
   </Button>
 );
 export const IconWarning = ({ color = 'warning', ...props }) => (
-  <Icon icon="exclamation-triangle" color={color} {...props} />
+  <Icon Component={FaExclamationTriangle} {...props} />
 );
 
 export const IconStop = ({ color = 'danger', ...props }) => (
-  <Icon icon="exclamation-circle" color={color} {...props} />
+  <Icon Component={FaExclamationCircle} {...props} />
 );
 
 export const ButtonSet = ({ className, children, size, ...rest }) => (
