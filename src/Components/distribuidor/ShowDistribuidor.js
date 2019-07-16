@@ -14,7 +14,6 @@ export default function ShowDistribuidor({ match }) {
   if (loading) return <Loading>Cargando distribuidor</Loading>;
 
   const dist = data.distribuidor;
-
   return (
     <Page
       title={`Distribuidor - ${dist ? dist.nombre : '??'}`}
@@ -29,6 +28,8 @@ export default function ShowDistribuidor({ match }) {
             <LabeledText label="Dirección" value={dist.direccion} pre />
             <LabeledText label="Contacto" value={dist.contacto} />
             <LabeledText label="Teléfono" value={dist.telefono} />
+            <LabeledText label="Entregados" value={dist.entregados} />
+            <LabeledText label="Existencias" value={dist.existencias} />
           </>
         ) : (
           <Alert color="danger">El distribuidor no existe o fue borrado</Alert>
