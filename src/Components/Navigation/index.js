@@ -46,6 +46,11 @@ export function Navigation() {
                 Distribuidores
               </NavLink>
             </NavItem>
+            <NavItem>
+              <NavLink tag={Link} to="/ventas">
+                Ventas
+              </NavLink>
+            </NavItem>
             <UncontrolledDropdown nav inNavbar>
               <DropdownToggle nav caret className={styles.user}>
                 {currentUser ? currentUser.nombre : 'guest'}

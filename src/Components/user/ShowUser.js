@@ -6,6 +6,8 @@ import Loading from 'Components/Loading';
 import { Alert } from 'reactstrap';
 import GqlError from 'Components/GqlError';
 
+import ListVentas from 'Components/ventas/ListVentas';
+
 import { useGetUser } from './actions';
 
 export default function ShowUser({ match }) {
@@ -24,6 +26,7 @@ export default function ShowUser({ match }) {
           <>
             <LabeledText label="Nombre" value={user.nombre} />
             <LabeledText label="eMail" value={user.email} />
+            <ListVentas vendedor={id} wide />
           </>
         ) : (
           <Alert color="danger">El usuario no existe o fue borrado</Alert>

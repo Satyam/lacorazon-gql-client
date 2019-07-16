@@ -10,6 +10,7 @@ import ShowUser from 'Components/user/ShowUser';
 import Distribuidores from 'Components/distribuidor/ListDistribuidores';
 import EditDistribuidor from 'Components/distribuidor/EditDistribuidor';
 import ShowDistribuidor from 'Components/distribuidor/ShowDistribuidor';
+import ListVentas from 'Components/ventas/ListVentas';
 import Login from 'Components/auth/Login';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
           <Route path="/distribuidor/edit/:id" component={EditDistribuidor} />
           <Route path="/distribuidor/:id" component={ShowDistribuidor} />
         </Switch>
+        <Route path="/ventas" component={ListVentas} />
         <Route path="/login/:register?" component={Login} />
       </ErrorBoundary>
     </Router>
