@@ -65,12 +65,8 @@ export const CREATE_DISTRIBUIDOR = gql`
       direccion: $direccion
     ) {
       id
-      nombre
-      localidad
-      contacto
-      telefono
-      email
-      direccion
+      entregados
+      existencias
     }
   }
 `;
@@ -85,9 +81,11 @@ export function useCreateDistribuidor() {
           const cached = cache.readQuery({
             query: LIST_DISTRIBUIDORES,
           });
+          console.log(values);
+          console.log(data.createDistribuidor);
+
           cached.distribuidores.push({
-            entregados: 0,
-            existencias: 0,
+            ...values,
             ...data.createDistribuidor,
           });
           cached.distribuidores.sort((a, b) => {
@@ -131,6 +129,8 @@ export const UPDATE_DISTRIBUIDOR = gql`
       telefono
       email
       direccion
+      entregados
+      existencias
     }
   }
 `;
@@ -150,12 +150,6 @@ export const DELETE_DISTRIBUIDOR = gql`
   mutation($id: ID!) {
     deleteDistribuidor(id: $id) {
       id
-      nombre
-      localidad
-      contacto
-      telefono
-      email
-      direccion
     }
   }
 `;

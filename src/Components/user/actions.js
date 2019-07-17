@@ -39,8 +39,6 @@ export const CREATE_USER = gql`
   mutation($nombre: String!, $email: String, $password: String!) {
     createUser(nombre: $nombre, email: $email, password: $password) {
       id
-      nombre
-      email
     }
   }
 `;
@@ -55,7 +53,10 @@ export function useCreateUser(values) {
           const cached = cache.readQuery({
             query: LIST_USERS,
           });
-          cached.users.push(data.createUser);
+          cached.users.push({
+            ...values,
+            ...data.createUser,
+          });
           cached.users.sort((a, b) => {
             if (a.nombre < b.nombre) return -1;
             if (a.nombre > b.nombre) return 1;
@@ -93,8 +94,6 @@ export const DELETE_USER = gql`
   mutation($id: ID!) {
     deleteUser(id: $id) {
       id
-      nombre
-      email
     }
   }
 `;
