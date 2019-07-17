@@ -49,7 +49,7 @@ export default function EditDistribuidor({ match }) {
               } else {
                 createDistribuidor(values).then(({ data }) => {
                   history.replace(
-                    `/distribuidor/${data.createDistribuidor.id}?edit=true`
+                    `/distribuidor/edit/${data.createDistribuidor.id}`
                   );
                 });
               }
