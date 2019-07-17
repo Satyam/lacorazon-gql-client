@@ -2,24 +2,21 @@ import React from 'react';
 import { ButtonGroup } from 'reactstrap';
 import { ButtonIconEdit, ButtonIconDelete } from '../Icons';
 import { MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
-
-const formatCurrency = new Intl.NumberFormat('es-ES', {
-  style: 'currency',
-  currency: 'EUR',
-});
+import { useIntl } from 'Components/intl';
 
 export default function TableRowDistribuidor(venta, history, deleteVenta) {
+  const { formatDate, formatCurrency } = useIntl();
   return (
     <tr key={venta.id} onClick={() => history.push(`/venta/${venta.id}`)}>
-      <td>{venta.fecha.toLocaleDateString()}</td>
+      <td align="right">{formatDate(venta.fecha)}</td>
       <td>{venta.concepto}</td>
       <td align="right">{venta.cantidad}</td>
-      <td align="right">{formatCurrency.format(venta.precioUnitario)}</td>
+      <td align="right">{formatCurrency(venta.precioUnitario)}</td>
       <td align="center">
         {venta.iva ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
       </td>
       <td align="right">
-        {formatCurrency.format(venta.cantidad * venta.precioUnitario)}
+        {formatCurrency(venta.cantidad * venta.precioUnitario)}
       </td>
       <td>
         <ButtonGroup size="sm">

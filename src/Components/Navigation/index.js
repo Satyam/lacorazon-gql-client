@@ -17,12 +17,14 @@ import {
 import laCorazon from '../../La Corazon.png';
 
 import { useAuth } from 'Components/auth/context';
+import { useIntl } from 'Components/intl';
 
 import styles from './styles.module.css';
 
 export function Navigation() {
   const [isOpen, setOpen] = useState(false);
   const { currentUser, logout } = useAuth();
+  const { locale, setLocale } = useIntl();
   function toggle() {
     setOpen(!isOpen);
   }
@@ -51,6 +53,19 @@ export function Navigation() {
                 Ventas
               </NavLink>
             </NavItem>
+            <UncontrolledDropdown nav inNavbar>
+              <DropdownToggle nav caret>
+                {locale}
+              </DropdownToggle>
+              <DropdownMenu right>
+                <DropdownItem onClick={() => setLocale('es-ES')}>
+                  es-ES
+                </DropdownItem>
+                <DropdownItem onClick={() => setLocale('en-US')}>
+                  en-US
+                </DropdownItem>
+              </DropdownMenu>
+            </UncontrolledDropdown>
             <UncontrolledDropdown nav inNavbar>
               <DropdownToggle nav caret className={styles.user}>
                 {currentUser ? currentUser.nombre : 'guest'}

@@ -1,18 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import './index.css';
+
 import ApolloClient from 'apollo-client';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { AuthProvider } from 'Components/auth/context';
+import { IntlProvider } from 'Components/intl';
 
-import './index.css';
 import App from 'Components/App';
 import * as serviceWorker from './serviceWorker';
-import { AuthProvider } from 'Components/auth/context';
 
+// import { addLocaleData, IntlProvider } from 'react-intl';
+// import esLocaleData from 'react-intl/locale-data/es';
+
+// addLocaleData(esLocaleData);
 const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: createHttpLink({
@@ -21,11 +28,28 @@ const client = new ApolloClient({
   }),
 });
 
+/*<IntlProvider
+    locale={'es-ES' /*navigator.language* /}
+    formats={{
+      number: {
+        EUR: {
+          style: 'currency',
+          currency: 'EUR',
+        },
+        USD: {
+          style: 'currency',
+          currency: 'USD',
+        },
+      },
+    }}
+  >*/
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    <IntlProvider locale="es-ES">
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </IntlProvider>
   </ApolloProvider>,
   document.getElementById('root')
 );
