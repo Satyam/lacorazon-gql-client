@@ -40,7 +40,7 @@ export default function ListVentas({ vendedor, wide }) {
             {ventas.map(venta => TableRowVenta(venta, history, deleteVenta))}
           </tbody>
         </Table>
-        <ButtonIconAdd onClick={() => history.push('/distribuidor/new')}>
+        <ButtonIconAdd onClick={() => history.push('/venta/new')}>
           Agregar
         </ButtonIconAdd>
       </GqlError>
