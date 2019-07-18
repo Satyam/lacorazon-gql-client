@@ -16,14 +16,15 @@ export const LIST_VENTAS = gql`
 `;
 
 export function useListVentas(vendedor) {
-  const { error, loading, data } = useQuery(LIST_VENTAS, {
+  const { error, loading, data, ...rest } = useQuery(LIST_VENTAS, {
     variables: { vendedor },
   });
   return loading || error
-    ? { error, loading }
+    ? { error, loading, ...rest }
     : {
         error,
         loading,
+        ...rest,
         data: {
           ventas: data.ventas.map(({ fecha, ...rest }) => ({
             ...rest,
@@ -33,15 +34,133 @@ export function useListVentas(vendedor) {
       };
 }
 
-export const DELETE_VENTA = gql`
-  mutation($id: ID!) {
-    deleteVenta(id: $id) {
+export const GET_VENTA = gql`
+  query($id: ID!) {
+    venta(id: $id) {
       id
       fecha
       concepto
       cantidad
       iva
       precioUnitario
+    }
+  }
+`;
+
+export function useGetVenta(id) {
+  const { error, loading, data, ...rest } = useQuery(GET_VENTA, {
+    variables: {
+      id,
+    },
+    skip: !id,
+  });
+  return loading || error || !data
+    ? { error, loading, ...rest }
+    : {
+        error,
+        loading,
+        ...rest,
+        data: {
+          venta: {
+            ...data.venta,
+            fecha: new Date(data.venta.fecha),
+            iva: !!data.venta.iva,
+          },
+        },
+      };
+}
+
+export const CREATE_VENTA = gql`
+  mutation(
+    $fecha: String!
+    $concepto: String
+    $cantidad: Int
+    $iva: Boolean
+    $precioUnitario: Float
+  ) {
+    createVenta(
+      fecha: $fecha
+      concepto: $concepto
+      cantidad: $cantidad
+      iva: $iva
+      precioUnitario: $precioUnitario
+    ) {
+      id
+    }
+  }
+`;
+
+export function useCreateVenta() {
+  const [createVenta, createStatus] = useMutation(CREATE_VENTA);
+  return [
+    values =>
+      createVenta({
+        variables: values,
+        update: (cache, { data }) => {
+          const cached = cache.readQuery({
+            query: LIST_VENTAS,
+          });
+          cached.ventas.push({
+            ...values,
+            ...data.createVenta,
+          });
+          cached.ventas.sort((a, b) => {
+            if (a.nombre < b.nombre) return -1;
+            if (a.nombre > b.nombre) return 1;
+            return 0;
+          });
+          cache.writeQuery({
+            query: LIST_VENTAS,
+            data: cached,
+          });
+        },
+      }),
+    createStatus,
+  ];
+}
+
+export const UPDATE_VENTA = gql`
+  mutation(
+    $id: ID!
+    $fecha: String
+    $concepto: String
+    $cantidad: Int
+    $iva: Boolean
+    $precioUnitario: Float
+  ) {
+    updateVenta(
+      id: $id
+      fecha: $fecha
+      concepto: $concepto
+      cantidad: $cantidad
+      iva: $iva
+      precioUnitario: $precioUnitario
+    ) {
+      id
+      fecha
+      concepto
+      cantidad
+      iva
+      precioUnitario
+    }
+  }
+`;
+
+export function useUpdateVenta() {
+  const [updateVenta, updateStatus] = useMutation(UPDATE_VENTA);
+  return [
+    (id, values) =>
+      updateVenta({
+        variables: { id, ...values },
+      }),
+    updateStatus,
+  ];
+}
+
+export const DELETE_VENTA = gql`
+  mutation($id: ID!) {
+    deleteVenta(id: $id) {
+      id
     }
   }
 `;
