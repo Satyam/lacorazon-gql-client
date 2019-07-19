@@ -73,7 +73,7 @@ export function useGetVenta(id) {
 export const CREATE_VENTA = gql`
   mutation(
     $fecha: String!
-    $concepto: String
+    $concepto: String!
     $cantidad: Int
     $iva: Boolean
     $precioUnitario: Float
@@ -105,8 +105,8 @@ export function useCreateVenta() {
             ...data.createVenta,
           });
           cached.ventas.sort((a, b) => {
-            if (a.nombre < b.nombre) return -1;
-            if (a.nombre > b.nombre) return 1;
+            if (a.fecha < b.fecha) return -1;
+            if (a.fecha > b.fecha) return 1;
             return 0;
           });
           cache.writeQuery({
