@@ -90,6 +90,7 @@ export default function DateField({
           className={classNames('form-control', className, {
             'is-invalid': invalid,
           })}
+          dateFormat="P"
           name={name}
           id={actualId}
           minDate={actualMin}

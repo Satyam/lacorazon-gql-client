@@ -24,7 +24,7 @@ import styles from './styles.module.css';
 export function Navigation() {
   const [isOpen, setOpen] = useState(false);
   const { currentUser, logout } = useAuth();
-  const { locale, setLocale } = useIntl();
+  const { locale, setLocale, locales } = useIntl();
   function toggle() {
     setOpen(!isOpen);
   }
@@ -58,12 +58,15 @@ export function Navigation() {
                 {locale}
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem onClick={() => setLocale('es-ES')}>
-                  es-ES
-                </DropdownItem>
-                <DropdownItem onClick={() => setLocale('en-US')}>
-                  en-US
-                </DropdownItem>
+                {locales.map(l => (
+                  <DropdownItem
+                    key={l}
+                    active={l === locale}
+                    onClick={() => setLocale(l)}
+                  >
+                    {l}
+                  </DropdownItem>
+                ))}
               </DropdownMenu>
             </UncontrolledDropdown>
             <UncontrolledDropdown nav inNavbar>

@@ -1,4 +1,19 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
+
+import { format } from 'date-fns';
+import { enUS, es } from 'date-fns/locale';
+
+import { registerLocale, setDefaultLocale } from 'react-datepicker';
+
+const localeTables = { 'en-US': enUS, 'es-ES': es };
+
+Object.keys(localeTables).forEach(l => registerLocale(l, localeTables[l]));
 
 export const IntlContext = createContext({});
 
@@ -9,18 +24,21 @@ export function IntlProvider({
 }) {
   const [locale, setLocale] = useState(l);
   const [currency, setCurrency] = useState(c);
-  const [formatDate, setFormatDate] = useState(value => value);
   const [formatCurrency, setFormatCurrency] = useState(value => value);
 
-  console.log('set provider', locale, currency);
+  const formatDate = useCallback(
+    (date, formatStr = 'P') =>
+      format(date, formatStr, {
+        locale: localeTables[locale],
+      }),
+    [locale]
+  );
+
   useEffect(() => {
-    console.log('date effect', locale);
-    const dateTimeFormatter = new Intl.DateTimeFormat(locale);
-    setFormatDate(() => date => dateTimeFormatter.format(date));
+    setDefaultLocale(locale);
   }, [locale]);
 
   useEffect(() => {
-    console.log('currency effect', locale, currency);
     const currFormatter = new Intl.NumberFormat(locale, {
       style: 'currency',
       currency,
@@ -31,6 +49,7 @@ export function IntlProvider({
   return (
     <IntlContext.Provider
       value={{
+        locales: Object.keys(localeTables),
         setLocale,
         locale,
         formatDate,
