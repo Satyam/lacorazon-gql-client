@@ -3,7 +3,13 @@ import useReactRouter from 'use-react-router';
 import { object, string, number, boolean, date } from 'yup';
 
 import { Alert } from 'reactstrap';
-import { Form, TextField, DateField, SubmitButton } from 'Components/Form';
+import {
+  Form,
+  TextField,
+  DateField,
+  CheckboxField,
+  SubmitButton,
+} from 'Components/Form';
 import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
@@ -72,7 +78,7 @@ export default function EditVenta({ match }) {
             <DateField name="fecha" label="Fecha" />
             <TextField name="concepto" label="Concepto" />
             <TextField name="cantidad" label="Cantidad" />
-            <TextField name="iva" label="IVA" />
+            <CheckboxField name="iva" label="IVA" />
             <TextField name="precioUnitario" label="Precio Unitario" />
             <ButtonSet>
               <SubmitButton component={ButtonIconAdd}>
