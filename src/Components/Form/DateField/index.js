@@ -8,6 +8,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import classNames from 'classnames';
 
 import { useFormik } from '../shared';
+import { useIntl } from 'Components/intl';
 
 let counter = 0;
 
@@ -31,7 +32,7 @@ export default function DateField({
     setFieldValue,
     validationSchema,
   } = useFormik();
-
+  const { locale } = useIntl();
   useEffect(() => {
     registerField(name, {
       props: {
@@ -56,7 +57,12 @@ export default function DateField({
       });
   });
 
-  const [actualId] = useState(id || `F_DF_${counter}`);
+  const [actualId, setActualId] = useState(id || `F_DF_${counter}`);
+
+  // I'm using setActualId as a means of forcing a
+  // refresh of the component so it takes the new locale
+  // In the end, it doesn't really changes the id at all.
+  useEffect(() => setActualId(id => id), [locale]);
 
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
 
