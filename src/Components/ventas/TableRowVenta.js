@@ -4,10 +4,10 @@ import { ButtonIconEdit, ButtonIconDelete } from '../Icons';
 import { MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
 import { useIntl } from 'Components/intl';
 
-export default function TableRowDistribuidor(venta, history, deleteVenta) {
+export default function TableRowDistribuidor({ venta, history, deleteVenta }) {
   const { formatDate, formatCurrency } = useIntl();
   return (
-    <tr key={venta.id} onClick={() => history.push(`/venta/${venta.id}`)}>
+    <tr onClick={() => history.push(`/venta/${venta.id}`)}>
       <td align="right">{formatDate(venta.fecha)}</td>
       <td>{venta.concepto}</td>
       <td align="right">{venta.cantidad}</td>

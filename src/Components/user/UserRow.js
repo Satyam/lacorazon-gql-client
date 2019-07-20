@@ -4,7 +4,7 @@ import { ButtonIconEdit, ButtonIconDelete } from 'Components/Icons';
 
 export default function UserRow({ user, history, deleteUser }) {
   return (
-    <tr key={user.id} onClick={() => history.push(`/user/${user.id}`)}>
+    <tr onClick={() => history.push(`/user/${user.id}`)}>
       <td>{user.email}</td>
       <td>{user.nombre}</td>
       <td>

@@ -39,9 +39,14 @@ export default function ListDistribuidores() {
             </tr>
           </thead>
           <tbody>
-            {distribuidores.map(distribuidor =>
-              TableRowDistribuidor(distribuidor, history, deleteDistribuidor)
-            )}
+            {distribuidores.map(distribuidor => (
+              <TableRowDistribuidor
+                key={distribuidor.id}
+                distribuidor={distribuidor}
+                history={history}
+                deleteDistribuidor={deleteDistribuidor}
+              />
+            ))}
           </tbody>
         </Table>
         <ButtonIconAdd onClick={() => history.push('/distribuidor/new')}>

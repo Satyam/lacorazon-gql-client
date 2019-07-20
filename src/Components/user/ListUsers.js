@@ -32,13 +32,14 @@ export default function ListUsers() {
             </tr>
           </thead>
           <tbody>
-            {users.map(user =>
-              UserRow({
-                user,
-                history,
-                deleteUser,
-              })
-            )}
+            {users.map(user => (
+              <UserRow
+                key={user.id}
+                user={user}
+                history={history}
+                deleteUser={deleteUser}
+              />
+            ))}
           </tbody>
         </Table>
         <ButtonIconAdd

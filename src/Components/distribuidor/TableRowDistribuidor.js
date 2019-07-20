@@ -3,11 +3,11 @@ import { ButtonGroup } from 'reactstrap';
 import { ButtonIconEdit, ButtonIconDelete } from '../Icons';
 import styles from './styles.module.css';
 
-export default function TableRowDistribuidor(
+export default function TableRowDistribuidor({
   distribuidor,
   history,
-  deleteDistribuidor
-) {
+  deleteDistribuidor,
+}) {
   return (
     <tr
       key={distribuidor.id}

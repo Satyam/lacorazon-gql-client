@@ -37,7 +37,14 @@ export default function ListVentas({ vendedor, wide }) {
             </tr>
           </thead>
           <tbody>
-            {ventas.map(venta => TableRowVenta(venta, history, deleteVenta))}
+            {ventas.map(venta => (
+              <TableRowVenta
+                venta={venta}
+                history={history}
+                deleteVenta={deleteVenta}
+                key={venta.id}
+              />
+            ))}
           </tbody>
         </Table>
         <ButtonIconAdd onClick={() => history.push('/venta/new')}>
