@@ -1,0 +1,9 @@
+.heading {
+  float: left;
+}
+.action {
+  float: right;
+}
+.spacing {
+  margin-top: 0.5em;
+}
