@@ -58,8 +58,8 @@ export default function ListVentas({ vendedor, wide }) {
         </td>
         <td>
           <ButtonGroup size="sm">
-            <ButtonIconEdit onClick={onEdit} data-id={id} />
-            <ButtonIconDelete onClick={onDelete} data-id={id} />
+            <ButtonIconEdit outline onClick={onEdit} data-id={id} />
+            <ButtonIconDelete outline onClick={onDelete} data-id={id} />
           </ButtonGroup>
         </td>
       </tr>
@@ -85,7 +85,9 @@ export default function ListVentas({ vendedor, wide }) {
           </thead>
           <tbody>{ventas.map(rowVenta)}</tbody>
         </Table>
-        <ButtonIconAdd onClick={onAdd}>Agregar</ButtonIconAdd>
+        <ButtonIconAdd outline onClick={onAdd}>
+          Agregar
+        </ButtonIconAdd>
       </GqlError>
     </Page>
   );
