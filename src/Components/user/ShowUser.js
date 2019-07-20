@@ -26,6 +26,7 @@ export default function ShowUser({ match }) {
           <>
             <LabeledText label="Nombre" value={user.nombre} />
             <LabeledText label="eMail" value={user.email} />
+            <hr />
             <ListVentas vendedor={id} wide />
           </>
         ) : (
