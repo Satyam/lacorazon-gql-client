@@ -69,7 +69,16 @@ export default function ListVentas({ vendedor, wide }) {
   const ventas = data ? data.ventas : [];
 
   return (
-    <Page title="Ventas" heading="Ventas" wide={wide}>
+    <Page
+      title="Ventas"
+      heading="Ventas"
+      wide={wide}
+      action={
+        <ButtonIconAdd outline onClick={onAdd}>
+          Agregar
+        </ButtonIconAdd>
+      }
+    >
       <GqlError error={[error, deleteStatus]}>
         <Table striped hover size="sm" responsive>
           <thead>
@@ -85,9 +94,6 @@ export default function ListVentas({ vendedor, wide }) {
           </thead>
           <tbody>{ventas.map(rowVenta)}</tbody>
         </Table>
-        <ButtonIconAdd outline onClick={onAdd}>
-          Agregar
-        </ButtonIconAdd>
       </GqlError>
     </Page>
   );

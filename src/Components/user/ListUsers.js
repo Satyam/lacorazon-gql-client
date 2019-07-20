@@ -58,7 +58,15 @@ export default function ListUsers() {
   const users = data ? data.users : [];
 
   return (
-    <Page title="Vendedores" heading="Vendedores">
+    <Page
+      title="Vendedores"
+      heading="Vendedores"
+      action={
+        <ButtonIconAdd outline onClick={onAdd} label="Agregar">
+          Agregar
+        </ButtonIconAdd>
+      }
+    >
       <GqlError error={[error, deleteStatus]}>
         <Table striped hover size="sm" responsive>
           <thead>
@@ -70,9 +78,6 @@ export default function ListUsers() {
           </thead>
           <tbody>{users.map(rowUser)}</tbody>
         </Table>
-        <ButtonIconAdd outline onClick={onAdd} label="Agregar">
-          Agregar
-        </ButtonIconAdd>
       </GqlError>
     </Page>
   );

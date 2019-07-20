@@ -64,7 +64,16 @@ export default function ListDistribuidores() {
   const distribuidores = data ? data.distribuidores : [];
 
   return (
-    <Page wide title="Distribuidores" heading="Distribuidores">
+    <Page
+      wide
+      title="Distribuidores"
+      heading="Distribuidores"
+      action={
+        <ButtonIconAdd outline onClick={onAdd}>
+          Agregar
+        </ButtonIconAdd>
+      }
+    >
       <GqlError error={[error, deleteStatus]}>
         <Table striped hover size="sm" responsive>
           <thead>
@@ -80,9 +89,6 @@ export default function ListDistribuidores() {
           </thead>
           <tbody>{distribuidores.map(rowDistribuidor)}</tbody>
         </Table>
-        <ButtonIconAdd outline onClick={onAdd}>
-          Agregar
-        </ButtonIconAdd>
       </GqlError>
     </Page>
   );
