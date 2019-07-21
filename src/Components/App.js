@@ -12,6 +12,7 @@ import EditDistribuidor from 'Components/distribuidor/EditDistribuidor';
 import ShowDistribuidor from 'Components/distribuidor/ShowDistribuidor';
 import ListVentas from 'Components/ventas/ListVentas';
 import EditVenta from 'Components/ventas/EditVenta';
+import ShowVenta from 'Components/ventas/ShowVenta';
 import Login from 'Components/auth/Login';
 
 function App() {
@@ -36,7 +37,7 @@ function App() {
         <Switch>
           <Route path="/venta/new" component={EditVenta} />
           <Route path="/venta/edit/:id" component={EditVenta} />
-          <Route path="/venta/:id" component={ShowDistribuidor} />
+          <Route path="/venta/:id" component={ShowVenta} />
         </Switch>
         <Route path="/login/:register?" component={Login} />
       </ErrorBoundary>
