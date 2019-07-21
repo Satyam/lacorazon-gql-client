@@ -5,14 +5,24 @@ import styles from './styles.module.css';
 
 const cx = classNames.bind(styles);
 
-export default function LabeledText({ label, value, children, pre }) {
+export default function LabeledText({
+  label,
+  value,
+  children,
+  pre,
+  className,
+  ...rest
+}) {
   return (
     <FormGroup row>
       <Label xs={12} lg={2}>
         {label}
       </Label>
       <Col xs={12} lg={8}>
-        <div className={cx('form-control', { 'labeled-pre': pre })}>
+        <div
+          className={cx('form-control', { 'labeled-pre': pre }, className)}
+          {...rest}
+        >
           {value}
           {children}
         </div>
