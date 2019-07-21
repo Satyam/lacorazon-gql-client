@@ -16,10 +16,6 @@ import { IntlProvider } from 'Components/intl';
 import App from 'Components/App';
 import * as serviceWorker from './serviceWorker';
 
-// import { addLocaleData, IntlProvider } from 'react-intl';
-// import esLocaleData from 'react-intl/locale-data/es';
-
-// addLocaleData(esLocaleData);
 const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: createHttpLink({
@@ -28,21 +24,6 @@ const client = new ApolloClient({
   }),
 });
 
-/*<IntlProvider
-    locale={'es-ES' /*navigator.language* /}
-    formats={{
-      number: {
-        EUR: {
-          style: 'currency',
-          currency: 'EUR',
-        },
-        USD: {
-          style: 'currency',
-          currency: 'USD',
-        },
-      },
-    }}
-  >*/
 ReactDOM.render(
   <ApolloProvider client={client}>
     <IntlProvider locale="es-ES">
