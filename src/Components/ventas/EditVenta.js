@@ -8,6 +8,7 @@ import {
   TextField,
   DateField,
   CheckboxField,
+  DropdownField,
   SubmitButton,
 } from 'Components/Form';
 import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
@@ -20,6 +21,7 @@ import {
   useDeleteVenta,
   useUpdateVenta,
   useGetVenta,
+  useOptionsVendedores,
 } from './actions';
 
 const ventaSchema = object().shape({
@@ -41,30 +43,41 @@ export default function EditVenta({ match }) {
   const id = match.params.id;
   const { history } = useReactRouter();
   const { loading, error, data } = useGetVenta(id);
-
+  const optionVendedoresStatus = useOptionsVendedores();
   const [createVenta, createStatus] = useCreateVenta();
   const [updateVenta, updateStatus] = useUpdateVenta();
   const [deleteVenta, deleteStatus] = useDeleteVenta();
 
   if (loading) return <Loading>Cargando venta</Loading>;
+  if (optionVendedoresStatus.loading)
+    return <Loading>Cargando vendedores</Loading>;
   if (createStatus.loading) return <Loading>Creando venta</Loading>;
   if (updateStatus.loading) return <Loading>Actualizando venta</Loading>;
   if (deleteStatus.loading) return <Loading>Borrando venta</Loading>;
 
   const venta = (data && data.venta) || {};
-  console.log(venta);
+  venta.vendedor = venta.vendedor || { id: '' };
   return (
     <Page
       title={`Venta - ${venta ? venta.nombre : 'nuevo'}`}
       heading={`${id ? 'Edit' : 'Add'} Venta`}
     >
-      <GqlError error={[error, createStatus, updateStatus, deleteStatus]}>
+      <GqlError
+        error={[
+          error,
+          optionVendedoresStatus,
+          createStatus,
+          updateStatus,
+          deleteStatus,
+        ]}
+      >
         {id && !venta ? (
           <Alert color="danger">La venta no existe o fue borrada</Alert>
         ) : (
           <Form
             values={venta}
             onSubmit={values => {
+              values.idVendedor = values.vendedor.id;
               if (id) {
                 updateVenta(id, values);
               } else {
@@ -77,6 +90,12 @@ export default function EditVenta({ match }) {
           >
             <DateField name="fecha" label="Fecha" />
             <TextField name="concepto" label="Concepto" />
+            <DropdownField
+              name="vendedor.id"
+              label="Vendedor"
+              noOption={!id}
+              options={optionVendedoresStatus.data.users}
+            />
             <TextField name="cantidad" label="Cantidad" />
             <CheckboxField name="iva" label="IVA" />
             <TextField name="precioUnitario" label="Precio Unitario" />

@@ -14,6 +14,8 @@ import Loading from 'Components/Loading';
 import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
 
+import styles from './styles.module.css';
+
 import { useListVentas, useDeleteVenta } from './actions';
 
 export default function ListVentas({ vendedor, wide }) {
@@ -45,7 +47,7 @@ export default function ListVentas({ vendedor, wide }) {
   const rowVenta = venta => {
     const id = venta.id;
     return (
-      <tr onClick={onShow} key={id} data-id={id}>
+      <tr className={styles.link} onClick={onShow} key={id} data-id={id}>
         <td align="right">{formatDate(venta.fecha)}</td>
         <td>{venta.concepto}</td>
         <td align="right">{venta.cantidad}</td>

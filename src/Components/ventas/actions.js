@@ -43,6 +43,10 @@ export const GET_VENTA = gql`
       cantidad
       iva
       precioUnitario
+      vendedor {
+        id
+        nombre
+      }
     }
   }
 `;
@@ -74,6 +78,7 @@ export const CREATE_VENTA = gql`
   mutation(
     $fecha: String!
     $concepto: String!
+    $idVendedor: ID
     $cantidad: Int
     $iva: Boolean
     $precioUnitario: Float
@@ -81,6 +86,7 @@ export const CREATE_VENTA = gql`
     createVenta(
       fecha: $fecha
       concepto: $concepto
+      idVendedor: $idVendedor
       cantidad: $cantidad
       iva: $iva
       precioUnitario: $precioUnitario
@@ -124,6 +130,7 @@ export const UPDATE_VENTA = gql`
     $id: ID!
     $fecha: String
     $concepto: String
+    $idVendedor: ID
     $cantidad: Int
     $iva: Boolean
     $precioUnitario: Float
@@ -132,6 +139,7 @@ export const UPDATE_VENTA = gql`
       id: $id
       fecha: $fecha
       concepto: $concepto
+      idVendedor: $idVendedor
       cantidad: $cantidad
       iva: $iva
       precioUnitario: $precioUnitario
@@ -139,6 +147,10 @@ export const UPDATE_VENTA = gql`
       id
       fecha
       concepto
+      vendedor {
+        id
+        nombre
+      }
       cantidad
       iva
       precioUnitario
@@ -186,4 +198,34 @@ export function useDeleteVenta() {
       }),
     delStatus,
   ];
+}
+
+export const OPTIONS_VENDEDORES = gql`
+  query {
+    users {
+      id
+      nombre
+    }
+  }
+`;
+
+export function useOptionsVendedores() {
+  const { error, loading, data, ...rest } = useQuery(OPTIONS_VENDEDORES);
+  return loading || error || !data
+    ? { error, loading, ...rest }
+    : {
+        error,
+        loading,
+        ...rest,
+        data: {
+          users: [
+            { id: '', nombre: ' ---- ' },
+            ...data.users.sort((a, b) => {
+              if (a.nombre < b.nombre) return -1;
+              if (a.nombre > b.nombre) return 1;
+              return 0;
+            }),
+          ],
+        },
+      };
 }
