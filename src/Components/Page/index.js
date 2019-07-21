@@ -11,9 +11,9 @@ export default function Page({ wide, children, title, heading, action }) {
         <Col sm="12" md={{ size: wide ? 12 : 8, offset: wide ? 0 : 2 }}>
           <div className={styles.spacing}>
             <h1 className={styles.heading}>{heading}</h1>
-            <span className={styles.action}>{action}</span>
+            <div className={styles.action}>{action}</div>
           </div>
-          {children}
+          <div className={styles.clear}>{children}</div>
         </Col>
       </Row>
     </Container>
