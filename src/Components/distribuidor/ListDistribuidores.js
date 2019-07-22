@@ -42,7 +42,7 @@ export default function ListDistribuidores() {
   const rowDistribuidor = distribuidor => {
     const id = distribuidor.id;
     return (
-      <tr key={id} onClick={onShow} data-id={id}>
+      <tr key={id} onClick={onShow} data-id={id} className={styles.link}>
         <td>{distribuidor.nombre}</td>
         <td>{distribuidor.contacto}</td>
         <td>{distribuidor.telefono}</td>
@@ -51,6 +51,8 @@ export default function ListDistribuidores() {
         <td className={styles.small}>
           {(distribuidor.email || '').replace('@', '\n@')}
         </td>
+        <td align="right">{distribuidor.entregados}</td>
+        <td align="right">{distribuidor.existencias}</td>
         <td>
           <ButtonGroup size="sm">
             <ButtonIconEdit outline onClick={onEdit} data-id={id} />
@@ -62,7 +64,6 @@ export default function ListDistribuidores() {
   };
 
   const distribuidores = data ? data.distribuidores : [];
-
   return (
     <Page
       wide
@@ -84,6 +85,8 @@ export default function ListDistribuidores() {
               <th>Dirección</th>
               <th>Localidad</th>
               <th>e-Mail</th>
+              <th>Entregados</th>
+              <th>Existencias</th>
               <th />
             </tr>
           </thead>
