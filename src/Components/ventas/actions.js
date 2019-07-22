@@ -3,8 +3,8 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 export const LIST_VENTAS = gql`
-  query($vendedor: ID) {
-    ventas(vendedor: $vendedor) {
+  query($idVendedor: ID) {
+    ventas(idVendedor: $idVendedor) {
       id
       fecha
       concepto
@@ -15,9 +15,9 @@ export const LIST_VENTAS = gql`
   }
 `;
 
-export function useListVentas(vendedor) {
+export function useListVentas(idVendedor) {
   const { error, loading, data, ...rest } = useQuery(LIST_VENTAS, {
-    variables: { vendedor },
+    variables: { idVendedor },
   });
   return loading || error
     ? { error, loading, ...rest }
