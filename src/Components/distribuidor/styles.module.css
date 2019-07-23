@@ -2,11 +2,3 @@
   white-space: pre-line;
   font-size: small;
 }
-
-.link {
-  cursor: pointer;
-}
-.link:hover {
-  color: black;
-  text-decoration: underline;
-}

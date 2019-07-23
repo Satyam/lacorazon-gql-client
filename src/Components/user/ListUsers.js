@@ -42,7 +42,13 @@ export default function ListUsers() {
   const rowUser = user => {
     const id = user.id;
     return (
-      <tr key={id} onClick={onShow} data-id={id}>
+      <tr
+        title={`Ver detalles\n${user.nombre}`}
+        key={id}
+        onClick={onShow}
+        data-id={id}
+        className="link"
+      >
         <td>{user.email}</td>
         <td>{user.nombre}</td>
         <td>

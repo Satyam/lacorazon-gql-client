@@ -10,7 +10,6 @@ import GqlError from 'Components/GqlError';
 import { useIntl } from 'Components/intl';
 
 import { useGetVenta } from './actions';
-import styles from './styles.module.css';
 
 export default function ShowVenta({ match }) {
   const id = match.params.id;
@@ -38,7 +37,7 @@ export default function ShowVenta({ match }) {
               value={venta.vendedor.nombre}
               data-id={venta.vendedor.id}
               onClick={venta.vendedor.id && onShowVendedor}
-              className={styles.link}
+              className="link"
             />
             <LabeledText label="Cantidad" value={venta.cantidad} />
             <LabeledCheckbox label="IVA" value={venta.iva} />

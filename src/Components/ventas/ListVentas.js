@@ -15,8 +15,6 @@ import Loading from 'Components/Loading';
 import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
 
-import styles from './styles.module.css';
-
 import { useListVentas, useDeleteVenta } from './actions';
 
 export default function ListVentas({ idVendedor, nombreVendedor, wide }) {
@@ -57,9 +55,10 @@ export default function ListVentas({ idVendedor, nombreVendedor, wide }) {
         <td>{venta.concepto}</td>
         {!idVendedor && (
           <td
-            className={styles.link}
+            className="link"
             onClick={onShowVendedor}
             data-id={venta.vendedor.id}
+            title={`Ver detalle vendedor: \n${venta.vendedor.nombre}`}
           >
             {venta.vendedor.nombre}
           </td>
