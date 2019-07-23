@@ -44,11 +44,11 @@ export const IconAdd = ({ color = 'primary', ...props }) => (
 export const ButtonIconAdd = ({
   children,
   color = 'primary',
-
+  title = 'Agregar',
   className,
   ...props
 }) => (
-  <Button color={color} className={className} {...props}>
+  <Button color={color} className={className} title={title} {...props}>
     <FaPlusCircle />
     <span className={styles.label}>{children}</span>
   </Button>
@@ -61,11 +61,11 @@ export const IconDelete = ({ color = 'danger', ...props }) => (
 export const ButtonIconDelete = ({
   children,
   color = 'danger',
-
+  title = 'Borrar',
   className,
   ...props
 }) => (
-  <Button color={color} className={className} {...props}>
+  <Button color={color} className={className} title={title} {...props}>
     <FaTrashAlt />
     <span className={styles.label}>{children}</span>
   </Button>
@@ -77,11 +77,11 @@ export const IconEdit = ({ color = 'secondary', ...props }) => (
 export const ButtonIconEdit = ({
   children,
   color = 'secondary',
-
+  title = 'Modificar',
   className,
   ...props
 }) => (
-  <Button color={color} className={className} {...props}>
+  <Button color={color} className={className} title={title} {...props}>
     <FaEdit />
     <span className={styles.label}>{children}</span>
   </Button>
@@ -94,11 +94,11 @@ export const IconView = ({ color = 'info', ...props }) => (
 export const ButtonIconView = ({
   children,
   color = 'info',
-
+  title = 'Ver detalle',
   className,
   ...props
 }) => (
-  <Button color={color} className={className} {...props}>
+  <Button color={color} className={className} title={title} {...props}>
     <FaEye />
     <span className={styles.label}>{children}</span>
   </Button>
@@ -142,11 +142,11 @@ export const IconCalendar = ({ color = 'secondary', ...props }) => (
 export const ButtonIconCalendar = ({
   children,
   color = 'secondary',
-
+  title = 'Calendario',
   className,
   ...props
 }) => (
-  <Button color={color} className={className} {...props}>
+  <Button color={color} className={className} title={title} {...props}>
     <FaCalendarAlt />
     <span className={styles.label}>{children}</span>
   </Button>
