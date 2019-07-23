@@ -3,6 +3,7 @@ import React from 'react';
 import { LabeledText } from 'Components/Form';
 import Page from 'Components/Page';
 import Loading from 'Components/Loading';
+import { Accordion, AccordionPanel } from 'Components/Accordion';
 import { Alert } from 'reactstrap';
 import GqlError from 'Components/GqlError';
 
@@ -26,8 +27,15 @@ export default function ShowUser({ match }) {
           <>
             <LabeledText label="Nombre" value={user.nombre} />
             <LabeledText label="eMail" value={user.email} />
-            <hr />
-            <ListVentas vendedor={id} wide />
+            <Accordion>
+              <AccordionPanel label="Ventas" name="ventas">
+                <ListVentas vendedor={id} wide />
+              </AccordionPanel>
+              <AccordionPanel label="Consigna" name="consigna">
+                Aqui iría los libros en consigna en las librerías de este
+                vendedor
+              </AccordionPanel>
+            </Accordion>
           </>
         ) : (
           <Alert color="danger">El usuario no existe o fue borrado</Alert>
