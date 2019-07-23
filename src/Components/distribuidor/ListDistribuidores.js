@@ -42,12 +42,21 @@ export default function ListDistribuidores() {
   const rowDistribuidor = distribuidor => {
     const id = distribuidor.id;
     return (
-      <tr key={id} onClick={onShow} data-id={id} className="link">
+      <tr
+        key={id}
+        onClick={onShow}
+        data-id={id}
+        className="link"
+        title={`Ver detalle:\n  ${distribuidor.nombre}`}
+      >
         <td>{distribuidor.nombre}</td>
         <td>{distribuidor.contacto}</td>
         <td>{distribuidor.telefono}</td>
-        <td className={styles.small}>{distribuidor.direccion}</td>
-        <td>{distribuidor.localidad}</td>
+        <td>
+          <div className={styles.small}>{distribuidor.direccion}</div>
+
+          {distribuidor.localidad}
+        </td>
         <td className={styles.small}>
           {(distribuidor.email || '').replace('@', '\n@')}
         </td>
@@ -83,7 +92,6 @@ export default function ListDistribuidores() {
               <th>Contacto</th>
               <th>Teléfono</th>
               <th>Dirección</th>
-              <th>Localidad</th>
               <th>e-Mail</th>
               <th>Entregados</th>
               <th>Existencias</th>
