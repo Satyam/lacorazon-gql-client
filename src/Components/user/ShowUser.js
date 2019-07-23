@@ -29,7 +29,7 @@ export default function ShowUser({ match }) {
             <LabeledText label="eMail" value={user.email} />
             <Accordion>
               <AccordionPanel label="Ventas" name="ventas">
-                <ListVentas vendedor={id} wide />
+                <ListVentas idVendedor={id} nombreVendedor={user.nombre} wide />
               </AccordionPanel>
               <AccordionPanel label="Consigna" name="consigna">
                 Aqui iría los libros en consigna en las librerías de este

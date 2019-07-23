@@ -18,9 +18,9 @@ import styles from './styles.module.css';
 
 import { useListVentas, useDeleteVenta } from './actions';
 
-export default function ListVentas({ vendedor, wide }) {
+export default function ListVentas({ idVendedor, nombreVendedor, wide }) {
   const { history } = useReactRouter();
-  const { loading, error, data } = useListVentas(vendedor);
+  const { loading, error, data } = useListVentas(idVendedor);
   const [deleteVenta, deleteStatus] = useDeleteVenta();
   const { formatDate, formatCurrency } = useIntl();
 
@@ -44,12 +44,21 @@ export default function ListVentas({ vendedor, wide }) {
     history.push(`/venta/edit/${ev.currentTarget.dataset.id}`);
   };
 
+  const onShowVendedor = ev => {
+    ev.stopPropagation();
+    history.push(`/user/${ev.currentTarget.dataset.id}`);
+  };
   const rowVenta = venta => {
     const id = venta.id;
     return (
       <tr className={styles.link} onClick={onShow} key={id} data-id={id}>
         <td align="right">{formatDate(venta.fecha)}</td>
         <td>{venta.concepto}</td>
+        {!idVendedor && (
+          <td onClick={onShowVendedor} data-id={venta.vendedor.id}>
+            {venta.vendedor.nombre}
+          </td>
+        )}
         <td align="right">{venta.cantidad}</td>
         <td align="right">{formatCurrency(venta.precioUnitario)}</td>
         <td align="center">
@@ -72,8 +81,8 @@ export default function ListVentas({ vendedor, wide }) {
 
   return (
     <Page
-      title="Ventas"
-      heading="Ventas"
+      title={!idVendedor && 'Ventas'}
+      heading={nombreVendedor ? `Ventas de ${nombreVendedor}` : 'Ventas'}
       wide={wide}
       action={
         <ButtonIconAdd outline onClick={onAdd}>
@@ -87,6 +96,7 @@ export default function ListVentas({ vendedor, wide }) {
             <tr>
               <th>Fecha</th>
               <th>Concepto</th>
+              {!idVendedor && <th>Vendedor</th>}
               <th>Cantidad</th>
               <th>Precio Unitario</th>
               <th>IVA</th>

@@ -8,6 +8,10 @@ export const LIST_VENTAS = gql`
       id
       fecha
       concepto
+      vendedor {
+        id
+        nombre
+      }
       cantidad
       iva
       precioUnitario
