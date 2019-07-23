@@ -42,14 +42,15 @@ export default function ListDistribuidores() {
   const rowDistribuidor = distribuidor => {
     const id = distribuidor.id;
     return (
-      <tr
-        key={id}
-        onClick={onShow}
-        data-id={id}
-        className="link"
-        title={`Ver detalle:\n  ${distribuidor.nombre}`}
-      >
-        <td>{distribuidor.nombre}</td>
+      <tr key={id}>
+        <td
+          onClick={onShow}
+          data-id={id}
+          className="link"
+          title={`Ver detalle:\n  ${distribuidor.nombre}`}
+        >
+          {distribuidor.nombre}
+        </td>
         <td>{distribuidor.contacto}</td>
         <td>{distribuidor.telefono}</td>
         <td>

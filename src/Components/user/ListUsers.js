@@ -42,15 +42,16 @@ export default function ListUsers() {
   const rowUser = user => {
     const id = user.id;
     return (
-      <tr
-        title={`Ver detalles\n${user.nombre}`}
-        key={id}
-        onClick={onShow}
-        data-id={id}
-        className="link"
-      >
+      <tr key={id}>
+        <td
+          onClick={onShow}
+          data-id={id}
+          className="link"
+          title={`Ver detalles\n${user.nombre}`}
+        >
+          {user.nombre}
+        </td>
         <td>{user.email}</td>
-        <td>{user.nombre}</td>
         <td>
           <ButtonGroup size="sm">
             <ButtonIconEdit outline onClick={onEdit} data-id={id} />
@@ -77,8 +78,8 @@ export default function ListUsers() {
         <Table striped hover size="sm" responsive>
           <thead>
             <tr>
-              <th>Alias</th>
               <th>Nombre</th>
+              <th>E-mail</th>
               <th />
             </tr>
           </thead>

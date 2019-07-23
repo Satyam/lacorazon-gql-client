@@ -13,6 +13,7 @@ code {
 }
 
 .link {
+  color: #0056b3 !important;
   cursor: pointer;
 }
 .link:hover {
