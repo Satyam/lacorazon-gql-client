@@ -5,6 +5,7 @@ import {
   FaPlusCircle,
   FaTrashAlt,
   FaEdit,
+  FaEye,
   FaCheckCircle,
   FaTimesCircle,
   FaCalendarAlt,
@@ -82,6 +83,23 @@ export const ButtonIconEdit = ({
 }) => (
   <Button color={color} className={className} {...props}>
     <FaEdit />
+    <span className={styles.label}>{children}</span>
+  </Button>
+);
+
+export const IconView = ({ color = 'info', ...props }) => (
+  <Icon Component={FaEye} {...props} />
+);
+
+export const ButtonIconView = ({
+  children,
+  color = 'info',
+
+  className,
+  ...props
+}) => (
+  <Button color={color} className={className} {...props}>
+    <FaEye />
     <span className={styles.label}>{children}</span>
   </Button>
 );

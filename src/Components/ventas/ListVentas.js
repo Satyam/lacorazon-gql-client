@@ -6,6 +6,7 @@ import {
   ButtonIconAdd,
   ButtonIconEdit,
   ButtonIconDelete,
+  ButtonIconView,
 } from 'Components/Icons';
 import { ButtonGroup } from 'reactstrap';
 import { MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
@@ -51,11 +52,15 @@ export default function ListVentas({ idVendedor, nombreVendedor, wide }) {
   const rowVenta = venta => {
     const id = venta.id;
     return (
-      <tr className={styles.link} onClick={onShow} key={id} data-id={id}>
+      <tr key={id} data-id={id}>
         <td align="right">{formatDate(venta.fecha)}</td>
         <td>{venta.concepto}</td>
         {!idVendedor && (
-          <td onClick={onShowVendedor} data-id={venta.vendedor.id}>
+          <td
+            className={styles.link}
+            onClick={onShowVendedor}
+            data-id={venta.vendedor.id}
+          >
             {venta.vendedor.nombre}
           </td>
         )}
@@ -69,6 +74,7 @@ export default function ListVentas({ idVendedor, nombreVendedor, wide }) {
         </td>
         <td>
           <ButtonGroup size="sm">
+            <ButtonIconView outline onClick={onShow} data-id={id} />
             <ButtonIconEdit outline onClick={onEdit} data-id={id} />
             <ButtonIconDelete outline onClick={onDelete} data-id={id} />
           </ButtonGroup>
