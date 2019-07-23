@@ -3,8 +3,8 @@ import { Button } from 'reactstrap';
 import classNames from 'classnames/bind';
 import {
   FaPlusCircle,
-  FaTrashAlt,
-  FaEdit,
+  FaRegTrashAlt,
+  FaRegEdit,
   FaEye,
   FaCheckCircle,
   FaTimesCircle,
@@ -55,7 +55,7 @@ export const ButtonIconAdd = ({
 );
 
 export const IconDelete = ({ color = 'danger', ...props }) => (
-  <Icon Component={FaTrashAlt} {...props} />
+  <Icon Component={FaRegTrashAlt} {...props} />
 );
 
 export const ButtonIconDelete = ({
@@ -66,12 +66,12 @@ export const ButtonIconDelete = ({
   ...props
 }) => (
   <Button color={color} className={className} title={title} {...props}>
-    <FaTrashAlt />
+    <FaRegTrashAlt />
     <span className={styles.label}>{children}</span>
   </Button>
 );
 export const IconEdit = ({ color = 'secondary', ...props }) => (
-  <Icon Component={FaEdit} {...props} />
+  <Icon Component={FaRegEdit} {...props} />
 );
 
 export const ButtonIconEdit = ({
@@ -82,7 +82,7 @@ export const ButtonIconEdit = ({
   ...props
 }) => (
   <Button color={color} className={className} title={title} {...props}>
-    <FaEdit />
+    <FaRegEdit />
     <span className={styles.label}>{children}</span>
   </Button>
 );
