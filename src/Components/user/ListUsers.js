@@ -11,6 +11,7 @@ import { ButtonGroup } from 'reactstrap';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
+import { confirmDelete } from 'Components/shared';
 
 import { useListUsers, useDeleteUser } from './actions';
 
@@ -32,7 +33,8 @@ export default function ListUsers() {
   };
   const onDelete = ev => {
     ev.stopPropagation();
-    deleteUser(ev.currentTarget.dataset.id);
+    const { nombre, id } = ev.currentTarget.dataset;
+    confirmDelete(`al usuario ${nombre}`, () => deleteUser(id));
   };
   const onEdit = ev => {
     ev.stopPropagation();
@@ -55,7 +57,12 @@ export default function ListUsers() {
         <td>
           <ButtonGroup size="sm">
             <ButtonIconEdit outline onClick={onEdit} data-id={id} />
-            <ButtonIconDelete outline onClick={onDelete} data-id={id} />
+            <ButtonIconDelete
+              outline
+              onClick={onDelete}
+              data-id={id}
+              data-nombre={user.nombre}
+            />
           </ButtonGroup>
         </td>
       </tr>

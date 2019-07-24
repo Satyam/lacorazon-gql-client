@@ -13,6 +13,7 @@ import { useIntl } from 'Components/intl';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
+import { confirmDelete } from 'Components/shared';
 
 import { useListVentas, useDeleteVenta } from './actions';
 
@@ -35,7 +36,8 @@ export default function ListVentas({ idVendedor, nombreVendedor, wide }) {
   };
   const onDelete = ev => {
     ev.stopPropagation();
-    deleteVenta(ev.currentTarget.dataset.id);
+    const { fecha, id } = ev.currentTarget.dataset;
+    confirmDelete(`la venta del ${fecha}`, () => deleteVenta(id));
   };
   const onEdit = ev => {
     ev.stopPropagation();
@@ -80,7 +82,12 @@ export default function ListVentas({ idVendedor, nombreVendedor, wide }) {
         </td>
         <td>
           <ButtonGroup size="sm">
-            <ButtonIconEdit outline onClick={onEdit} data-id={id} />
+            <ButtonIconEdit
+              outline
+              onClick={onEdit}
+              data-id={id}
+              data-fecha={formatDate(venta.fecha)}
+            />
             <ButtonIconDelete outline onClick={onDelete} data-id={id} />
           </ButtonGroup>
         </td>

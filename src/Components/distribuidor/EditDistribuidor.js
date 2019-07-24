@@ -7,6 +7,7 @@ import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
+import { confirmDelete } from 'Components/shared';
 
 import {
   useCreateDistribuidor,
@@ -68,9 +69,12 @@ export default function EditDistribuidor({ match }) {
               </SubmitButton>
               <ButtonIconDelete
                 disabled={!id}
-                onClick={() => {
-                  deleteDistribuidor(id).then(() =>
-                    history.replace('/distribuidores')
+                onClick={ev => {
+                  ev.stopPropagation();
+                  confirmDelete(`al distribuidor ${distribuidor.nombre}`, () =>
+                    deleteDistribuidor(id).then(() =>
+                      history.replace('/distribuidores')
+                    )
                   );
                 }}
               >

@@ -12,6 +12,7 @@ import styles from './styles.module.css';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
+import { confirmDelete } from 'Components/shared';
 
 import { useListDistribuidores, useDeleteDistribuidor } from './actions';
 
@@ -33,7 +34,8 @@ export default function ListDistribuidores() {
   };
   const onDelete = ev => {
     ev.stopPropagation();
-    deleteDistribuidor(ev.currentTarget.dataset.id);
+    const { nombre, id } = ev.currentTarget.dataset;
+    confirmDelete(`al distribuidor ${nombre}`, () => deleteDistribuidor(id));
   };
   const onAdd = ev => {
     ev.stopPropagation();
@@ -66,7 +68,12 @@ export default function ListDistribuidores() {
         <td>
           <ButtonGroup size="sm">
             <ButtonIconEdit outline onClick={onEdit} data-id={id} />
-            <ButtonIconDelete outline onClick={onDelete} data-id={id} />
+            <ButtonIconDelete
+              outline
+              onClick={onDelete}
+              data-id={id}
+              data-nombre={distribuidor.nombre}
+            />
           </ButtonGroup>
         </td>
       </tr>

@@ -7,6 +7,7 @@ import { Form, TextField, SubmitButton } from 'Components/Form';
 import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
 import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
+import { confirmDelete } from 'Components/shared';
 
 import {
   useGetUser,
@@ -64,8 +65,11 @@ export default function EditUser({ match }) {
               </SubmitButton>
               <ButtonIconDelete
                 disabled={!id}
-                onClick={() => {
-                  deleteUser(id).then(() => history.replace('/users'));
+                onClick={ev => {
+                  ev.stopPropagation();
+                  confirmDelete(`al usuario ${user.nombre}`, () =>
+                    deleteUser(id).then(() => history.replace('/users'))
+                  );
                 }}
               >
                 Borrar

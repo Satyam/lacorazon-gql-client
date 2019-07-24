@@ -15,6 +15,8 @@ import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
+import { confirmDelete } from 'Components/shared';
+import { useIntl } from 'Components/intl';
 
 import {
   useCreateVenta,
@@ -48,6 +50,7 @@ export default function EditVenta({ match }) {
   const [updateVenta, updateStatus] = useUpdateVenta();
   const [deleteVenta, deleteStatus] = useDeleteVenta();
 
+  const { formatDate } = useIntl();
   if (loading) return <Loading>Cargando venta</Loading>;
   if (optionVendedoresStatus.loading)
     return <Loading>Cargando vendedores</Loading>;
@@ -105,8 +108,11 @@ export default function EditVenta({ match }) {
               </SubmitButton>
               <ButtonIconDelete
                 disabled={!id}
-                onClick={() => {
-                  deleteVenta(id).then(() => history.replace('/ventas'));
+                onClick={ev => {
+                  ev.stopPropagation();
+                  confirmDelete(`la venta del ${formatDate(venta.fecha)}`, () =>
+                    deleteVenta(id).then(() => history.replace('/ventas'))
+                  );
                 }}
               >
                 Borrar
