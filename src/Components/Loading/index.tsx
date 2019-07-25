@@ -5,7 +5,7 @@ import styles from './styles.module.css';
 
 const Loading: React.FC<{
   title?: string;
-  noIcon: boolean;
+  noIcon?: boolean;
   isOpen?: boolean;
 }> = ({
   title = 'Cargando ....',

@@ -10,8 +10,9 @@ import GqlError from 'Components/GqlError';
 import ListVentas from 'Components/ventas/ListVentas';
 
 import { useGetUser } from './actions';
+import { RouteComponentProps } from 'react-router-dom';
 
-export default function ShowUser({ match }) {
+const ShowUser = ({ match }: RouteComponentProps<{ id: string }>) => {
   const id = match.params.id;
   const { loading, error, data } = useGetUser(id);
   if (loading) return <Loading>Cargando usuario</Loading>;
@@ -43,4 +44,6 @@ export default function ShowUser({ match }) {
       </GqlError>
     </Page>
   );
-}
+};
+
+export default ShowUser;
