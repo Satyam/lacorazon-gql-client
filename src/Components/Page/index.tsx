@@ -3,8 +3,13 @@ import { Container, Row, Col } from 'reactstrap';
 
 import styles from './styles.module.css';
 
-export default function Page({ wide, children, title, heading, action }) {
-  document.title = `La Corazón - ${title}`;
+const Page: React.FC<{
+  wide?: boolean;
+  title?: string;
+  heading: string;
+  action?: React.ReactNode;
+}> = ({ wide, children, title, heading, action }) => {
+  if (title) document.title = `La Corazón - ${title}`;
   return (
     <Container fluid>
       <Row>
@@ -18,4 +23,6 @@ export default function Page({ wide, children, title, heading, action }) {
       </Row>
     </Container>
   );
-}
+};
+
+export default Page;
