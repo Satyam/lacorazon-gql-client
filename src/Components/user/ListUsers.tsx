@@ -13,7 +13,7 @@ import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
 import { confirmDelete } from 'Components/shared';
 
-import { useListUsers, useDeleteUser, users, user } from './actions';
+import { useListUsers, useDeleteUser, UserType } from './actions';
 
 export default function ListUsers() {
   const { history } = useReactRouter();
@@ -41,7 +41,7 @@ export default function ListUsers() {
     history.push(`/user/edit/${ev.currentTarget.dataset.id}`);
   };
 
-  const rowUser = (user: user) => {
+  const rowUser = (user: UserType) => {
     const id = user.id;
     return (
       <tr key={id}>

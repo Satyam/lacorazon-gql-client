@@ -2,14 +2,14 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import gql from 'graphql-tag';
 
-export type user = {
+export type UserType = {
   id?: string;
   nombre: string;
   email?: string;
 };
-export type users = user[];
-export type usersCache = {
-  users: users;
+export type UsersType = UserType[];
+export type UsersCacheType = {
+  users: UsersType;
 };
 
 export const LIST_USERS = gql`
@@ -23,7 +23,7 @@ export const LIST_USERS = gql`
 `;
 
 export function useListUsers() {
-  return useQuery<{ users: users }>(LIST_USERS);
+  return useQuery<{ users: UsersType }>(LIST_USERS);
 }
 
 export const GET_USER = gql`
@@ -37,7 +37,7 @@ export const GET_USER = gql`
 `;
 
 export function useGetUser(id: string | number) {
-  return useQuery<{ user: user }>(GET_USER, {
+  return useQuery<{ user: UserType }>(GET_USER, {
     variables: {
       id,
     },
@@ -55,21 +55,21 @@ export const CREATE_USER = gql`
 
 export function useCreateUser() {
   const [createUser, createStatus] = useMutation<{
-    createUser: user;
+    createUser: UserType;
   }>(CREATE_USER);
   return [
-    (values: user) =>
+    (values: UserType) =>
       createUser({
         variables: { ...values, password: values.nombre },
         update: (cache, { data }) => {
-          const cached: usersCache = cache.readQuery({
+          const cached: UsersCacheType = cache.readQuery({
             query: LIST_USERS,
           }) || { users: [] };
           cached.users.push({
             ...values,
             ...data.createUser,
           });
-          cached.users.sort((a: user, b: user) => {
+          cached.users.sort((a: UserType, b: UserType) => {
             if (a.nombre < b.nombre) return -1;
             if (a.nombre > b.nombre) return 1;
             return 0;
@@ -95,11 +95,12 @@ export const UPDATE_USER = gql`
 `;
 
 export function useUpdateUser() {
-  const [updateUser, updateStatus] = useMutation<{ updateUser: user }>(
+  const [updateUser, updateStatus] = useMutation<{ updateUser: UserType }>(
     UPDATE_USER
   );
   return [
-    (id: string, values: user) => updateUser({ variables: { id, ...values } }),
+    (id: string, values: UserType) =>
+      updateUser({ variables: { id, ...values } }),
     updateStatus,
   ] as const;
 }
@@ -123,7 +124,7 @@ export function useDeleteUser() {
       deleteUser({
         variables: { id },
         update: cache => {
-          const cached: usersCache = cache.readQuery({
+          const cached: UsersCacheType = cache.readQuery({
             query: LIST_USERS,
           }) || { users: [] };
           cache.writeQuery({
