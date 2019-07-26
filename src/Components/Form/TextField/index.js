@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { FormGroup, Label, FormFeedback, FormText, Col } from 'reactstrap';
-import { Field as KField, ErrorMessage } from 'formik';
+import { Field as KField, ErrorMessage, useFormikContext } from 'formik';
 import classNames from 'classnames';
 import invariant from 'invariant';
-
-import { useFormik } from '../shared';
 
 let counter = 0;
 /**
@@ -14,7 +12,7 @@ let counter = 0;
 export default function TextField({ name, label, id, rows, help, ...rest }) {
   invariant(name, 'TextField: name argument is mandatory');
 
-  const { errors, touched } = useFormik();
+  const { errors, touched } = useFormikContext();
   const invalid = errors[name] && touched[name];
   const [actualId] = useState(id || `F_TF_${counter}`);
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;

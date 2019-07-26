@@ -1,12 +1,12 @@
 import React from 'react';
 import { Button } from 'reactstrap';
-import { useFormik } from '../shared';
+import { useFormikContext } from 'formik';
 
 export default function SubmitButton({
   component: Component = Button,
   ...rest
 }) {
-  const { isSubmitting, isValid, dirty } = useFormik();
+  const { isSubmitting, isValid, dirty } = useFormikContext();
   return (
     <Component
       type="submit"

@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { FormGroup, Label, FormFeedback, FormText, Col } from 'reactstrap';
-import { ErrorMessage } from 'formik';
+import { ErrorMessage, useFormikContext } from 'formik';
 import invariant from 'invariant';
 import DatePicker from 'react-datepicker';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import classNames from 'classnames';
 
-import { useFormik } from '../shared';
 import { useIntl } from 'Components/intl';
 
 let counter = 0;
@@ -31,7 +30,7 @@ export default function DateField({
     setFieldTouched,
     setFieldValue,
     validationSchema,
-  } = useFormik();
+  } = useFormikContext();
   const { locale } = useIntl();
   useEffect(() => {
     registerField(name, {

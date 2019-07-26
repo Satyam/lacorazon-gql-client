@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { FormGroup, Label, FormFeedback, FormText, Col } from 'reactstrap';
-import { Field as KField, ErrorMessage } from 'formik';
+import { Field as KField, ErrorMessage, useFormikContext } from 'formik';
 import classNames from 'classnames';
 import invariant from 'invariant';
-
-import { useFormik } from '../shared';
 
 let counter = 0;
 
@@ -22,7 +20,7 @@ export default function DropdownField({
   invariant(name, 'DropdownField: name argument is mandatory');
   invariant(options, 'DropdownField: options argument is mandatory');
 
-  const { errors, touched } = useFormik();
+  const { errors, touched } = useFormikContext();
   const invalid = errors[name] && touched[name];
   const [actualId] = useState(id || `F_DDF_${counter}`);
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
