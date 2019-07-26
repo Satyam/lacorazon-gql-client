@@ -13,7 +13,7 @@ import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
 import { confirmDelete } from 'Components/shared';
 
-import { useListUsers, useDeleteUser } from './actions';
+import { useListUsers, useDeleteUser, users, user } from './actions';
 
 export default function ListUsers() {
   const { history } = useReactRouter();
@@ -23,25 +23,25 @@ export default function ListUsers() {
   if (loading) return <Loading>Cargando usuarios</Loading>;
   if (deleteStatus.loading) return <Loading>Borrando usuario</Loading>;
 
-  const onAdd = ev => {
+  const onAdd: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
     history.push(`/user/new`);
   };
-  const onShow = ev => {
+  const onShow: React.MouseEventHandler<HTMLTableCellElement> = ev => {
     ev.stopPropagation();
     history.push(`/user/${ev.currentTarget.dataset.id}`);
   };
-  const onDelete = ev => {
+  const onDelete: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
     const { nombre, id } = ev.currentTarget.dataset;
-    confirmDelete(`al usuario ${nombre}`, () => deleteUser(id));
+    confirmDelete(`al usuario ${nombre}`, () => deleteUser(id as string));
   };
-  const onEdit = ev => {
+  const onEdit: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
     history.push(`/user/edit/${ev.currentTarget.dataset.id}`);
   };
 
-  const rowUser = user => {
+  const rowUser = (user: user) => {
     const id = user.id;
     return (
       <tr key={id}>
