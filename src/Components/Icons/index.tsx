@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'reactstrap';
+import { Button, ButtonProps } from 'reactstrap';
 import classNames from 'classnames/bind';
 import {
   FaPlusCircle,
@@ -15,6 +15,9 @@ import {
 
 import styles from './styles.module.css';
 
+type MyButtonProps = {
+  color?: BootstrapColor;
+} & Omit<ButtonProps, 'color'>;
 const cx = classNames.bind(styles);
 
 export const Icon: React.FC<{
@@ -49,18 +52,13 @@ export const IconAdd: React.FC<{ color?: BootstrapColor }> = ({
   ...props
 }) => <Icon Component={FaPlusCircle} {...props} />;
 
-export const ButtonIconAdd: React.FC<{
-  color?: BootstrapColor;
-  title?: string;
-  className?: string;
-}> = ({
+export const ButtonIconAdd: React.FC<MyButtonProps> = ({
   children,
   color = 'primary',
   title = 'Agregar',
-  className,
   ...props
 }) => (
-  <Button color={color} className={className} title={title} {...props}>
+  <Button color={color} title={title} {...props}>
     <FaPlusCircle />
     <span className={styles.label}>{children}</span>
   </Button>
@@ -71,18 +69,13 @@ export const IconDelete: React.FC<{ color?: BootstrapColor }> = ({
   ...props
 }) => <Icon Component={FaRegTrashAlt} {...props} />;
 
-export const ButtonIconDelete: React.FC<{
-  color?: BootstrapColor;
-  title?: string;
-  className?: string;
-}> = ({
+export const ButtonIconDelete: React.FC<MyButtonProps> = ({
   children,
   color = 'danger',
   title = 'Borrar',
-  className,
   ...props
 }) => (
-  <Button color={color} className={className} title={title} {...props}>
+  <Button color={color} title={title} {...props}>
     <FaRegTrashAlt />
     <span className={styles.label}>{children}</span>
   </Button>
@@ -93,18 +86,13 @@ export const IconEdit: React.FC<{ color?: BootstrapColor }> = ({
   ...props
 }) => <Icon Component={FaRegEdit} {...props} />;
 
-export const ButtonIconEdit: React.FC<{
-  color?: BootstrapColor;
-  title?: string;
-  className?: string;
-}> = ({
+export const ButtonIconEdit: React.FC<MyButtonProps> = ({
   children,
   color = 'secondary',
   title = 'Modificar',
-  className,
   ...props
 }) => (
-  <Button color={color} className={className} title={title} {...props}>
+  <Button color={color} title={title} {...props}>
     <FaRegEdit />
     <span className={styles.label}>{children}</span>
   </Button>
@@ -115,18 +103,13 @@ export const IconView: React.FC<{ color?: BootstrapColor }> = ({
   ...props
 }) => <Icon Component={FaEye} {...props} />;
 
-export const ButtonIconView: React.FC<{
-  color?: BootstrapColor;
-  title?: string;
-  className?: string;
-}> = ({
+export const ButtonIconView: React.FC<MyButtonProps> = ({
   children,
   color = 'info',
   title = 'Ver detalle',
-  className,
   ...props
 }) => (
-  <Button color={color} className={className} title={title} {...props}>
+  <Button color={color} title={title} {...props}>
     <FaEye />
     <span className={styles.label}>{children}</span>
   </Button>
@@ -137,18 +120,12 @@ export const IconCheck: React.FC<{ color?: BootstrapColor }> = ({
   ...props
 }) => <Icon Component={FaCheckCircle} {...props} />;
 
-export const ButtonIconCheck: React.FC<{
-  color?: BootstrapColor;
-  title?: string;
-  className?: string;
-}> = ({
+export const ButtonIconCheck: React.FC<MyButtonProps> = ({
   children,
   color = 'success',
-
-  className,
   ...props
 }) => (
-  <Button color={color} className={className} {...props}>
+  <Button color={color} {...props}>
     <FaCheckCircle />
     <span className={styles.label}>{children}</span>
   </Button>
@@ -159,18 +136,12 @@ export const IconNotCheck: React.FC<{ color?: BootstrapColor }> = ({
   ...props
 }) => <Icon Component={FaTimesCircle} {...props} />;
 
-export const ButtonIconNotCheck: React.FC<{
-  color?: BootstrapColor;
-  title?: string;
-  className?: string;
-}> = ({
+export const ButtonIconNotCheck: React.FC<MyButtonProps> = ({
   children,
   color = 'warning',
-
-  className,
   ...props
 }) => (
-  <Button color={color} className={className} {...props}>
+  <Button color={color} {...props}>
     <FaTimesCircle />
     <span className={styles.label}>{children}</span>
   </Button>
@@ -181,18 +152,13 @@ export const IconCalendar: React.FC<{ color?: BootstrapColor }> = ({
   ...props
 }) => <Icon Component={FaCalendarAlt} {...props} />;
 
-export const ButtonIconCalendar: React.FC<{
-  color?: BootstrapColor;
-  title?: string;
-  className?: string;
-}> = ({
+export const ButtonIconCalendar: React.FC<MyButtonProps> = ({
   children,
   color = 'secondary',
   title = 'Calendario',
-  className,
   ...props
 }) => (
-  <Button color={color} className={className} title={title} {...props}>
+  <Button color={color} title={title} {...props}>
     <FaCalendarAlt />
     <span className={styles.label}>{children}</span>
   </Button>
@@ -210,7 +176,7 @@ export const IconStop: React.FC<{ color?: BootstrapColor }> = ({
 
 export const ButtonSet: React.FC<{
   className?: string;
-  size: BootstrapSize;
+  size?: BootstrapSize;
 }> = ({ className, children, size, ...rest }) => (
   <div className={cx('buttonSet', { [`btn-group-${size}`]: size }, className)}>
     {children}
