@@ -1,7 +1,38 @@
 import React, { useState, cloneElement, Children } from 'react';
 import invariant from 'invariant';
+import { Button } from 'reactstrap';
+import { FaCaretUp, FaCaretDown } from 'react-icons/fa';
+import classNames from 'classnames';
 
-import { AccordionPanelProps } from './AccordionPanel';
+type AccordionPanelProps = {
+  label: string;
+  name: string;
+  open?: boolean;
+};
+
+export const AccordionPanel: React.FC<AccordionPanelProps> = ({
+  label,
+  name,
+  open,
+  children,
+}) => (
+  <div className="card">
+    <div className="card-header p-0">
+      <Button color="secondary" size="sm" block data-name={name}>
+        {label}
+        {open ? (
+          <FaCaretUp className="float-right" />
+        ) : (
+          <FaCaretDown className="float-right" />
+        )}
+      </Button>
+    </div>
+
+    <div className={classNames('collapse', { show: open })}>
+      {open && <div className="card-body p-1">{children} </div>}
+    </div>
+  </div>
+);
 
 type AccordionProps = {
   mutuallyExclusive?: boolean;
@@ -9,7 +40,8 @@ type AccordionProps = {
   initiallyOpen?: string[];
   children: React.ReactElement<AccordionPanelProps>[];
 };
-const Accordion = ({
+
+export const Accordion = ({
   mutuallyExclusive = true,
   allClose = true,
   initiallyOpen = [],
@@ -18,6 +50,7 @@ const Accordion = ({
   const [nowOpen, setOpen] = useState<string[]>(initiallyOpen);
 
   const elements = Children.toArray(children);
+
   invariant(elements.length > 1, 'Accordion should have multiple panels');
 
   if (mutuallyExclusive && nowOpen.length > 1) {
@@ -54,5 +87,3 @@ const Accordion = ({
     </div>
   );
 };
-
-export default Accordion;
