@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { FormGroup, Label, FormFeedback, FormText, Col } from 'reactstrap';
-import { Field as KField, ErrorMessage, useFormikContext } from 'formik';
+import { Field as KField, ErrorMessage, useField } from 'formik';
 import classNames from 'classnames';
 import invariant from 'invariant';
 
@@ -9,11 +9,16 @@ let counter = 0;
 /**
  * Produces a labeled input box within form
  */
-export default function TextField({ name, label, id, rows, help, ...rest }) {
+const TextField: React.FC<{
+  name: string;
+  label?: string;
+  id?: string;
+  rows?: number;
+  help?: string;
+}> = ({ name, label, id, rows, help, ...rest }) => {
   invariant(name, 'TextField: name argument is mandatory');
 
-  const { errors, touched } = useFormikContext();
-  const invalid = errors[name] && touched[name];
+  const { error, touched } = useField(name)[1];
   const [actualId] = useState(id || `F_TF_${counter}`);
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
 
@@ -26,7 +31,7 @@ export default function TextField({ name, label, id, rows, help, ...rest }) {
         <KField
           as={rows ? 'textarea' : 'input'}
           className={classNames('form-control', {
-            'is-invalid': invalid,
+            'is-invalid': error && touched,
           })}
           rows={rows}
           name={name}
@@ -38,7 +43,7 @@ export default function TextField({ name, label, id, rows, help, ...rest }) {
       </Col>
     </FormGroup>
   );
-}
+};
 
 TextField.propTypes = {
   /**
@@ -69,5 +74,7 @@ TextField.propTypes = {
   /**
    * Any other properties will be passed on to the `<input>` or `<textarea>` elements
    */
-  '...rest': PropTypes.object,
+  // '...rest': PropTypes.object,
 };
+
+export default TextField;

@@ -15,7 +15,7 @@ import {
 
 import styles from './styles.module.css';
 
-type MyButtonProps = {
+export type MyButtonProps = {
   color?: BootstrapColor;
 } & Omit<ButtonProps, 'color'>;
 const cx = classNames.bind(styles);
