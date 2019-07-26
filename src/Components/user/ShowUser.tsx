@@ -17,7 +17,7 @@ const ShowUser = ({ match }: RouteComponentProps<{ id: string }>) => {
   const { loading, error, data } = useGetUser(id);
   if (loading) return <Loading>Cargando usuario</Loading>;
 
-  const user = data.user;
+  const user = data && data.user;
   return (
     <Page
       title={`Vendedor - ${user ? user.nombre : '??'}`}
