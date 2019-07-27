@@ -1,6 +1,6 @@
 import React from 'react';
 import useReactRouter from 'use-react-router';
-
+import { RouteComponentProps } from 'react-router-dom';
 import { Alert } from 'reactstrap';
 import Loading from 'Components/Loading';
 import { Form, TextField, SubmitButton } from 'Components/Form';
@@ -14,11 +14,14 @@ import {
   useCreateUser,
   useUpdateUser,
   useDeleteUser,
+  UserType,
 } from './actions';
 
 import userSchema from './validation';
 
-export default function EditUser({ match }) {
+export default function EditUser({
+  match,
+}: RouteComponentProps<{ id: string }>) {
   const id = match.params.id;
   const { history } = useReactRouter();
   const { loading, error, data } = useGetUser(id);
@@ -31,7 +34,7 @@ export default function EditUser({ match }) {
   if (updateStatus.loading) return <Loading>Actualizando usuario</Loading>;
   if (deleteStatus.loading) return <Loading>Borrando usuario</Loading>;
 
-  const user = (data && data.user) || {};
+  const user = data ? data.user : ({} as UserType);
 
   return (
     <Page
@@ -44,13 +47,17 @@ export default function EditUser({ match }) {
         ) : (
           <Form
             values={user}
-            onSubmit={values => {
+            onSubmit={(values: UserType) => {
               if (id) {
-                updateUser(id, values);
+                return updateUser(id, values);
               } else {
-                createUser({ ...values, password: values.nombre }).then(
-                  ({ data }) => {
-                    history.replace(`/user/edit/${data.createUser.id}`);
+                return createUser({ ...values, password: values.nombre }).then(
+                  // https://github.com/apollographql/react-apollo/issues/2095
+                  status => {
+                    if (status && status.data)
+                      history.replace(
+                        `/user/edit/${status.data.createUser.id}`
+                      );
                   }
                 );
               }
@@ -65,7 +72,7 @@ export default function EditUser({ match }) {
               </SubmitButton>
               <ButtonIconDelete
                 disabled={!id}
-                onClick={ev => {
+                onClick={(ev: React.MouseEvent<HTMLButtonElement>) => {
                   ev.stopPropagation();
                   confirmDelete(`al usuario ${user.nombre}`, () =>
                     deleteUser(id).then(() => history.replace('/users'))

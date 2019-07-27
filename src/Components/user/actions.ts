@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 
 export type UserType = {
   id?: string;
-  nombre: string;
+  nombre?: string;
   email?: string;
 };
 export type UsersType = UserType[];
@@ -58,7 +58,7 @@ export function useCreateUser() {
     createUser: UserType;
   }>(CREATE_USER);
   return [
-    (values: UserType) =>
+    (values: UserType & { password?: string }) =>
       createUser({
         variables: { ...values, password: values.nombre },
         update: (cache, { data }) => {
@@ -70,8 +70,8 @@ export function useCreateUser() {
             ...data.createUser,
           });
           cached.users.sort((a: UserType, b: UserType) => {
-            if (a.nombre < b.nombre) return -1;
-            if (a.nombre > b.nombre) return 1;
+            if (a.nombre! < b.nombre!) return -1;
+            if (a.nombre! > b.nombre!) return 1;
             return 0;
           });
           cache.writeQuery({
@@ -99,7 +99,7 @@ export function useUpdateUser() {
     UPDATE_USER
   );
   return [
-    (id: string, values: UserType) =>
+    (id: string, values: UserType & { password?: string }) =>
       updateUser({ variables: { id, ...values } }),
     updateStatus,
   ] as const;
