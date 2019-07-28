@@ -17,7 +17,12 @@ const LabeledText: React.FC<{
     </Label>
     <Col xs={12} lg={8}>
       <div
-        className={cx('form-control', { 'labeled-pre': pre }, className)}
+        className={cx(
+          'form-control',
+          'readonly',
+          { 'labeled-pre': pre },
+          className
+        )}
         {...rest}
       >
         {value}

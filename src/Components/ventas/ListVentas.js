@@ -8,7 +8,7 @@ import {
   ButtonIconDelete,
 } from 'Components/Icons';
 import { ButtonGroup } from 'reactstrap';
-import { MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
+import { FaRegCheckSquare, FaRegSquare } from 'react-icons/fa';
 import { useIntl } from 'Components/intl';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
@@ -78,7 +78,7 @@ export default function ListVentas({ idVendedor, nombreVendedor, wide }) {
         <td align="right">{venta.cantidad}</td>
         <td align="right">{formatCurrency(venta.precioUnitario)}</td>
         <td align="center">
-          {venta.iva ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
+          {venta.iva ? <FaRegCheckSquare /> : <FaRegSquare />}
         </td>
         <td align="right">
           {formatCurrency(venta.cantidad * venta.precioUnitario)}

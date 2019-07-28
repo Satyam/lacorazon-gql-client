@@ -2,3 +2,7 @@
   white-space: pre-line;
   height: auto;
 }
+.readonly {
+  background-color: var(--light);
+  border: none;
+}
