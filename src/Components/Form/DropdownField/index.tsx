@@ -1,12 +1,28 @@
 import React, { useState } from 'react';
-import { FormGroup, Label, FormFeedback, FormText, Col } from 'reactstrap';
-import { Field as KField, ErrorMessage, useFormikContext } from 'formik';
-import classNames from 'classnames';
+import {
+  FormGroup,
+  Label,
+  FormFeedback,
+  FormText,
+  Col,
+  Input,
+} from 'reactstrap';
+import { ErrorMessage, useField } from 'formik';
 import invariant from 'invariant';
 
 let counter = 0;
 
-export default function DropdownField({
+const DropdownField: React.FC<{
+  name: string;
+  optValue: string;
+  optLabel: string;
+  options: { [index: string]: string | number }[];
+  noOption: boolean;
+  label?: string;
+  id?: string;
+  rows?: number;
+  help?: string;
+}> = ({
   name,
   label,
   id,
@@ -16,12 +32,11 @@ export default function DropdownField({
   help,
   noOption,
   ...rest
-}) {
+}) => {
   invariant(name, 'DropdownField: name argument is mandatory');
   invariant(options, 'DropdownField: options argument is mandatory');
 
-  const { errors, touched } = useFormikContext();
-  const invalid = errors[name] && touched[name];
+  const [fieldProps, meta] = useField(name);
   const [actualId] = useState(id || `F_DDF_${counter}`);
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
 
@@ -31,13 +46,12 @@ export default function DropdownField({
         {label}
       </Label>
       <Col xs={12} lg={8}>
-        <KField
-          as={'select'}
-          className={classNames('form-control', {
-            'is-invalid': invalid,
-          })}
+        <Input
+          type="select"
+          invalid={!!meta.error && meta.touched}
           name={name}
           id={actualId}
+          {...fieldProps}
           {...rest}
         >
           {noOption && (
@@ -51,11 +65,13 @@ export default function DropdownField({
               {o[optLabel]}
             </option>
           ))}
-        </KField>
+        </Input>
 
         {help && <FormText>{help}</FormText>}
         <ErrorMessage name={name} component={FormFeedback} />
       </Col>
     </FormGroup>
   );
-}
+};
+
+export default DropdownField;

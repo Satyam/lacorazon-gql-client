@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, Label, FormFeedback, FormText, Col } from 'reactstrap';
-import { Field as KField, ErrorMessage, useField } from 'formik';
-import classNames from 'classnames';
+import {
+  FormGroup,
+  Label,
+  FormFeedback,
+  FormText,
+  Col,
+  Input,
+} from 'reactstrap';
+import { ErrorMessage, useField } from 'formik';
 import invariant from 'invariant';
 
 let counter = 0;
@@ -18,7 +24,7 @@ const TextField: React.FC<{
 }> = ({ name, label, id, rows, help, ...rest }) => {
   invariant(name, 'TextField: name argument is mandatory');
 
-  const { error, touched } = useField(name)[1];
+  const [fieldProps, meta] = useField(name);
   const [actualId] = useState(id || `F_TF_${counter}`);
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
 
@@ -28,14 +34,12 @@ const TextField: React.FC<{
         {label}
       </Label>
       <Col xs={12} lg={8}>
-        <KField
-          as={rows ? 'textarea' : 'input'}
-          className={classNames('form-control', {
-            'is-invalid': error && touched,
-          })}
+        <Input
+          type={rows ? 'textarea' : 'text'}
+          invalid={meta.touched && !!meta.error}
           rows={rows}
-          name={name}
           id={actualId}
+          {...fieldProps}
           {...rest}
         />
         {help && <FormText>{help}</FormText>}
