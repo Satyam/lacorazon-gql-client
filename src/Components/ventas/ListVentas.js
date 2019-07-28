@@ -62,16 +62,19 @@ export default function ListVentas({ idVendedor, nombreVendedor, wide }) {
           {formatDate(venta.fecha)}
         </td>
         <td>{venta.concepto}</td>
-        {!idVendedor && (
-          <td
-            className="link"
-            onClick={onShowVendedor}
-            data-id={venta.vendedor.id}
-            title={`Ver detalle vendedor: \n${venta.vendedor.nombre}`}
-          >
-            {venta.vendedor.nombre}
-          </td>
-        )}
+        {!idVendedor &&
+          (venta.vendedor ? (
+            <td
+              className="link"
+              onClick={onShowVendedor}
+              data-id={venta.vendedor.id}
+              title={`Ver detalle vendedor: \n${venta.vendedor.nombre}`}
+            >
+              {venta.vendedor.nombre}
+            </td>
+          ) : (
+            <td>---</td>
+          ))}
         <td align="right">{venta.cantidad}</td>
         <td align="right">{formatCurrency(venta.precioUnitario)}</td>
         <td align="center">
