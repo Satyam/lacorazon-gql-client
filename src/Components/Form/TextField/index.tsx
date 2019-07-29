@@ -17,11 +17,12 @@ let counter = 0;
  */
 const TextField: React.FC<{
   name: string;
+  type?: string;
   label?: string;
   id?: string;
   rows?: number;
   help?: string;
-}> = ({ name, label, id, rows, help, ...rest }) => {
+}> = ({ name, type, label, id, rows, help, ...rest }) => {
   invariant(name, 'TextField: name argument is mandatory');
 
   const [fieldProps, meta] = useField(name);
@@ -35,7 +36,7 @@ const TextField: React.FC<{
       </Label>
       <Col xs={12} lg={8}>
         <Input
-          type={rows ? 'textarea' : 'text'}
+          type={type || rows ? 'textarea' : 'text'}
           invalid={meta.touched && !!meta.error}
           rows={rows}
           id={actualId}
