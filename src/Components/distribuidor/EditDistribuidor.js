@@ -16,7 +16,37 @@ import {
   useGetDistribuidor,
 } from './actions';
 
-import distribuidorSchema from 'Components/distribuidor/validation';
+import * as yup from 'yup';
+
+const distribuidorSchema = yup.object().shape({
+  nombre: yup
+    .string()
+    .required()
+    .trim()
+    .default(''),
+  localidad: yup
+    .string()
+    .trim()
+    .default(''),
+  contacto: yup
+    .string()
+    .trim()
+    .default(''),
+  telefono: yup
+    .string()
+    .trim()
+    .matches(/[\d\s\-()]+/, { excludeEmptyString: true })
+    .default(''),
+  email: yup
+    .string()
+    .trim()
+    .email()
+    .default(''),
+  direccion: yup
+    .string()
+    .trim()
+    .default(''),
+});
 
 export default function EditDistribuidor({ match }) {
   const id = match.params.id;

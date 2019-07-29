@@ -17,7 +17,19 @@ import {
   UserType,
 } from './actions';
 
-import userSchema from './validation';
+import * as yup from 'yup';
+
+const userSchema = yup.object().shape({
+  email: yup
+    .string()
+    .trim()
+    .email()
+    .default(''),
+  nombre: yup
+    .string()
+    .trim()
+    .default(''),
+});
 
 export default function EditUser({
   match,
