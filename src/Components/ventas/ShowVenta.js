@@ -1,7 +1,6 @@
 import React from 'react';
 import useReactRouter from 'use-react-router';
-import { LabeledText } from 'Components/Form';
-import { LabeledCheckbox } from 'Components/Form';
+import { LabeledText, LabeledCheckbox } from 'Components/Form';
 import Page from 'Components/Page';
 import Loading from 'Components/Loading';
 import { Alert } from 'reactstrap';
