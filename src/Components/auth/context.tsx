@@ -6,30 +6,31 @@ import React, {
   useCallback,
 } from 'react';
 
-import { useGetCurrentUser, useLogout } from './actions';
+import { useGetCurrentUser, useLogout, UserType } from './actions';
 import Loading from 'Components/Loading';
 import GqlError from 'Components/GqlError';
+import { ApolloQueryResult } from 'apollo-client';
 
-export const UserContext = createContext({});
+export const UserContext = createContext<{
+  currentUser?: UserType;
+  refreshCurrentUser: () => Promise<ApolloQueryResult<{
+    createUser: UserType;
+  }> | void>;
+  logout: () => Promise<void>;
+}>({
+  refreshCurrentUser: () => Promise.resolve(),
+  logout: () => Promise.resolve(),
+});
 
-export function AuthProvider({ children }) {
-  const {
-    loading,
-    error,
-    currentUser: originalUser,
-    refetch,
-  } = useGetCurrentUser();
+export const AuthProvider: React.FC<{}> = ({ children }) => {
+  const { loading, error, data, refetch } = useGetCurrentUser();
+  const originalUser = data && data.currentUser;
+
   const [currentUser, setCurrentUser] = useState(originalUser);
   const [doLogout, logoutStatus] = useLogout();
 
   const refreshCurrentUser = useCallback(
-    () =>
-      refetch().then(({ data, error }) => {
-        if (error) {
-          throw new Error('refreshCurrentUser failed (see console)');
-        }
-        return setCurrentUser(data.currentUser);
-      }),
+    () => refetch().then(({ data }) => setCurrentUser(data.currentUser)),
     [refetch, setCurrentUser]
   );
 
@@ -51,7 +52,7 @@ export function AuthProvider({ children }) {
       </UserContext.Provider>
     </GqlError>
   );
-}
+};
 
 export function useAuth() {
   return useContext(UserContext);

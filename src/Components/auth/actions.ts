@@ -1,6 +1,12 @@
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
+export type UserType = {
+  id?: string;
+  nombre?: string;
+  email?: string;
+};
+
 export const GET_CURRENT_USER = gql`
   query {
     currentUser {
@@ -12,7 +18,7 @@ export const GET_CURRENT_USER = gql`
 `;
 
 export function useGetCurrentUser() {
-  return useQuery(GET_CURRENT_USER);
+  return useQuery<{ currentUser: UserType }, void>(GET_CURRENT_USER);
 }
 
 export const LOGIN = gql`
@@ -23,9 +29,14 @@ export const LOGIN = gql`
   }
 `;
 
+type LoginType = { nombre: string; password: string };
+
 export function useLogin() {
-  const [login, loginStatus] = useMutation(LOGIN);
-  return [values => login({ variables: values }), loginStatus];
+  const [login, loginStatus] = useMutation<{ id: string }, LoginType>(LOGIN);
+  return [
+    (values: LoginType) => login({ variables: values }),
+    loginStatus,
+  ] as const;
 }
 
 export const LOGOUT = gql`
@@ -35,5 +46,5 @@ export const LOGOUT = gql`
 `;
 
 export function useLogout() {
-  return useMutation(LOGOUT);
+  return useMutation<{}, void>(LOGOUT);
 }

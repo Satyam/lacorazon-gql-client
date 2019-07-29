@@ -1,6 +1,6 @@
 import React from 'react';
 import useReactRouter from 'use-react-router';
-import { object, string } from 'yup';
+import * as yup from 'yup';
 
 import Loading from 'Components/Loading';
 import { Form, TextField, SubmitButton } from 'Components/Form';
@@ -11,22 +11,25 @@ import { useLogin } from './actions';
 import { useCreateUser } from 'Components/user/actions';
 import { useAuth } from './context';
 
-const loginSchema = object().shape({
-  nombre: string()
+const loginSchema = yup.object().shape({
+  nombre: yup
+    .string()
     .required()
     .trim()
     .default(''),
-  password: string()
+  password: yup
+    .string()
     .required()
     .trim()
     .default(''),
-  confirmPassword: string()
+  confirmPassword: yup
+    .string()
     .trim()
     .default(''),
 });
 
-export default function Login() {
-  const { history, match } = useReactRouter();
+const Login: React.FC<{}> = () => {
+  const { history, match } = useReactRouter<{ register?: string }>();
   const { refreshCurrentUser } = useAuth();
   const [login, loginStatus] = useLogin();
   const [createUser, createUserStatus] = useCreateUser();
@@ -48,30 +51,24 @@ export default function Login() {
                 return createUser({
                   nombre: values.nombre,
                   password: values.password,
-                }).then(({ error, data }) => {
-                  if (error) {
-                    return Promise.reject('Server error');
-                  }
-                  return data.createUser
+                }).then(status =>
+                  status && status.data
                     ? refreshCurrentUser().then(() => {
                         history.goBack();
                       })
-                    : Promise.reject('Duplicate user name');
-                });
+                    : Promise.reject('Duplicate user name')
+                );
               } else {
                 return Promise.reject('Confirmación no coincide');
               }
             } else {
-              return login(values).then(({ error, data }) => {
-                if (error) {
-                  return Promise.reject('Server error');
-                }
-                return data.login
+              return login(values).then(status =>
+                status && status.data
                   ? refreshCurrentUser().then(() => {
                       history.goBack();
                     })
-                  : Promise.reject('User name or password do not exist');
-              });
+                  : Promise.reject('User name or password do not exist')
+              );
             }
           }}
           schema={loginSchema}
@@ -92,4 +89,6 @@ export default function Login() {
       </GqlError>
     </Page>
   );
-}
+};
+
+export default Login;
