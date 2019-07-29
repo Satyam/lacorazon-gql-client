@@ -4,8 +4,8 @@ import { Formik, Form as KForm, FormikValues } from 'formik';
 import { Schema } from 'yup';
 
 const Form: React.FC<{
-  schema: Schema<any>;
-  values: FormikValues;
+  schema?: Schema<any>;
+  values?: FormikValues;
   onSubmit: (values: any) => any | Promise<any>;
   formProps?: any;
 }> = ({ schema, values, onSubmit, children, formProps, ...rest }) => (
