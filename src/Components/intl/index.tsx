@@ -36,8 +36,8 @@ export const IntlContext = createContext<intlType>({
 });
 
 export const IntlProvider: React.FC<{
-  locale: string;
-  currency: string;
+  locale?: string;
+  currency?: string;
 }> = ({ locale: l = navigator.language, currency: c = 'EUR', children }) => {
   const [locale, setLocale] = useState(l);
   const [currency, setCurrency] = useState(c);
