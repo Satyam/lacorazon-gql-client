@@ -53,7 +53,14 @@ export default function EditUser({
       title={`Vendedor - ${user ? user.nombre : 'nuevo'}`}
       heading={`${id ? 'Edit' : 'Add'} Vendedor`}
     >
-      <GqlError error={[error, createStatus, updateStatus, deleteStatus]}>
+      <GqlError
+        error={[
+          error,
+          createStatus.error,
+          updateStatus.error,
+          deleteStatus.error,
+        ]}
+      >
         {id && !user ? (
           <Alert color="danger">El usuario no existe o fue borrado</Alert>
         ) : (

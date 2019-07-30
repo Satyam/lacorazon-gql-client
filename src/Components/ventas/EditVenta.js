@@ -68,10 +68,10 @@ export default function EditVenta({ match }) {
       <GqlError
         error={[
           error,
-          optionVendedoresStatus,
-          createStatus,
-          updateStatus,
-          deleteStatus,
+          optionVendedoresStatus.error,
+          createStatus.error,
+          updateStatus.error,
+          deleteStatus.error,
         ]}
       >
         {id && !venta ? (

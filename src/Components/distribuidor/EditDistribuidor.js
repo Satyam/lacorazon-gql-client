@@ -68,7 +68,7 @@ export default function EditDistribuidor({ match }) {
       title={`Distribuidor - ${distribuidor ? distribuidor.nombre : 'nuevo'}`}
       heading={`${id ? 'Edit' : 'Add'} Distribuidor`}
     >
-      <GqlError error={[error, createStatus, updateStatus, deleteStatus]}>
+      <GqlError error={[error, createStatus.error, updateStatus.error, deleteStatus.error]}>
         {id && !distribuidor ? (
           <Alert color="danger">El distribuidor no existe o fue borrado</Alert>
         ) : (

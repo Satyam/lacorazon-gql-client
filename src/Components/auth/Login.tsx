@@ -40,7 +40,7 @@ const Login: React.FC<{}> = () => {
       title={register ? 'Registro' : 'Login'}
       heading={register ? 'Registro' : 'Login'}
     >
-      <GqlError error={[loginStatus, createUserStatus]}>
+      <GqlError error={[loginStatus.error, createUserStatus.error]}>
         {(loginStatus.loading || createUserStatus.loading) && (
           <Loading>{register ? 'Registrando' : 'Confirmando'} usuario</Loading>
         )}

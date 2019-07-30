@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<{}> = ({ children }) => {
   if (loading) return <Loading>Current User</Loading>;
   if (logoutStatus.loading) return <Loading>Logging out</Loading>;
   return (
-    <GqlError error={[error, logoutStatus]}>
+    <GqlError error={[error, logoutStatus.error]}>
       <UserContext.Provider value={{ currentUser, refreshCurrentUser, logout }}>
         {children}
       </UserContext.Provider>

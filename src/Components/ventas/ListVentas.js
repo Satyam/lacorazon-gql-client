@@ -111,7 +111,7 @@ export default function ListVentas({ idVendedor, nombreVendedor, wide }) {
         </ButtonIconAdd>
       }
     >
-      <GqlError error={[error, deleteStatus]}>
+      <GqlError error={[error, deleteStatus.error]}>
         <Table striped hover size="sm" responsive>
           <thead>
             <tr>

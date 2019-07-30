@@ -92,7 +92,7 @@ export default function ListDistribuidores() {
         </ButtonIconAdd>
       }
     >
-      <GqlError error={[error, deleteStatus]}>
+      <GqlError error={[error, deleteStatus.error]}>
         <Table striped hover size="sm" responsive>
           <thead>
             <tr>

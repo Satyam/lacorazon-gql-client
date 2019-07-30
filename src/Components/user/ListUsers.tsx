@@ -15,7 +15,7 @@ import { confirmDelete } from 'Components/shared';
 
 import { useListUsers, useDeleteUser, UserType } from './actions';
 
-export default function ListUsers() {
+const ListUsers: React.FC<{}> = () => {
   const { history } = useReactRouter();
   const { loading, error, data } = useListUsers();
   const [deleteUser, deleteStatus] = useDeleteUser();
@@ -81,7 +81,7 @@ export default function ListUsers() {
         </ButtonIconAdd>
       }
     >
-      <GqlError error={[error, deleteStatus]}>
+      <GqlError error={[error, deleteStatus.error]}>
         <Table striped hover size="sm" responsive>
           <thead>
             <tr>
@@ -95,4 +95,6 @@ export default function ListUsers() {
       </GqlError>
     </Page>
   );
-}
+};
+
+export default ListUsers;
