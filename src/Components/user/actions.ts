@@ -23,7 +23,7 @@ export const LIST_USERS = gql`
 `;
 
 export function useListUsers() {
-  return useQuery<{ users: UsersType }>(LIST_USERS);
+  return useQuery<{ users: UsersType }, void>(LIST_USERS);
 }
 
 export const GET_USER = gql`
@@ -37,7 +37,7 @@ export const GET_USER = gql`
 `;
 
 export function useGetUser(id: string | number) {
-  return useQuery<{ user: UserType }>(GET_USER, {
+  return useQuery<{ user: UserType }, {id: string| number}>(GET_USER, {
     variables: {
       id,
     },
@@ -56,7 +56,7 @@ export const CREATE_USER = gql`
 export function useCreateUser() {
   const [createUser, createStatus] = useMutation<{
     createUser: UserType;
-  }>(CREATE_USER);
+  }, UserType & { password?: string }>(CREATE_USER);
   return [
     (values: UserType & { password?: string }) =>
       createUser({
@@ -95,7 +95,7 @@ export const UPDATE_USER = gql`
 `;
 
 export function useUpdateUser() {
-  const [updateUser, updateStatus] = useMutation<{ updateUser: UserType }>(
+  const [updateUser, updateStatus] = useMutation<{ updateUser: UserType }, UserType & { password?: string }>(
     UPDATE_USER
   );
   return [
@@ -117,8 +117,8 @@ export function useDeleteUser() {
   const [deleteUser, deleteStatus] = useMutation<{
     deleteUser: {
       id: string;
-    };
-  }>(DELETE_USER);
+    }
+  }, {id: string}>(DELETE_USER);
   return [
     (id: string) =>
       deleteUser({
