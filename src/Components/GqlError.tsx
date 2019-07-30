@@ -1,7 +1,6 @@
 import React from 'react';
 import { Alert } from 'reactstrap';
 import { ApolloError } from 'apollo-client';
-import { QueryResult, MutationResult } from '@apollo/react-common';
 
 const GqlError: React.FC<{
   error?: ApolloError | (ApolloError | undefined)[];
