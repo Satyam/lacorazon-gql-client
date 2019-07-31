@@ -10,22 +10,21 @@ import { useIntl } from 'Components/intl';
 
 import { useGetVenta } from './actions';
 
-export default function ShowVenta({ match }) {
+export default function ShowVenta() {
+  const { history, match } = useReactRouter<{ id?: string }>();
   const id = match.params.id;
-  const { loading, error, data } = useGetVenta(id);
+  const { loading, error, venta } = useGetVenta(id);
   const { formatDate, formatCurrency } = useIntl();
-  const { history } = useReactRouter();
 
   if (loading) return <Loading>Cargando venta</Loading>;
 
-  const venta = data.venta;
-  const onShowVendedor = ev => {
+  const vendedor = (venta && venta.vendedor) || { nombre: '', id: '' };
+  const onShowVendedor: React.MouseEventHandler<HTMLDivElement> = ev => {
     ev.stopPropagation();
     history.push(`/user/${ev.currentTarget.dataset.id}`);
   };
-  venta.vendedor = venta.vendedor || { nombre: '' };
   return (
-    <Page title={`Venta - ${venta ? venta.nombre : '??'}`} heading={`Venta`}>
+    <Page title={`Venta - ${venta ? venta.fecha : '??'}`} heading={`Venta`}>
       <GqlError error={error}>
         {venta ? (
           <>
@@ -33,9 +32,9 @@ export default function ShowVenta({ match }) {
             <LabeledText label="Concepto" value={venta.concepto} />
             <LabeledText
               label="Vendedor"
-              value={venta.vendedor.nombre}
-              data-id={venta.vendedor.id}
-              onClick={venta.vendedor.id && onShowVendedor}
+              value={vendedor.nombre}
+              data-id={vendedor.id}
+              onClick={vendedor.id ? onShowVendedor : undefined}
               className="link"
             />
             <LabeledText label="Cantidad" value={venta.cantidad} />
@@ -46,7 +45,7 @@ export default function ShowVenta({ match }) {
             />
             <LabeledText
               label="Precio Total"
-              value={formatCurrency(venta.precioUnitario * venta.cantidad)}
+              value={formatCurrency(venta.precioUnitario! * venta.cantidad!)}
             />
           </>
         ) : (

@@ -15,40 +15,44 @@ import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
 import { confirmDelete } from 'Components/shared';
 
-import { useListVentas, useDeleteVenta } from './actions';
+import { useListVentas, useDeleteVenta, VentaType } from './actions';
 
-export default function ListVentas({ idVendedor, nombreVendedor, wide }) {
+const ListVentas: React.FC<{
+  idVendedor?: string;
+  nombreVendedor?: string;
+  wide?: boolean;
+}> = ({ idVendedor, nombreVendedor, wide }) => {
   const { history } = useReactRouter();
-  const { loading, error, data } = useListVentas(idVendedor);
+  const { loading, error, ventas } = useListVentas(idVendedor);
   const [deleteVenta, deleteStatus] = useDeleteVenta();
   const { formatDate, formatCurrency } = useIntl();
 
   if (loading) return <Loading>Cargando ventas</Loading>;
   if (deleteStatus.loading) return <Loading>Borrando venta</Loading>;
 
-  const onAdd = ev => {
+  const onAdd: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
     history.push('/venta/new');
   };
-  const onShow = ev => {
+  const onShow: React.MouseEventHandler<HTMLElement> = ev => {
     ev.stopPropagation();
     history.push(`/venta/${ev.currentTarget.dataset.id}`);
   };
-  const onDelete = ev => {
+  const onDelete: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
     const { fecha, id } = ev.currentTarget.dataset;
-    confirmDelete(`la venta del ${fecha}`, () => deleteVenta(id));
+    confirmDelete(`la venta del ${fecha}`, () => deleteVenta(id!));
   };
-  const onEdit = ev => {
+  const onEdit: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
     history.push(`/venta/edit/${ev.currentTarget.dataset.id}`);
   };
 
-  const onShowVendedor = ev => {
+  const onShowVendedor: React.MouseEventHandler<HTMLElement> = ev => {
     ev.stopPropagation();
     history.push(`/user/${ev.currentTarget.dataset.id}`);
   };
-  const rowVenta = venta => {
+  const rowVenta = (venta: VentaType) => {
     const id = venta.id;
     return (
       <tr key={id}>
@@ -81,7 +85,7 @@ export default function ListVentas({ idVendedor, nombreVendedor, wide }) {
           {venta.iva ? <FaRegCheckSquare /> : <FaRegSquare />}
         </td>
         <td align="right">
-          {formatCurrency(venta.cantidad * venta.precioUnitario)}
+          {formatCurrency(venta.cantidad! * venta.precioUnitario!)}
         </td>
         <td>
           <ButtonGroup size="sm">
@@ -98,11 +102,9 @@ export default function ListVentas({ idVendedor, nombreVendedor, wide }) {
     );
   };
 
-  const ventas = data ? data.ventas : [];
-
   return (
     <Page
-      title={!idVendedor && 'Ventas'}
+      title={idVendedor ? undefined : 'Ventas'}
       heading={nombreVendedor ? `Ventas de ${nombreVendedor}` : 'Ventas'}
       wide={wide}
       action={
@@ -125,9 +127,11 @@ export default function ListVentas({ idVendedor, nombreVendedor, wide }) {
               <th />
             </tr>
           </thead>
-          <tbody>{ventas.map(rowVenta)}</tbody>
+          <tbody>{(ventas || []).map(rowVenta)}</tbody>
         </Table>
       </GqlError>
     </Page>
   );
-}
+};
+
+export default ListVentas;

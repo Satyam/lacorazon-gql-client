@@ -41,10 +41,10 @@ const ventaSchema = object().shape({
   precioUnitario: number().default(10),
 });
 
-export default function EditVenta({ match }) {
+export default function EditVenta() {
+  const { history, match } = useReactRouter<{ id?: string }>();
   const id = match.params.id;
-  const { history } = useReactRouter();
-  const { loading, error, data } = useGetVenta(id);
+  const { loading, error, venta } = useGetVenta(id);
   const optionVendedoresStatus = useOptionsVendedores();
   const [createVenta, createStatus] = useCreateVenta();
   const [updateVenta, updateStatus] = useUpdateVenta();
@@ -58,11 +58,10 @@ export default function EditVenta({ match }) {
   if (updateStatus.loading) return <Loading>Actualizando venta</Loading>;
   if (deleteStatus.loading) return <Loading>Borrando venta</Loading>;
 
-  const venta = (data && data.venta) || {};
-  venta.vendedor = venta.vendedor || { id: '' };
+  if (venta) venta.vendedor = venta.vendedor || { id: '' };
   return (
     <Page
-      title={`Venta - ${venta ? venta.nombre : 'nuevo'}`}
+      title={`Venta - ${venta ? venta.fecha : 'nuevo'}`}
       heading={`${id ? 'Edit' : 'Add'} Venta`}
     >
       <GqlError
@@ -81,11 +80,12 @@ export default function EditVenta({ match }) {
             values={venta}
             onSubmit={values => {
               values.idVendedor = values.vendedor.id;
+              delete values.vendedor;
               if (id) {
-                updateVenta(id, values);
+                return updateVenta(id, values);
               } else {
-                createVenta(values).then(({ data }) => {
-                  history.replace(`/venta/edit/${data.createVenta.id}`);
+                return createVenta(values).then(id => {
+                  history.replace(`/venta/edit/${id}`);
                 });
               }
             }}
@@ -93,12 +93,14 @@ export default function EditVenta({ match }) {
           >
             <DateField name="fecha" label="Fecha" />
             <TextField name="concepto" label="Concepto" />
-            <DropdownField
-              name="vendedor.id"
-              label="Vendedor"
-              noOption={!id}
-              options={optionVendedoresStatus.data.users}
-            />
+            {optionVendedoresStatus.optionsVendedores && (
+              <DropdownField
+                name="vendedor.id"
+                label="Vendedor"
+                noOption={!id}
+                options={optionVendedoresStatus.optionsVendedores}
+              />
+            )}
             <TextField name="cantidad" label="Cantidad" />
             <CheckboxField name="iva" label="IVA" />
             <TextField name="precioUnitario" label="Precio Unitario" />
@@ -106,17 +108,21 @@ export default function EditVenta({ match }) {
               <SubmitButton component={ButtonIconAdd}>
                 {id ? 'Modificar' : 'Agregar'}
               </SubmitButton>
-              <ButtonIconDelete
-                disabled={!id}
-                onClick={ev => {
-                  ev.stopPropagation();
-                  confirmDelete(`la venta del ${formatDate(venta.fecha)}`, () =>
-                    deleteVenta(id).then(() => history.replace('/ventas'))
-                  );
-                }}
-              >
-                Borrar
-              </ButtonIconDelete>
+              {id && (
+                <ButtonIconDelete
+                  disabled={!id}
+                  onClick={(ev: React.MouseEvent<HTMLButtonElement>) => {
+                    ev.stopPropagation();
+                    confirmDelete(
+                      `la venta del ${formatDate(venta && venta.fecha)}`,
+                      () =>
+                        deleteVenta(id).then(() => history.replace('/ventas'))
+                    );
+                  }}
+                >
+                  Borrar
+                </ButtonIconDelete>
+              )}
             </ButtonSet>
           </Form>
         )}
