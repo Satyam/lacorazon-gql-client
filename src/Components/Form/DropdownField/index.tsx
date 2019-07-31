@@ -14,8 +14,8 @@ let counter = 0;
 
 const DropdownField: React.FC<{
   name: string;
-  optValue: string;
-  optLabel: string;
+  optValue?: string;
+  optLabel?: string;
   options: { [index: string]: string | number }[];
   noOption: boolean;
   label?: string;
