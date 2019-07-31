@@ -12,3 +12,5 @@ type BootstrapColor =
   | 'dark'
   | 'light';
 type BootstrapSize = 'sm' | 'md' | 'lg';
+
+type ID = string;
