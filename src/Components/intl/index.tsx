@@ -19,10 +19,10 @@ type intlType = {
   locales: string[];
   setLocale: (locale: string) => void;
   locale: string;
-  formatDate: (date: object) => string;
+  formatDate: (date?: object) => string;
   currency: string;
   setCurrency: (currency: string) => void;
-  formatCurrency: (amount: number) => string;
+  formatCurrency: (amount?: number) => string;
 };
 
 export const IntlContext = createContext<intlType>({
@@ -42,14 +42,16 @@ export const IntlProvider: React.FC<{
   const [locale, setLocale] = useState(l);
   const [currency, setCurrency] = useState(c);
   const [formatCurrency, setFormatCurrency] = useState<
-    (value: number) => string
+    (value?: number) => string
   >(value => String(value));
 
   const formatDate = useCallback(
     (date, formatStr = 'P') =>
-      format(date, formatStr, {
-        locale: localeTables[locale],
-      }),
+      date
+        ? format(date, formatStr, {
+            locale: localeTables[locale],
+          })
+        : '',
     [locale]
   );
 
@@ -62,7 +64,9 @@ export const IntlProvider: React.FC<{
       style: 'currency',
       currency,
     });
-    setFormatCurrency(() => (value: number) => currFormatter.format(value));
+    setFormatCurrency(() => (value?: number) =>
+      value ? currFormatter.format(value) : ''
+    );
   }, [currency, locale]);
 
   return (
