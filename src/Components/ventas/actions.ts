@@ -125,6 +125,15 @@ export const CREATE_VENTA = gql`
       precioUnitario: $precioUnitario
     ) {
       id
+      fecha
+      concepto
+      vendedor {
+        id
+        nombre
+      }
+      cantidad
+      iva
+      precioUnitario
     }
   }
 `;
@@ -146,30 +155,25 @@ export function useCreateVenta(): [
       };
       return createVenta({
         variables: gqlValues,
-        refetchQueries: [
-          {
+
+        update: (cache, { data }) => {
+          const cached: VentasCacheType = cache.readQuery({
             query: LIST_VENTAS,
-          },
-        ],
-        // update: (cache, { data }) => {
-        //   const cached: VentasCacheType = cache.readQuery({
-        //     query: LIST_VENTAS,
-        //   }) || { ventas: [] };
-        //   console.log('create', cached);
-        //   cached.ventas.push({
-        //     ...gqlValues,
-        //     ...data.createVenta,
-        //   });
-        //   cached.ventas.sort((a: GqlVentaType, b: GqlVentaType) => {
-        //     if (a.fecha! < b.fecha!) return -1;
-        //     if (a.fecha! > b.fecha!) return 1;
-        //     return 0;
-        //   });
-        //   cache.writeQuery({
-        //     query: LIST_VENTAS,
-        //     data: cached,
-        //   });
-        // },
+          }) || { ventas: [] };
+          cached.ventas.push({
+            ...gqlValues,
+            ...data.createVenta,
+          });
+          cached.ventas.sort((a: GqlVentaType, b: GqlVentaType) => {
+            if (a.fecha! < b.fecha!) return -1;
+            if (a.fecha! > b.fecha!) return 1;
+            return 0;
+          });
+          cache.writeQuery({
+            query: LIST_VENTAS,
+            data: cached,
+          });
+        },
       }).then(
         status => (status && status.data && status.data.createVenta.id) || ''
       );
@@ -198,6 +202,15 @@ export const UPDATE_VENTA = gql`
       precioUnitario: $precioUnitario
     ) {
       id
+      fecha
+      concepto
+      vendedor {
+        id
+        nombre
+      }
+      cantidad
+      iva
+      precioUnitario
     }
   }
 `;
@@ -221,12 +234,6 @@ export function useUpdateVenta(): [
       };
       return updateVenta({
         variables: gqlValues,
-        update: (cache, { data }) => {
-          const cached: VentasCacheType = cache.readQuery({
-            query: LIST_VENTAS,
-          }) || { ventas: [] };
-          console.log('update', cached);
-        },
       }).then(
         status => (status && status.data && status.data.updateVenta.id) || ''
       );

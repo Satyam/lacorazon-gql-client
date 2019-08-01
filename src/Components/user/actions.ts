@@ -37,7 +37,7 @@ export const GET_USER = gql`
 `;
 
 export function useGetUser(id: string | number) {
-  return useQuery<{ user: UserType }, {id: string| number}>(GET_USER, {
+  return useQuery<{ user: UserType }, { id: string | number }>(GET_USER, {
     variables: {
       id,
     },
@@ -49,14 +49,19 @@ export const CREATE_USER = gql`
   mutation($nombre: String!, $email: String, $password: String!) {
     createUser(nombre: $nombre, email: $email, password: $password) {
       id
+      nombre
+      email
     }
   }
 `;
 
 export function useCreateUser() {
-  const [createUser, createStatus] = useMutation<{
-    createUser: UserType;
-  }, UserType & { password?: string }>(CREATE_USER);
+  const [createUser, createStatus] = useMutation<
+    {
+      createUser: UserType;
+    },
+    UserType & { password?: string }
+  >(CREATE_USER);
   return [
     (values: UserType & { password?: string }) =>
       createUser({
@@ -95,9 +100,10 @@ export const UPDATE_USER = gql`
 `;
 
 export function useUpdateUser() {
-  const [updateUser, updateStatus] = useMutation<{ updateUser: UserType }, UserType & { password?: string }>(
-    UPDATE_USER
-  );
+  const [updateUser, updateStatus] = useMutation<
+    { updateUser: UserType },
+    UserType & { password?: string }
+  >(UPDATE_USER);
   return [
     (id: string, values: UserType & { password?: string }) =>
       updateUser({ variables: { id, ...values } }),
@@ -114,11 +120,14 @@ export const DELETE_USER = gql`
 `;
 
 export function useDeleteUser() {
-  const [deleteUser, deleteStatus] = useMutation<{
-    deleteUser: {
-      id: string;
-    }
-  }, {id: string}>(DELETE_USER);
+  const [deleteUser, deleteStatus] = useMutation<
+    {
+      deleteUser: {
+        id: string;
+      };
+    },
+    { id: string }
+  >(DELETE_USER);
   return [
     (id: string) =>
       deleteUser({
