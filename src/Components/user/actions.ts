@@ -2,6 +2,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import gql from 'graphql-tag';
 import { ApolloError } from 'apollo-client';
+import { DataProxy } from 'apollo-cache';
 
 export type UserType = {
   id?: ID;
@@ -80,6 +81,16 @@ export const CREATE_USER = gql`
   }
 `;
 
+function readUsersCache(cache: DataProxy): UsersCacheType {
+  let cached: UsersCacheType | null = null;
+  try {
+    cached = cache.readQuery({
+      query: LIST_USERS,
+    });
+  } catch (err) {}
+  return cached || { users: [] };
+}
+
 export function useCreateUser(): [
   (values: UserType & { password?: string }) => Promise<ID>,
   { loading: boolean; error?: ApolloError }
@@ -89,19 +100,14 @@ export function useCreateUser(): [
       createUser: UserType;
     },
     UserType & { password?: string }
-  >(CREATE_USER);
+  >(CREATE_USER, { ignoreResults: false });
   return [
     (values: UserType & { password?: string }) =>
       createUser({
         variables: { ...values, password: values.nombre },
         update: (cache, { data }) => {
-          const cached: UsersCacheType = cache.readQuery({
-            query: LIST_USERS,
-          }) || { users: [] };
-          cached.users.push({
-            ...values,
-            ...data.createUser,
-          });
+          const cached = readUsersCache(cache);
+          cached.users.push(data.createUser);
           cached.users.sort((a: UserType, b: UserType) => {
             if (a.nombre! < b.nombre!) return -1;
             if (a.nombre! > b.nombre!) return 1;
@@ -113,6 +119,7 @@ export function useCreateUser(): [
           });
         },
       }).then(
+        // https://github.com/apollographql/react-apollo/issues/2095
         status => (status && status.data && status.data.createUser.id) || ''
       ),
     { loading, error },
@@ -171,9 +178,7 @@ export function useDeleteUser(): [
       deleteUser({
         variables: { id },
         update: cache => {
-          const cached: UsersCacheType = cache.readQuery({
-            query: LIST_USERS,
-          }) || { users: [] };
+          const cached = readUsersCache(cache);
           cache.writeQuery({
             query: LIST_USERS,
             data: {

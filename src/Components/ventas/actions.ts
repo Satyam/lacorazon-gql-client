@@ -3,6 +3,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { UserType } from 'Components/user/actions';
 import { ApolloError } from 'apollo-client';
+import { DataProxy } from 'apollo-cache';
 
 export interface GqlVentaType {
   id?: ID;
@@ -138,6 +139,16 @@ export const CREATE_VENTA = gql`
   }
 `;
 
+function readVentasCache(cache: DataProxy): VentasCacheType {
+  let cached: VentasCacheType | null = null;
+  try {
+    cached = cache.readQuery({
+      query: LIST_VENTAS,
+    });
+  } catch (err) {}
+  return cached || { ventas: [] };
+}
+
 export function useCreateVenta(): [
   (values: VentaType) => Promise<ID>,
   { loading: boolean; error?: ApolloError }
@@ -157,13 +168,8 @@ export function useCreateVenta(): [
         variables: gqlValues,
 
         update: (cache, { data }) => {
-          const cached: VentasCacheType = cache.readQuery({
-            query: LIST_VENTAS,
-          }) || { ventas: [] };
-          cached.ventas.push({
-            ...gqlValues,
-            ...data.createVenta,
-          });
+          const cached = readVentasCache(cache);
+          cached.ventas.push(data.createVenta);
           cached.ventas.sort((a: GqlVentaType, b: GqlVentaType) => {
             if (a.fecha! < b.fecha!) return -1;
             if (a.fecha! > b.fecha!) return 1;
@@ -263,10 +269,7 @@ export function useDeleteVenta(): [
       delVenta({
         variables: { id },
         update: cache => {
-          const cached: VentasCacheType = cache.readQuery({
-            query: LIST_VENTAS,
-          }) || { ventas: [] };
-
+          const cached = readVentasCache(cache);
           cache.writeQuery({
             query: LIST_VENTAS,
             data: {

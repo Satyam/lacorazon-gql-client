@@ -71,6 +71,16 @@ export const CREATE_DISTRIBUIDOR = gql`
   }
 `;
 
+function readDistribuidoresCache(cache) {
+  let cached = null;
+  try {
+    cached = cache.readQuery({
+      query: LIST_DISTRIBUIDORES,
+    });
+  } catch (err) {}
+  return cached || { distribuidores: [] };
+}
+
 export function useCreateDistribuidor() {
   const [createDistribuidor, createStatus] = useMutation(CREATE_DISTRIBUIDOR);
   return [
@@ -78,16 +88,8 @@ export function useCreateDistribuidor() {
       createDistribuidor({
         variables: values,
         update: (cache, { data }) => {
-          const cached = cache.readQuery({
-            query: LIST_DISTRIBUIDORES,
-          });
-          console.log(values);
-          console.log(data.createDistribuidor);
-
-          cached.distribuidores.push({
-            ...values,
-            ...data.createDistribuidor,
-          });
+          const cached = readDistribuidoresCache(cache);
+          cached.distribuidores.push(data.createDistribuidor);
           cached.distribuidores.sort((a, b) => {
             if (a.nombre < b.nombre) return -1;
             if (a.nombre > b.nombre) return 1;
@@ -161,9 +163,7 @@ export function useDeleteDistribuidor() {
       delDistribuidor({
         variables: { id },
         update: cache => {
-          const cached = cache.readQuery({
-            query: LIST_DISTRIBUIDORES,
-          });
+          const cached = readDistribuidoresCache(cache);
 
           cache.writeQuery({
             query: LIST_DISTRIBUIDORES,
