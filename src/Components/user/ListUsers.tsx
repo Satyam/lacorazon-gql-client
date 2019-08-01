@@ -17,7 +17,7 @@ import { useListUsers, useDeleteUser, UserType } from './actions';
 
 const ListUsers: React.FC<{}> = () => {
   const { history } = useReactRouter();
-  const { loading, error, data } = useListUsers();
+  const { loading, error, users } = useListUsers();
   const [deleteUser, deleteStatus] = useDeleteUser();
 
   if (loading) return <Loading>Cargando usuarios</Loading>;
@@ -69,8 +69,6 @@ const ListUsers: React.FC<{}> = () => {
     );
   };
 
-  const users = data ? data.users : [];
-
   return (
     <Page
       title="Vendedores"
@@ -90,7 +88,7 @@ const ListUsers: React.FC<{}> = () => {
               <th />
             </tr>
           </thead>
-          <tbody>{users.map(rowUser)}</tbody>
+          <tbody>{(users || []).map(rowUser)}</tbody>
         </Table>
       </GqlError>
     </Page>

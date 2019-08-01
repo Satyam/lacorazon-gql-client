@@ -36,7 +36,7 @@ export default function EditUser({
 }: RouteComponentProps<{ id: string }>) {
   const id = match.params.id;
   const { history } = useReactRouter();
-  const { loading, error, data } = useGetUser(id);
+  const { loading, error, user } = useGetUser(id);
   const [createUser, createStatus] = useCreateUser();
   const [updateUser, updateStatus] = useUpdateUser();
   const [deleteUser, deleteStatus] = useDeleteUser();
@@ -45,8 +45,6 @@ export default function EditUser({
   if (createStatus.loading) return <Loading>Creando usuario</Loading>;
   if (updateStatus.loading) return <Loading>Actualizando usuario</Loading>;
   if (deleteStatus.loading) return <Loading>Borrando usuario</Loading>;
-
-  const user = data ? data.user : ({} as UserType);
 
   return (
     <Page
@@ -72,11 +70,8 @@ export default function EditUser({
               } else {
                 return createUser({ ...values, password: values.nombre }).then(
                   // https://github.com/apollographql/react-apollo/issues/2095
-                  status => {
-                    if (status && status.data)
-                      history.replace(
-                        `/user/edit/${status.data.createUser.id}`
-                      );
+                  id => {
+                    history.replace(`/user/edit/${id}`);
                   }
                 );
               }
@@ -89,17 +84,19 @@ export default function EditUser({
               <SubmitButton component={ButtonIconAdd}>
                 {id ? 'Modificar' : 'Agregar'}
               </SubmitButton>
-              <ButtonIconDelete
-                disabled={!id}
-                onClick={(ev: React.MouseEvent<HTMLButtonElement>) => {
-                  ev.stopPropagation();
-                  confirmDelete(`al usuario ${user.nombre}`, () =>
-                    deleteUser(id).then(() => history.replace('/users'))
-                  );
-                }}
-              >
-                Borrar
-              </ButtonIconDelete>
+              {id && (
+                <ButtonIconDelete
+                  disabled={!id}
+                  onClick={(ev: React.MouseEvent<HTMLButtonElement>) => {
+                    ev.stopPropagation();
+                    confirmDelete(`al usuario ${user && user.nombre}`, () =>
+                      deleteUser(id).then(() => history.replace('/users'))
+                    );
+                  }}
+                >
+                  Borrar
+                </ButtonIconDelete>
+              )}
             </ButtonSet>
           </Form>
         )}

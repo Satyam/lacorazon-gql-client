@@ -51,8 +51,8 @@ const Login: React.FC<{}> = () => {
                 return createUser({
                   nombre: values.nombre,
                   password: values.password,
-                }).then(status =>
-                  status && status.data
+                }).then(id =>
+                  id
                     ? refreshCurrentUser().then(() => {
                         history.goBack();
                       })

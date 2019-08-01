@@ -1,15 +1,15 @@
 import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import gql from 'graphql-tag';
+import { ApolloError } from 'apollo-client';
 
 export type UserType = {
-  id?: string;
+  id?: ID;
   nombre?: string;
   email?: string;
 };
-export type UsersType = UserType[];
 export type UsersCacheType = {
-  users: UsersType;
+  users: UserType[];
 };
 
 export const LIST_USERS = gql`
@@ -22,8 +22,20 @@ export const LIST_USERS = gql`
   }
 `;
 
-export function useListUsers() {
-  return useQuery<{ users: UsersType }, void>(LIST_USERS);
+export function useListUsers(): {
+  error?: ApolloError;
+  loading: boolean;
+  users?: UserType[];
+} {
+  const { error, loading, data } = useQuery<{ users: UserType[] }, void>(
+    LIST_USERS
+  );
+  if (!data || loading || error) return { error, loading };
+  return {
+    error,
+    loading,
+    users: data.users,
+  };
 }
 
 export const GET_USER = gql`
@@ -36,13 +48,26 @@ export const GET_USER = gql`
   }
 `;
 
-export function useGetUser(id: string | number) {
-  return useQuery<{ user: UserType }, { id: string | number }>(GET_USER, {
-    variables: {
-      id,
-    },
-    skip: !id,
-  });
+export function useGetUser(
+  id: ID
+): { error?: ApolloError; loading: boolean; user?: UserType } {
+  const { error, loading, data } = useQuery<{ user: UserType }, { id: ID }>(
+    GET_USER,
+    {
+      variables: {
+        id,
+      },
+      skip: !id,
+    }
+  );
+  if (!data || loading || error) {
+    return { loading, error };
+  }
+  return {
+    loading,
+    error,
+    user: data.user,
+  };
 }
 
 export const CREATE_USER = gql`
@@ -55,8 +80,11 @@ export const CREATE_USER = gql`
   }
 `;
 
-export function useCreateUser() {
-  const [createUser, createStatus] = useMutation<
+export function useCreateUser(): [
+  (values: UserType & { password?: string }) => Promise<ID>,
+  { loading: boolean; error?: ApolloError }
+] {
+  const [createUser, { loading, error }] = useMutation<
     {
       createUser: UserType;
     },
@@ -84,9 +112,11 @@ export function useCreateUser() {
             data: cached,
           });
         },
-      }),
-    createStatus,
-  ] as const;
+      }).then(
+        status => (status && status.data && status.data.createUser.id) || ''
+      ),
+    { loading, error },
+  ];
 }
 
 export const UPDATE_USER = gql`
@@ -99,16 +129,21 @@ export const UPDATE_USER = gql`
   }
 `;
 
-export function useUpdateUser() {
-  const [updateUser, updateStatus] = useMutation<
+export function useUpdateUser(): [
+  (id: ID, values: Omit<UserType, 'id'>) => Promise<ID>,
+  { loading: boolean; error?: ApolloError }
+] {
+  const [updateUser, { loading, error }] = useMutation<
     { updateUser: UserType },
     UserType & { password?: string }
   >(UPDATE_USER);
   return [
     (id: string, values: UserType & { password?: string }) =>
-      updateUser({ variables: { id, ...values } }),
-    updateStatus,
-  ] as const;
+      updateUser({ variables: { id, ...values } }).then(
+        status => (status && status.data && status.data.updateUser.id) || ''
+      ),
+    { loading, error },
+  ];
 }
 
 export const DELETE_USER = gql`
@@ -119,17 +154,20 @@ export const DELETE_USER = gql`
   }
 `;
 
-export function useDeleteUser() {
-  const [deleteUser, deleteStatus] = useMutation<
+export function useDeleteUser(): [
+  (id: ID) => Promise<ID>,
+  { loading: boolean; error?: ApolloError }
+] {
+  const [deleteUser, { loading, error }] = useMutation<
     {
       deleteUser: {
-        id: string;
+        id: ID;
       };
     },
-    { id: string }
+    { id: ID }
   >(DELETE_USER);
   return [
-    (id: string) =>
+    id =>
       deleteUser({
         variables: { id },
         update: cache => {
@@ -143,7 +181,9 @@ export function useDeleteUser() {
             },
           });
         },
-      }),
-    deleteStatus,
-  ] as const;
+      }).then(
+        status => (status && status.data && status.data.deleteUser.id) || ''
+      ),
+    { loading, error },
+  ];
 }

@@ -14,10 +14,9 @@ import { RouteComponentProps } from 'react-router-dom';
 
 const ShowUser = ({ match }: RouteComponentProps<{ id: string }>) => {
   const id = match.params.id;
-  const { loading, error, data } = useGetUser(id);
+  const { loading, error, user } = useGetUser(id);
   if (loading) return <Loading>Cargando usuario</Loading>;
 
-  const user = data && data.user;
   return (
     <Page
       title={`Vendedor - ${user ? user.nombre : '??'}`}
