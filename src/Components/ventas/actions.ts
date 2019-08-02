@@ -251,10 +251,10 @@ export const DELETE_VENTA = gql`
 `;
 
 export function useDeleteVenta(): (id: ID) => Promise<ID> {
-  const [delVenta, { loading, error }] = useMutation<
-    { deleteVenta: { id: ID } },
-    { id: ID }
-  >(DELETE_VENTA, { ignoreResults: true });
+  const [delVenta] = useMutation<{ deleteVenta: { id: ID } }, { id: ID }>(
+    DELETE_VENTA,
+    { ignoreResults: true }
+  );
   return id =>
     delVenta({
       variables: { id },
