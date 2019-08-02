@@ -2,13 +2,12 @@ import React from 'react';
 import useReactRouter from 'use-react-router';
 import * as yup from 'yup';
 
-import Loading from 'Components/Loading';
 import { Form, TextField, SubmitButton } from 'Components/Form';
 import Page from 'Components/Page';
-import GqlError from 'Components/GqlError';
+import { useCreateUser } from 'Components/user/actions';
+import { usePopups } from 'Components/Popups';
 
 import { useLogin } from './actions';
-import { useCreateUser } from 'Components/user/actions';
 import { useAuth } from './context';
 
 const loginSchema = yup.object().shape({
@@ -31,8 +30,9 @@ const loginSchema = yup.object().shape({
 const Login: React.FC<{}> = () => {
   const { history, match } = useReactRouter<{ register?: string }>();
   const { refreshCurrentUser } = useAuth();
-  const [login, loginStatus] = useLogin();
+  const login = useLogin();
   const createUser = useCreateUser();
+  const { openLoading, closeLoading } = usePopups();
   const register = match.params.register;
 
   return (
@@ -40,53 +40,54 @@ const Login: React.FC<{}> = () => {
       title={register ? 'Registro' : 'Login'}
       heading={register ? 'Registro' : 'Login'}
     >
-      <GqlError error={loginStatus.error}>
-        {loginStatus.loading && (
-          <Loading>{register ? 'Registrando' : 'Confirmando'} usuario</Loading>
-        )}
-        <Form
-          onSubmit={values => {
-            if (register) {
-              if (values.password === values.confirmPassword) {
-                return createUser({
-                  nombre: values.nombre,
-                  password: values.password,
-                }).then(id =>
+      <Form
+        onSubmit={values => {
+          if (register) {
+            if (values.password === values.confirmPassword) {
+              openLoading('Registrando nuevo usuario');
+              return createUser({
+                nombre: values.nombre,
+                password: values.password,
+              })
+                .then(id =>
                   id
                     ? refreshCurrentUser().then(() => {
                         history.goBack();
                       })
                     : Promise.reject('Duplicate user name')
-                );
-              } else {
-                return Promise.reject('Confirmación no coincide');
-              }
+                )
+                .finally(closeLoading);
             } else {
-              return login(values).then(status =>
-                status && status.data
+              return Promise.reject('Confirmación no coincide');
+            }
+          } else {
+            openLoading('Accediendo ...');
+            return login(values)
+              .then(id =>
+                id
                   ? refreshCurrentUser().then(() => {
                       history.goBack();
                     })
                   : Promise.reject('User name or password do not exist')
-              );
-            }
-          }}
-          schema={loginSchema}
-        >
-          <TextField name="nombre" label="Nombre" />
-          <TextField type="password" name="password" label="Contraseña" />
-          {register && (
-            <TextField
-              type="password"
-              name="confirmPassword"
-              label="Confirmar contraseña"
-            />
-          )}
-          <SubmitButton color="primary">
-            {register ? 'Crear' : 'Entrar'}
-          </SubmitButton>
-        </Form>
-      </GqlError>
+              )
+              .finally(closeLoading);
+          }
+        }}
+        schema={loginSchema}
+      >
+        <TextField name="nombre" label="Nombre" />
+        <TextField type="password" name="password" label="Contraseña" />
+        {register && (
+          <TextField
+            type="password"
+            name="confirmPassword"
+            label="Confirmar contraseña"
+          />
+        )}
+        <SubmitButton color="primary">
+          {register ? 'Crear' : 'Entrar'}
+        </SubmitButton>
+      </Form>
     </Page>
   );
 };

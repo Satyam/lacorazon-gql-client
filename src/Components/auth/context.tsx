@@ -27,7 +27,7 @@ export const AuthProvider: React.FC<{}> = ({ children }) => {
   const originalUser = data && data.currentUser;
 
   const [currentUser, setCurrentUser] = useState(originalUser);
-  const [doLogout, logoutStatus] = useLogout();
+  const doLogout = useLogout();
 
   const refreshCurrentUser = useCallback(
     () => refetch().then(({ data }) => setCurrentUser(data.currentUser)),
@@ -44,9 +44,8 @@ export const AuthProvider: React.FC<{}> = ({ children }) => {
   }
 
   if (loading) return <Loading>Current User</Loading>;
-  if (logoutStatus.loading) return <Loading>Logging out</Loading>;
   return (
-    <GqlError error={[error, logoutStatus.error]}>
+    <GqlError error={error}>
       <UserContext.Provider value={{ currentUser, refreshCurrentUser, logout }}>
         {children}
       </UserContext.Provider>

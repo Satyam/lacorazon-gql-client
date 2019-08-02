@@ -2,7 +2,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 export type UserType = {
-  id?: string;
+  id?: ID;
   nombre?: string;
   email?: string;
 };
@@ -31,12 +31,15 @@ export const LOGIN = gql`
 
 type LoginType = { nombre: string; password: string };
 
-export function useLogin() {
-  const [login, loginStatus] = useMutation<{ id: string }, LoginType>(LOGIN);
-  return [
-    (values: LoginType) => login({ variables: values }),
-    loginStatus,
-  ] as const;
+export function useLogin(): (values: LoginType) => Promise<ID | void> {
+  const [login] = useMutation<{ login: { id: ID } }, LoginType>(LOGIN, {
+    ignoreResults: true,
+  });
+  return values =>
+    login({ variables: values }).then(status => {
+      debugger;
+      return status && status.data && status.data.login.id;
+    });
 }
 
 export const LOGOUT = gql`
@@ -46,5 +49,6 @@ export const LOGOUT = gql`
 `;
 
 export function useLogout() {
-  return useMutation<{}, void>(LOGOUT);
+  const [logout] = useMutation<{}, void>(LOGOUT, { ignoreResults: true });
+  return logout;
 }
