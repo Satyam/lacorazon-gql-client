@@ -1,20 +1,21 @@
 import React from 'react';
+import useReactRouter from 'use-react-router';
+import { Alert } from 'reactstrap';
 
 import { LabeledText } from 'Components/Form';
 import Page from 'Components/Page';
 import Loading from 'Components/Loading';
 import { Accordion, AccordionPanel } from 'Components/Accordion';
-import { Alert } from 'reactstrap';
 import GqlError from 'Components/GqlError';
-
 import ListVentas from 'Components/ventas/ListVentas';
 
 import { useGetUser } from './actions';
-import { RouteComponentProps } from 'react-router-dom';
 
-const ShowUser = ({ match }: RouteComponentProps<{ id: string }>) => {
+const ShowUser = () => {
+  const { match } = useReactRouter<{ id: string }>();
   const id = match.params.id;
   const { loading, error, user } = useGetUser(id);
+
   if (loading) return <Loading>Cargando usuario</Loading>;
 
   return (

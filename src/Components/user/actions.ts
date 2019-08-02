@@ -91,39 +91,35 @@ function readUsersCache(cache: DataProxy): UsersCacheType {
   return cached || { users: [] };
 }
 
-export function useCreateUser(): [
-  (values: UserType & { password?: string }) => Promise<ID>,
-  { loading: boolean; error?: ApolloError }
-] {
-  const [createUser, { loading, error }] = useMutation<
+export function useCreateUser(): (
+  values: UserType & { password?: string }
+) => Promise<ID> {
+  const [createUser] = useMutation<
     {
       createUser: UserType;
     },
     UserType & { password?: string }
-  >(CREATE_USER, { ignoreResults: false });
-  return [
-    (values: UserType & { password?: string }) =>
-      createUser({
-        variables: { ...values, password: values.nombre },
-        update: (cache, { data }) => {
-          const cached = readUsersCache(cache);
-          cached.users.push(data.createUser);
-          cached.users.sort((a: UserType, b: UserType) => {
-            if (a.nombre! < b.nombre!) return -1;
-            if (a.nombre! > b.nombre!) return 1;
-            return 0;
-          });
-          cache.writeQuery({
-            query: LIST_USERS,
-            data: cached,
-          });
-        },
-      }).then(
-        // https://github.com/apollographql/react-apollo/issues/2095
-        status => (status && status.data && status.data.createUser.id) || ''
-      ),
-    { loading, error },
-  ];
+  >(CREATE_USER, { ignoreResults: true });
+  return (values: UserType & { password?: string }) =>
+    createUser({
+      variables: { ...values, password: values.nombre },
+      update: (cache, { data }) => {
+        const cached = readUsersCache(cache);
+        cached.users.push(data.createUser);
+        cached.users.sort((a: UserType, b: UserType) => {
+          if (a.nombre! < b.nombre!) return -1;
+          if (a.nombre! > b.nombre!) return 1;
+          return 0;
+        });
+        cache.writeQuery({
+          query: LIST_USERS,
+          data: cached,
+        });
+      },
+    }).then(
+      // https://github.com/apollographql/react-apollo/issues/2095
+      status => (status && status.data && status.data.createUser.id) || ''
+    );
 }
 
 export const UPDATE_USER = gql`
@@ -136,21 +132,18 @@ export const UPDATE_USER = gql`
   }
 `;
 
-export function useUpdateUser(): [
-  (id: ID, values: Omit<UserType, 'id'>) => Promise<ID>,
-  { loading: boolean; error?: ApolloError }
-] {
-  const [updateUser, { loading, error }] = useMutation<
+export function useUpdateUser(): (
+  id: ID,
+  values: Omit<UserType, 'id'>
+) => Promise<ID> {
+  const [updateUser] = useMutation<
     { updateUser: UserType },
     UserType & { password?: string }
-  >(UPDATE_USER);
-  return [
-    (id: string, values: UserType & { password?: string }) =>
-      updateUser({ variables: { id, ...values } }).then(
-        status => (status && status.data && status.data.updateUser.id) || ''
-      ),
-    { loading, error },
-  ];
+  >(UPDATE_USER, { ignoreResults: true });
+  return (id: string, values: UserType & { password?: string }) =>
+    updateUser({ variables: { id, ...values } }).then(
+      status => (status && status.data && status.data.updateUser.id) || ''
+    );
 }
 
 export const DELETE_USER = gql`
@@ -161,34 +154,28 @@ export const DELETE_USER = gql`
   }
 `;
 
-export function useDeleteUser(): [
-  (id: ID) => Promise<ID>,
-  { loading: boolean; error?: ApolloError }
-] {
-  const [deleteUser, { loading, error }] = useMutation<
+export function useDeleteUser(): (id: ID) => Promise<ID> {
+  const [deleteUser] = useMutation<
     {
       deleteUser: {
         id: ID;
       };
     },
     { id: ID }
-  >(DELETE_USER);
-  return [
-    id =>
-      deleteUser({
-        variables: { id },
-        update: cache => {
-          const cached = readUsersCache(cache);
-          cache.writeQuery({
-            query: LIST_USERS,
-            data: {
-              users: cached.users.filter(u => u.id !== id),
-            },
-          });
-        },
-      }).then(
-        status => (status && status.data && status.data.deleteUser.id) || ''
-      ),
-    { loading, error },
-  ];
+  >(DELETE_USER, { ignoreResults: true });
+  return id =>
+    deleteUser({
+      variables: { id },
+      update: cache => {
+        const cached = readUsersCache(cache);
+        cache.writeQuery({
+          query: LIST_USERS,
+          data: {
+            users: cached.users.filter(u => u.id !== id),
+          },
+        });
+      },
+    }).then(
+      status => (status && status.data && status.data.deleteUser.id) || ''
+    );
 }

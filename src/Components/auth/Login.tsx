@@ -32,7 +32,7 @@ const Login: React.FC<{}> = () => {
   const { history, match } = useReactRouter<{ register?: string }>();
   const { refreshCurrentUser } = useAuth();
   const [login, loginStatus] = useLogin();
-  const [createUser, createUserStatus] = useCreateUser();
+  const createUser = useCreateUser();
   const register = match.params.register;
 
   return (
@@ -40,8 +40,8 @@ const Login: React.FC<{}> = () => {
       title={register ? 'Registro' : 'Login'}
       heading={register ? 'Registro' : 'Login'}
     >
-      <GqlError error={[loginStatus.error, createUserStatus.error]}>
-        {(loginStatus.loading || createUserStatus.loading) && (
+      <GqlError error={loginStatus.error}>
+        {loginStatus.loading && (
           <Loading>{register ? 'Registrando' : 'Confirmando'} usuario</Loading>
         )}
         <Form

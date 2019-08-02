@@ -1,27 +1,26 @@
 import React from 'react';
 import useReactRouter from 'use-react-router';
+import { Table, ButtonGroup } from 'reactstrap';
 
-import { Table } from 'reactstrap';
 import {
   ButtonIconAdd,
   ButtonIconEdit,
   ButtonIconDelete,
 } from 'Components/Icons';
-import { ButtonGroup } from 'reactstrap';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
-import { confirmDelete } from 'Components/shared';
+import { usePopups } from 'Components/Popups';
 
 import { useListUsers, useDeleteUser, UserType } from './actions';
 
-const ListUsers: React.FC<{}> = () => {
+const ListUsers = () => {
   const { history } = useReactRouter();
   const { loading, error, users } = useListUsers();
-  const [deleteUser, deleteStatus] = useDeleteUser();
+  const deleteUser = useDeleteUser();
+  const { confirmDelete } = usePopups();
 
   if (loading) return <Loading>Cargando usuarios</Loading>;
-  if (deleteStatus.loading) return <Loading>Borrando usuario</Loading>;
 
   const onAdd: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
@@ -79,7 +78,7 @@ const ListUsers: React.FC<{}> = () => {
         </ButtonIconAdd>
       }
     >
-      <GqlError error={[error, deleteStatus.error]}>
+      <GqlError error={error}>
         <Table striped hover size="sm" responsive>
           <thead>
             <tr>
