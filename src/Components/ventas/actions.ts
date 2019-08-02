@@ -1,15 +1,15 @@
 import { useQuery, useMutation } from '@apollo/react-hooks';
-
 import gql from 'graphql-tag';
-import { UserType } from 'Components/user/actions';
 import { ApolloError } from 'apollo-client';
 import { DataProxy } from 'apollo-cache';
+
+import { UserType } from 'Components/user/actions';
 
 export interface GqlVentaType {
   id?: ID;
   fecha?: string;
   concepto?: string;
-  idVendedor?: UserType;
+  idVendedor?: ID;
   cantidad?: number;
   iva?: boolean;
   precioUnitario?: number;
@@ -149,43 +149,39 @@ function readVentasCache(cache: DataProxy): VentasCacheType {
   return cached || { ventas: [] };
 }
 
-export function useCreateVenta(): [
-  (values: VentaType) => Promise<ID>,
-  { loading: boolean; error?: ApolloError }
-] {
-  const [createVenta, { loading, error }] = useMutation<
-    { createVenta: { id: ID } },
-    GqlVentaType
-  >(CREATE_VENTA);
-  return [
-    values => {
-      const { fecha, ...rest } = values;
-      const gqlValues = {
-        fecha: fecha && fecha.toISOString(),
-        ...rest,
-      };
-      return createVenta({
-        variables: gqlValues,
+export function useCreateVenta(): (
+  values: Omit<VentaType, 'vendedor'> & { idVendedor: ID }
+) => Promise<ID> {
+  const [createVenta] = useMutation<{ createVenta: { id: ID } }, GqlVentaType>(
+    CREATE_VENTA,
+    { ignoreResults: true }
+  );
+  return values => {
+    const { fecha, ...rest } = values;
+    const gqlValues = {
+      fecha: fecha && fecha.toISOString(),
+      ...rest,
+    };
+    return createVenta({
+      variables: gqlValues,
 
-        update: (cache, { data }) => {
-          const cached = readVentasCache(cache);
-          cached.ventas.push(data.createVenta);
-          cached.ventas.sort((a: GqlVentaType, b: GqlVentaType) => {
-            if (a.fecha! < b.fecha!) return -1;
-            if (a.fecha! > b.fecha!) return 1;
-            return 0;
-          });
-          cache.writeQuery({
-            query: LIST_VENTAS,
-            data: cached,
-          });
-        },
-      }).then(
-        status => (status && status.data && status.data.createVenta.id) || ''
-      );
-    },
-    { loading, error },
-  ];
+      update: (cache, { data }) => {
+        const cached = readVentasCache(cache);
+        cached.ventas.push(data.createVenta);
+        cached.ventas.sort((a: GqlVentaType, b: GqlVentaType) => {
+          if (a.fecha! < b.fecha!) return -1;
+          if (a.fecha! > b.fecha!) return 1;
+          return 0;
+        });
+        cache.writeQuery({
+          query: LIST_VENTAS,
+          data: cached,
+        });
+      },
+    }).then(
+      status => (status && status.data && status.data.createVenta.id) || ''
+    );
+  };
 }
 
 export const UPDATE_VENTA = gql`
@@ -221,31 +217,29 @@ export const UPDATE_VENTA = gql`
   }
 `;
 
-export function useUpdateVenta(): [
-  (id: ID, values: Omit<VentaType, 'id'>) => Promise<ID>,
-  { loading: boolean; error?: ApolloError }
-] {
-  const [updateVenta, { loading, error }] = useMutation<
+export function useUpdateVenta(): (
+  id: ID,
+  values: Omit<VentaType, 'id'>
+) => Promise<ID> {
+  const [updateVenta] = useMutation<
     { updateVenta: GqlVentaType },
     GqlVentaType
-  >(UPDATE_VENTA);
+  >(UPDATE_VENTA, { ignoreResults: true });
 
-  return [
-    (id, values) => {
-      const { fecha, ...rest } = values;
-      const gqlValues = {
-        id,
-        fecha: fecha && fecha.toISOString(),
-        ...rest,
-      };
-      return updateVenta({
-        variables: gqlValues,
-      }).then(
-        status => (status && status.data && status.data.updateVenta.id) || ''
-      );
-    },
-    { loading, error },
-  ];
+  return (id, values) => {
+    const { fecha, vendedor, ...rest } = values;
+    const gqlValues = {
+      id,
+      fecha: fecha && fecha.toISOString(),
+      idVendedor: vendedor && vendedor.id,
+      ...rest,
+    };
+    return updateVenta({
+      variables: gqlValues,
+    }).then(
+      status => (status && status.data && status.data.updateVenta.id) || ''
+    );
+  };
 }
 
 export const DELETE_VENTA = gql`
@@ -256,32 +250,26 @@ export const DELETE_VENTA = gql`
   }
 `;
 
-export function useDeleteVenta(): [
-  (id: ID) => Promise<ID>,
-  { loading: boolean; error?: ApolloError }
-] {
+export function useDeleteVenta(): (id: ID) => Promise<ID> {
   const [delVenta, { loading, error }] = useMutation<
     { deleteVenta: { id: ID } },
     { id: ID }
-  >(DELETE_VENTA);
-  return [
-    id =>
-      delVenta({
-        variables: { id },
-        update: cache => {
-          const cached = readVentasCache(cache);
-          cache.writeQuery({
-            query: LIST_VENTAS,
-            data: {
-              ventas: cached.ventas.filter(d => d.id !== id),
-            },
-          });
-        },
-      }).then(
-        status => (status && status.data && status.data.deleteVenta.id) || ''
-      ),
-    { loading, error },
-  ];
+  >(DELETE_VENTA, { ignoreResults: true });
+  return id =>
+    delVenta({
+      variables: { id },
+      update: cache => {
+        const cached = readVentasCache(cache);
+        cache.writeQuery({
+          query: LIST_VENTAS,
+          data: {
+            ventas: cached.ventas.filter(d => d.id !== id),
+          },
+        });
+      },
+    }).then(
+      status => (status && status.data && status.data.deleteVenta.id) || ''
+    );
 }
 
 export const OPTIONS_VENDEDORES = gql`

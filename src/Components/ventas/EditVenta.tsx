@@ -1,8 +1,8 @@
 import React from 'react';
 import useReactRouter from 'use-react-router';
-import { object, string, number, boolean, date } from 'yup';
-
+import * as yup from 'yup';
 import { Alert } from 'reactstrap';
+
 import {
   Form,
   TextField,
@@ -15,8 +15,8 @@ import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
-import { confirmDelete } from 'Components/shared';
 import { useIntl } from 'Components/intl';
+import { usePopups } from 'Components/Popups';
 
 import {
   useCreateVenta,
@@ -24,21 +24,25 @@ import {
   useUpdateVenta,
   useGetVenta,
   useOptionsVendedores,
+  VentaType,
 } from './actions';
 
-const ventaSchema = object().shape({
-  fecha: date()
+const ventaSchema = yup.object().shape({
+  fecha: yup
+    .date()
     .required()
     .default(new Date()),
-  concepto: string()
+  concepto: yup
+    .string()
     .trim()
     .default(''),
-  cantidad: number()
+  cantidad: yup
+    .number()
     .integer()
     .positive()
     .default(1),
-  iva: boolean().default(false),
-  precioUnitario: number().default(10),
+  iva: yup.boolean().default(false),
+  precioUnitario: yup.number().default(10),
 });
 
 export default function EditVenta() {
@@ -46,51 +50,49 @@ export default function EditVenta() {
   const id = match.params.id;
   const { loading, error, venta } = useGetVenta(id);
   const optionVendedoresStatus = useOptionsVendedores();
-  const [createVenta, createStatus] = useCreateVenta();
-  const [updateVenta, updateStatus] = useUpdateVenta();
-  const [deleteVenta, deleteStatus] = useDeleteVenta();
-
+  const createVenta = useCreateVenta();
+  const updateVenta = useUpdateVenta();
+  const deleteVenta = useDeleteVenta();
+  const { openLoading, closeLoading, confirmDelete } = usePopups();
   const { formatDate } = useIntl();
+
   if (loading) return <Loading>Cargando venta</Loading>;
   if (optionVendedoresStatus.loading)
     return <Loading>Cargando vendedores</Loading>;
-  if (createStatus.loading) return <Loading>Creando venta</Loading>;
-  if (updateStatus.loading) return <Loading>Actualizando venta</Loading>;
-  if (deleteStatus.loading) return <Loading>Borrando venta</Loading>;
 
+  const onSubmit = (
+    values: Omit<VentaType, 'vendedor'> & { idVendedor: ID }
+  ) => {
+    if (id) {
+      openLoading('Actualizando Venta');
+      return updateVenta(id, values).finally(closeLoading);
+    } else {
+      openLoading('Creando Venta');
+      return createVenta(values)
+        .then(id => {
+          history.replace(`/venta/edit/${id}`);
+        })
+        .finally(closeLoading);
+    }
+  };
+
+  const onDeleteClick = (ev: React.MouseEvent<HTMLButtonElement>) => {
+    ev.stopPropagation();
+    confirmDelete(`la venta del ${formatDate(venta && venta.fecha)}`, () =>
+      deleteVenta(id!).then(() => history.replace('/ventas'))
+    );
+  };
   if (venta) venta.vendedor = venta.vendedor || { id: '' };
   return (
     <Page
       title={`Venta - ${venta ? venta.fecha : 'nuevo'}`}
       heading={`${id ? 'Edit' : 'Add'} Venta`}
     >
-      <GqlError
-        error={[
-          error,
-          optionVendedoresStatus.error,
-          createStatus.error,
-          updateStatus.error,
-          deleteStatus.error,
-        ]}
-      >
+      <GqlError error={[error, optionVendedoresStatus.error]}>
         {id && !venta ? (
           <Alert color="danger">La venta no existe o fue borrada</Alert>
         ) : (
-          <Form
-            values={venta}
-            onSubmit={values => {
-              values.idVendedor = values.vendedor.id;
-              delete values.vendedor;
-              if (id) {
-                return updateVenta(id, values);
-              } else {
-                return createVenta(values).then(id => {
-                  history.replace(`/venta/edit/${id}`);
-                });
-              }
-            }}
-            schema={ventaSchema}
-          >
+          <Form values={venta} onSubmit={onSubmit} schema={ventaSchema}>
             <DateField name="fecha" label="Fecha" />
             <TextField name="concepto" label="Concepto" />
             {optionVendedoresStatus.optionsVendedores && (
@@ -109,17 +111,7 @@ export default function EditVenta() {
                 {id ? 'Modificar' : 'Agregar'}
               </SubmitButton>
               {id && (
-                <ButtonIconDelete
-                  disabled={!id}
-                  onClick={(ev: React.MouseEvent<HTMLButtonElement>) => {
-                    ev.stopPropagation();
-                    confirmDelete(
-                      `la venta del ${formatDate(venta && venta.fecha)}`,
-                      () =>
-                        deleteVenta(id).then(() => history.replace('/ventas'))
-                    );
-                  }}
-                >
+                <ButtonIconDelete disabled={!id} onClick={onDeleteClick}>
                   Borrar
                 </ButtonIconDelete>
               )}

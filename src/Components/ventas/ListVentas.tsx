@@ -1,19 +1,18 @@
 import React from 'react';
 import useReactRouter from 'use-react-router';
+import { Table, ButtonGroup } from 'reactstrap';
+import { FaRegCheckSquare, FaRegSquare } from 'react-icons/fa';
 
-import { Table } from 'reactstrap';
 import {
   ButtonIconAdd,
   ButtonIconEdit,
   ButtonIconDelete,
 } from 'Components/Icons';
-import { ButtonGroup } from 'reactstrap';
-import { FaRegCheckSquare, FaRegSquare } from 'react-icons/fa';
 import { useIntl } from 'Components/intl';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
-import { confirmDelete } from 'Components/shared';
+import { usePopups } from 'Components/Popups';
 
 import { useListVentas, useDeleteVenta, VentaType } from './actions';
 
@@ -24,11 +23,11 @@ const ListVentas: React.FC<{
 }> = ({ idVendedor, nombreVendedor, wide }) => {
   const { history } = useReactRouter();
   const { loading, error, ventas } = useListVentas(idVendedor);
-  const [deleteVenta, deleteStatus] = useDeleteVenta();
+  const deleteVenta = useDeleteVenta();
   const { formatDate, formatCurrency } = useIntl();
+  const { confirmDelete } = usePopups();
 
   if (loading) return <Loading>Cargando ventas</Loading>;
-  if (deleteStatus.loading) return <Loading>Borrando venta</Loading>;
 
   const onAdd: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
@@ -47,11 +46,11 @@ const ListVentas: React.FC<{
     ev.stopPropagation();
     history.push(`/venta/edit/${ev.currentTarget.dataset.id}`);
   };
-
   const onShowVendedor: React.MouseEventHandler<HTMLElement> = ev => {
     ev.stopPropagation();
     history.push(`/user/${ev.currentTarget.dataset.id}`);
   };
+
   const rowVenta = (venta: VentaType) => {
     const id = venta.id;
     return (
@@ -113,7 +112,7 @@ const ListVentas: React.FC<{
         </ButtonIconAdd>
       }
     >
-      <GqlError error={[error, deleteStatus.error]}>
+      <GqlError error={error}>
         <Table striped hover size="sm" responsive>
           <thead>
             <tr>

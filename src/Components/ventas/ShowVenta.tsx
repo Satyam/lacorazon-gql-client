@@ -1,11 +1,11 @@
 import React from 'react';
 import useReactRouter from 'use-react-router';
+
 import { LabeledText, LabeledCheckbox } from 'Components/Form';
 import Page from 'Components/Page';
 import Loading from 'Components/Loading';
 import { Alert } from 'reactstrap';
 import GqlError from 'Components/GqlError';
-
 import { useIntl } from 'Components/intl';
 
 import { useGetVenta } from './actions';
@@ -19,10 +19,12 @@ export default function ShowVenta() {
   if (loading) return <Loading>Cargando venta</Loading>;
 
   const vendedor = (venta && venta.vendedor) || { nombre: '', id: '' };
+
   const onShowVendedor: React.MouseEventHandler<HTMLDivElement> = ev => {
     ev.stopPropagation();
     history.push(`/user/${ev.currentTarget.dataset.id}`);
   };
+
   return (
     <Page title={`Venta - ${venta ? venta.fecha : '??'}`} heading={`Venta`}>
       <GqlError error={error}>
