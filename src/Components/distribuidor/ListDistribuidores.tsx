@@ -1,47 +1,51 @@
 import React from 'react';
 import useReactRouter from 'use-react-router';
+import { Table, ButtonGroup } from 'reactstrap';
 
-import { Table } from 'reactstrap';
 import {
   ButtonIconAdd,
   ButtonIconEdit,
   ButtonIconDelete,
 } from 'Components/Icons';
-import { ButtonGroup } from 'reactstrap';
-import styles from './styles.module.css';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
 import { confirmDelete } from 'Components/shared';
 
-import { useListDistribuidores, useDeleteDistribuidor } from './actions';
+import {
+  useListDistribuidores,
+  useDeleteDistribuidor,
+  DistribuidorType,
+} from './actions';
+import styles from './styles.module.css';
 
 export default function ListDistribuidores() {
   const { history } = useReactRouter();
-  const { loading, error, data } = useListDistribuidores();
-  const [deleteDistribuidor, deleteStatus] = useDeleteDistribuidor();
+  const { loading, error, distribuidores } = useListDistribuidores();
+  const deleteDistribuidor = useDeleteDistribuidor();
 
   if (loading) return <Loading>Cargando distribuidores</Loading>;
-  if (deleteStatus.loading) return <Loading>Borrando distribuidor</Loading>;
 
-  const onEdit = ev => {
+  const onEdit: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
     history.push(`/distribuidor/edit/${ev.currentTarget.dataset.id}`);
   };
-  const onShow = ev => {
+  const onShow: React.MouseEventHandler<HTMLTableCellElement> = ev => {
     ev.stopPropagation();
     history.push(`/distribuidor/${ev.currentTarget.dataset.id}`);
   };
-  const onDelete = ev => {
+  const onDelete: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
     const { nombre, id } = ev.currentTarget.dataset;
-    confirmDelete(`al distribuidor ${nombre}`, () => deleteDistribuidor(id));
+    confirmDelete(`al distribuidor ${nombre}`, () =>
+      deleteDistribuidor(id as ID)
+    );
   };
-  const onAdd = ev => {
+  const onAdd: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
     history.push('/distribuidor/new');
   };
-  const rowDistribuidor = distribuidor => {
+  const rowDistribuidor = (distribuidor: DistribuidorType) => {
     const id = distribuidor.id;
     return (
       <tr key={id}>
@@ -80,7 +84,6 @@ export default function ListDistribuidores() {
     );
   };
 
-  const distribuidores = data ? data.distribuidores : [];
   return (
     <Page
       wide
@@ -92,7 +95,7 @@ export default function ListDistribuidores() {
         </ButtonIconAdd>
       }
     >
-      <GqlError error={[error, deleteStatus.error]}>
+      <GqlError error={error}>
         <Table striped hover size="sm" responsive>
           <thead>
             <tr>
@@ -106,7 +109,7 @@ export default function ListDistribuidores() {
               <th />
             </tr>
           </thead>
-          <tbody>{distribuidores.map(rowDistribuidor)}</tbody>
+          <tbody>{(distribuidores || []).map(rowDistribuidor)}</tbody>
         </Table>
       </GqlError>
     </Page>

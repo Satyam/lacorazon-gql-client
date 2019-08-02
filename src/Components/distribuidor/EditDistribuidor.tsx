@@ -1,22 +1,23 @@
 import React from 'react';
 import useReactRouter from 'use-react-router';
-
 import { Alert } from 'reactstrap';
+import { FormikHelpers } from 'formik';
+import * as yup from 'yup';
+
 import { Form, TextField, SubmitButton } from 'Components/Form';
 import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
 import GqlError from 'Components/GqlError';
-import { confirmDelete } from 'Components/shared';
+import { usePopups } from 'Components/Popups';
 
 import {
   useCreateDistribuidor,
   useDeleteDistribuidor,
   useUpdateDistribuidor,
   useGetDistribuidor,
+  DistribuidorType,
 } from './actions';
-
-import * as yup from 'yup';
 
 const distribuidorSchema = yup.object().shape({
   nombre: yup
@@ -48,43 +49,73 @@ const distribuidorSchema = yup.object().shape({
     .default(''),
 });
 
-export default function EditDistribuidor({ match }) {
+export default function EditDistribuidor() {
+  const { history, match } = useReactRouter<{ id: ID }>();
   const id = match.params.id;
-  const { history } = useReactRouter();
-  const { loading, error, data } = useGetDistribuidor(id);
+  const { loading, error, distribuidor } = useGetDistribuidor(id);
 
-  const [createDistribuidor, createStatus] = useCreateDistribuidor();
-  const [updateDistribuidor, updateStatus] = useUpdateDistribuidor();
-  const [deleteDistribuidor, deleteStatus] = useDeleteDistribuidor();
+  const createDistribuidor = useCreateDistribuidor();
+  const updateDistribuidor = useUpdateDistribuidor();
+  const deleteDistribuidor = useDeleteDistribuidor();
+
+  const { openLoading, closeLoading, confirmDelete } = usePopups();
 
   if (loading) return <Loading>Cargando distribuidor</Loading>;
-  if (createStatus.loading) return <Loading>Creando distribuidor</Loading>;
-  if (updateStatus.loading) return <Loading>Actualizando distribuidor</Loading>;
-  if (deleteStatus.loading) return <Loading>Borrando distribuidor</Loading>;
 
-  const distribuidor = (data && data.distribuidor) || {};
+  const onDeleteClick = (ev: React.MouseEvent<HTMLButtonElement>) => {
+    ev.stopPropagation();
+    confirmDelete(
+      `al distribuidor ${distribuidor && distribuidor.nombre}`,
+      () =>
+        deleteDistribuidor(id).then(() => history.replace('/distribuidores'))
+    );
+  };
+  const onSubmit = (
+    values: DistribuidorType,
+    { setFieldError }: FormikHelpers<DistribuidorType>
+  ) => {
+    if (id) {
+      openLoading('Actualizando Distribuidor');
+      updateDistribuidor(id, values)
+        .catch(err => {
+          if (
+            err.message ===
+            'GraphQL error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.nombre'
+          ) {
+            setFieldError('nombre', 'Ese distribuidor ya existe');
+          } else throw err;
+        })
+        .finally(closeLoading);
+    } else {
+      openLoading('Creando distribuidor');
+      createDistribuidor(values)
+        .then(id => {
+          history.replace(`/distribuidor/edit/${id}`);
+        })
+        .catch(err => {
+          if (
+            err.message ===
+            'GraphQL error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.nombre'
+          ) {
+            setFieldError('nombre', 'Ese distribuidor ya existe');
+          } else throw err;
+        })
+        .finally(closeLoading);
+    }
+  };
+
   return (
     <Page
       title={`Distribuidor - ${distribuidor ? distribuidor.nombre : 'nuevo'}`}
       heading={`${id ? 'Edit' : 'Add'} Distribuidor`}
     >
-      <GqlError error={[error, createStatus.error, updateStatus.error, deleteStatus.error]}>
+      <GqlError error={error}>
         {id && !distribuidor ? (
           <Alert color="danger">El distribuidor no existe o fue borrado</Alert>
         ) : (
           <Form
             values={distribuidor}
-            onSubmit={values => {
-              if (id) {
-                updateDistribuidor(id, values);
-              } else {
-                createDistribuidor(values).then(({ data }) => {
-                  history.replace(
-                    `/distribuidor/edit/${data.createDistribuidor.id}`
-                  );
-                });
-              }
-            }}
+            onSubmit={onSubmit}
             schema={distribuidorSchema}
           >
             <TextField name="nombre" label="Nombre" />
@@ -97,17 +128,7 @@ export default function EditDistribuidor({ match }) {
               <SubmitButton component={ButtonIconAdd}>
                 {id ? 'Modificar' : 'Agregar'}
               </SubmitButton>
-              <ButtonIconDelete
-                disabled={!id}
-                onClick={ev => {
-                  ev.stopPropagation();
-                  confirmDelete(`al distribuidor ${distribuidor.nombre}`, () =>
-                    deleteDistribuidor(id).then(() =>
-                      history.replace('/distribuidores')
-                    )
-                  );
-                }}
-              >
+              <ButtonIconDelete disabled={!id} onClick={onDeleteClick}>
                 Borrar
               </ButtonIconDelete>
             </ButtonSet>
