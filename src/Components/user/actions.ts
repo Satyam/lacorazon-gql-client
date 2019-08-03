@@ -140,7 +140,7 @@ export function useUpdateUser(): (
     { updateUser: UserType },
     UserType & { password?: string }
   >(UPDATE_USER, { ignoreResults: true });
-  return (id: string, values: UserType & { password?: string }) =>
+  return (id: ID, values: UserType & { password?: string }) =>
     updateUser({ variables: { id, ...values } }).then(
       status => (status && status.data && status.data.updateUser.id) || ''
     );
