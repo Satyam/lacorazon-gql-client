@@ -2,6 +2,8 @@ import React, { useState, useContext, createContext, useCallback } from 'react';
 import Loading from 'Components/Loading';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 
+import styles from './styles.module.css';
+
 type PopupsType = {
   openLoading: (message: string) => void;
   closeLoading: () => void;
@@ -19,12 +21,10 @@ const ConfirmDelete: React.FC<{
   onClose: (result: boolean) => void;
 }> = ({ descr, onClose }) => (
   <Modal isOpen={!!descr}>
-    <ModalHeader
-      style={{ backgroundColor: 'var(--primary)', color: 'var(--light)' }}
-    >
+    <ModalHeader className={styles.confirmDeleteHeader}>
       Confirmación borrado
     </ModalHeader>
-    <ModalBody style={{ width: '100%', textAlign: 'center', padding: '2em' }}>
+    <ModalBody className={styles.confirmDeleteBody}>
       {`¿Está seguro que desea borrar ${descr} ?`}
     </ModalBody>
     <ModalFooter>
