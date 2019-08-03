@@ -8,7 +8,6 @@ import { Form, TextField, SubmitButton } from 'Components/Form';
 import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
-import GqlError from 'Components/GqlError';
 import { usePopups } from 'Components/Popups';
 
 import {
@@ -108,33 +107,32 @@ export default function EditDistribuidor() {
     <Page
       title={`Distribuidor - ${distribuidor ? distribuidor.nombre : 'nuevo'}`}
       heading={`${id ? 'Edit' : 'Add'} Distribuidor`}
+      error={error}
     >
-      <GqlError error={error}>
-        {id && !distribuidor ? (
-          <Alert color="danger">El distribuidor no existe o fue borrado</Alert>
-        ) : (
-          <Form
-            values={distribuidor}
-            onSubmit={onSubmit}
-            schema={distribuidorSchema}
-          >
-            <TextField name="nombre" label="Nombre" />
-            <TextField name="email" label="eMail" />
-            <TextField name="localidad" label="Localidad" />
-            <TextField name="contacto" label="Contacto" />
-            <TextField name="telefono" label="Teléfono" />
-            <TextField name="direccion" label="Dirección" rows={5} />
-            <ButtonSet>
-              <SubmitButton component={ButtonIconAdd}>
-                {id ? 'Modificar' : 'Agregar'}
-              </SubmitButton>
-              <ButtonIconDelete disabled={!id} onClick={onDeleteClick}>
-                Borrar
-              </ButtonIconDelete>
-            </ButtonSet>
-          </Form>
-        )}
-      </GqlError>
+      {id && !distribuidor ? (
+        <Alert color="danger">El distribuidor no existe o fue borrado</Alert>
+      ) : (
+        <Form
+          values={distribuidor}
+          onSubmit={onSubmit}
+          schema={distribuidorSchema}
+        >
+          <TextField name="nombre" label="Nombre" />
+          <TextField name="email" label="eMail" />
+          <TextField name="localidad" label="Localidad" />
+          <TextField name="contacto" label="Contacto" />
+          <TextField name="telefono" label="Teléfono" />
+          <TextField name="direccion" label="Dirección" rows={5} />
+          <ButtonSet>
+            <SubmitButton component={ButtonIconAdd}>
+              {id ? 'Modificar' : 'Agregar'}
+            </SubmitButton>
+            <ButtonIconDelete disabled={!id} onClick={onDeleteClick}>
+              Borrar
+            </ButtonIconDelete>
+          </ButtonSet>
+        </Form>
+      )}
     </Page>
   );
 }

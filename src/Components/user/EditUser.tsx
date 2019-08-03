@@ -7,7 +7,6 @@ import * as yup from 'yup';
 import Loading from 'Components/Loading';
 import { Form, TextField, SubmitButton } from 'Components/Form';
 import Page from 'Components/Page';
-import GqlError from 'Components/GqlError';
 import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
 import { usePopups } from 'Components/Popups';
 
@@ -88,31 +87,30 @@ export default function EditUser() {
     <Page
       title={`Vendedor - ${user ? user.nombre : 'nuevo'}`}
       heading={`${id ? 'Edit' : 'Add'} Vendedor`}
+      error={error}
     >
-      <GqlError error={error}>
-        {id && !user ? (
-          <Alert color="danger">El usuario no existe o fue borrado</Alert>
-        ) : (
-          <Form values={user} onSubmit={onSubmit} schema={userSchema}>
-            <TextField name="email" label="eMail" />
-            <TextField name="nombre" label="Nombre" />
-            <ButtonSet>
-              <SubmitButton component={ButtonIconAdd}>
-                {id ? 'Modificar' : 'Agregar'}
-              </SubmitButton>
-              {id && (
-                <ButtonIconDelete
-                  data-id={id}
-                  data-nombre={user && user.nombre}
-                  onClick={onDeleteClick}
-                >
-                  Borrar
-                </ButtonIconDelete>
-              )}
-            </ButtonSet>
-          </Form>
-        )}
-      </GqlError>
+      {id && !user ? (
+        <Alert color="danger">El usuario no existe o fue borrado</Alert>
+      ) : (
+        <Form values={user} onSubmit={onSubmit} schema={userSchema}>
+          <TextField name="email" label="eMail" />
+          <TextField name="nombre" label="Nombre" />
+          <ButtonSet>
+            <SubmitButton component={ButtonIconAdd}>
+              {id ? 'Modificar' : 'Agregar'}
+            </SubmitButton>
+            {id && (
+              <ButtonIconDelete
+                data-id={id}
+                data-nombre={user && user.nombre}
+                onClick={onDeleteClick}
+              >
+                Borrar
+              </ButtonIconDelete>
+            )}
+          </ButtonSet>
+        </Form>
+      )}
     </Page>
   );
 }

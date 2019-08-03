@@ -11,7 +11,6 @@ import {
 import { useIntl } from 'Components/intl';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
-import GqlError from 'Components/GqlError';
 import { usePopups } from 'Components/Popups';
 
 import { useListVentas, useDeleteVenta, VentaType } from './actions';
@@ -111,24 +110,23 @@ const ListVentas: React.FC<{
           Agregar
         </ButtonIconAdd>
       }
+      error={error}
     >
-      <GqlError error={error}>
-        <Table striped hover size="sm" responsive>
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Concepto</th>
-              {!idVendedor && <th>Vendedor</th>}
-              <th>Cantidad</th>
-              <th>Precio Unitario</th>
-              <th>IVA</th>
-              <th>Precio Total</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>{(ventas || []).map(rowVenta)}</tbody>
-        </Table>
-      </GqlError>
+      <Table striped hover size="sm" responsive>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Concepto</th>
+            {!idVendedor && <th>Vendedor</th>}
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>IVA</th>
+            <th>Precio Total</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>{(ventas || []).map(rowVenta)}</tbody>
+      </Table>
     </Page>
   );
 };

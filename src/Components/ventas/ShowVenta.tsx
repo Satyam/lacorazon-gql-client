@@ -5,7 +5,6 @@ import { LabeledText, LabeledCheckbox } from 'Components/Form';
 import Page from 'Components/Page';
 import Loading from 'Components/Loading';
 import { Alert } from 'reactstrap';
-import GqlError from 'Components/GqlError';
 import { useIntl } from 'Components/intl';
 
 import { useGetVenta } from './actions';
@@ -26,34 +25,36 @@ export default function ShowVenta() {
   };
 
   return (
-    <Page title={`Venta - ${venta ? venta.fecha : '??'}`} heading={`Venta`}>
-      <GqlError error={error}>
-        {venta ? (
-          <>
-            <LabeledText label="Fecha" value={formatDate(venta.fecha)} />
-            <LabeledText label="Concepto" value={venta.concepto} />
-            <LabeledText
-              label="Vendedor"
-              value={vendedor.nombre}
-              data-id={vendedor.id}
-              onClick={vendedor.id ? onShowVendedor : undefined}
-              className="link"
-            />
-            <LabeledText label="Cantidad" value={venta.cantidad} />
-            <LabeledCheckbox label="IVA" value={venta.iva} />
-            <LabeledText
-              label="Precio Unitario"
-              value={formatCurrency(venta.precioUnitario)}
-            />
-            <LabeledText
-              label="Precio Total"
-              value={formatCurrency(venta.precioUnitario! * venta.cantidad!)}
-            />
-          </>
-        ) : (
-          <Alert color="danger">La venta no existe o fue borrada</Alert>
-        )}
-      </GqlError>
+    <Page
+      title={`Venta - ${venta ? venta.fecha : '??'}`}
+      heading={`Venta`}
+      error={error}
+    >
+      {venta ? (
+        <>
+          <LabeledText label="Fecha" value={formatDate(venta.fecha)} />
+          <LabeledText label="Concepto" value={venta.concepto} />
+          <LabeledText
+            label="Vendedor"
+            value={vendedor.nombre}
+            data-id={vendedor.id}
+            onClick={vendedor.id ? onShowVendedor : undefined}
+            className="link"
+          />
+          <LabeledText label="Cantidad" value={venta.cantidad} />
+          <LabeledCheckbox label="IVA" value={venta.iva} />
+          <LabeledText
+            label="Precio Unitario"
+            value={formatCurrency(venta.precioUnitario)}
+          />
+          <LabeledText
+            label="Precio Total"
+            value={formatCurrency(venta.precioUnitario! * venta.cantidad!)}
+          />
+        </>
+      ) : (
+        <Alert color="danger">La venta no existe o fue borrada</Alert>
+      )}
     </Page>
   );
 }

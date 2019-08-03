@@ -14,7 +14,6 @@ import {
 import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
-import GqlError from 'Components/GqlError';
 import { useIntl } from 'Components/intl';
 import { usePopups } from 'Components/Popups';
 
@@ -87,38 +86,37 @@ export default function EditVenta() {
     <Page
       title={`Venta - ${venta ? venta.fecha : 'nuevo'}`}
       heading={`${id ? 'Edit' : 'Add'} Venta`}
+      error={[error, optionVendedoresStatus.error]}
     >
-      <GqlError error={[error, optionVendedoresStatus.error]}>
-        {id && !venta ? (
-          <Alert color="danger">La venta no existe o fue borrada</Alert>
-        ) : (
-          <Form values={venta} onSubmit={onSubmit} schema={ventaSchema}>
-            <DateField name="fecha" label="Fecha" />
-            <TextField name="concepto" label="Concepto" />
-            {optionVendedoresStatus.optionsVendedores && (
-              <DropdownField
-                name="vendedor.id"
-                label="Vendedor"
-                noOption={!id}
-                options={optionVendedoresStatus.optionsVendedores}
-              />
+      {id && !venta ? (
+        <Alert color="danger">La venta no existe o fue borrada</Alert>
+      ) : (
+        <Form values={venta} onSubmit={onSubmit} schema={ventaSchema}>
+          <DateField name="fecha" label="Fecha" />
+          <TextField name="concepto" label="Concepto" />
+          {optionVendedoresStatus.optionsVendedores && (
+            <DropdownField
+              name="vendedor.id"
+              label="Vendedor"
+              noOption={!id}
+              options={optionVendedoresStatus.optionsVendedores}
+            />
+          )}
+          <TextField name="cantidad" label="Cantidad" />
+          <CheckboxField name="iva" label="IVA" />
+          <TextField name="precioUnitario" label="Precio Unitario" />
+          <ButtonSet>
+            <SubmitButton component={ButtonIconAdd}>
+              {id ? 'Modificar' : 'Agregar'}
+            </SubmitButton>
+            {id && (
+              <ButtonIconDelete disabled={!id} onClick={onDeleteClick}>
+                Borrar
+              </ButtonIconDelete>
             )}
-            <TextField name="cantidad" label="Cantidad" />
-            <CheckboxField name="iva" label="IVA" />
-            <TextField name="precioUnitario" label="Precio Unitario" />
-            <ButtonSet>
-              <SubmitButton component={ButtonIconAdd}>
-                {id ? 'Modificar' : 'Agregar'}
-              </SubmitButton>
-              {id && (
-                <ButtonIconDelete disabled={!id} onClick={onDeleteClick}>
-                  Borrar
-                </ButtonIconDelete>
-              )}
-            </ButtonSet>
-          </Form>
-        )}
-      </GqlError>
+          </ButtonSet>
+        </Form>
+      )}
     </Page>
   );
 }

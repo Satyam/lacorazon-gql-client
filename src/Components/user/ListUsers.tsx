@@ -9,7 +9,6 @@ import {
 } from 'Components/Icons';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
-import GqlError from 'Components/GqlError';
 import { usePopups } from 'Components/Popups';
 
 import { useListUsers, useDeleteUser, UserType } from './actions';
@@ -77,19 +76,18 @@ const ListUsers = () => {
           Agregar
         </ButtonIconAdd>
       }
+      error={error}
     >
-      <GqlError error={error}>
-        <Table striped hover size="sm" responsive>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>E-mail</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>{(users || []).map(rowUser)}</tbody>
-        </Table>
-      </GqlError>
+      <Table striped hover size="sm" responsive>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>E-mail</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>{(users || []).map(rowUser)}</tbody>
+      </Table>
     </Page>
   );
 };

@@ -9,7 +9,6 @@ import {
 } from 'Components/Icons';
 import Loading from 'Components/Loading';
 import Page from 'Components/Page';
-import GqlError from 'Components/GqlError';
 import { confirmDelete } from 'Components/shared';
 
 import {
@@ -94,24 +93,23 @@ export default function ListDistribuidores() {
           Agregar
         </ButtonIconAdd>
       }
+      error={error}
     >
-      <GqlError error={error}>
-        <Table striped hover size="sm" responsive>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Contacto</th>
-              <th>Teléfono</th>
-              <th>Dirección</th>
-              <th>e-Mail</th>
-              <th>Entregados</th>
-              <th>Existencias</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>{(distribuidores || []).map(rowDistribuidor)}</tbody>
-        </Table>
-      </GqlError>
+      <Table striped hover size="sm" responsive>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Contacto</th>
+            <th>Teléfono</th>
+            <th>Dirección</th>
+            <th>e-Mail</th>
+            <th>Entregados</th>
+            <th>Existencias</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>{(distribuidores || []).map(rowDistribuidor)}</tbody>
+      </Table>
     </Page>
   );
 }

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Container, Row, Col } from 'reactstrap';
+import { ApolloError } from 'apollo-client';
 
+import GqlError from 'Components/GqlError';
 import styles from './styles.module.css';
 
 const Page: React.FC<{
@@ -8,7 +10,8 @@ const Page: React.FC<{
   title?: string;
   heading: string;
   action?: React.ReactNode;
-}> = ({ wide, children, title, heading, action }) => {
+  error?: ApolloError | (ApolloError | undefined)[];
+}> = ({ wide, children, title, heading, action, error }) => {
   if (title) document.title = `La Corazón - ${title}`;
   return (
     <Container fluid>
@@ -18,7 +21,9 @@ const Page: React.FC<{
             <h1 className={styles.heading}>{heading}</h1>
             <div className={styles.action}>{action}</div>
           </div>
-          <div className={styles.clear}>{children}</div>
+          <div className={styles.clear}>
+            <GqlError error={error}>{children}</GqlError>
+          </div>
         </Col>
       </Row>
     </Container>
