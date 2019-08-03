@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { FormGroup, Label, FormFeedback, FormText, Col } from 'reactstrap';
-import { ErrorMessage, useField, useFormikContext } from 'formik';
+import {
+  ErrorMessage,
+  useField,
+  useFormikContext,
+  FieldValidator,
+} from 'formik';
 import invariant from 'invariant';
 import DatePicker from 'react-datepicker';
 
@@ -19,10 +24,24 @@ const DateField: React.FC<{
   className?: string;
   minDate?: Date;
   maxDate?: Date;
-}> = ({ name, label, help, className, id, minDate, maxDate, ...rest }) => {
+  validate?: FieldValidator;
+}> = ({
+  name,
+  label,
+  help,
+  className,
+  id,
+  minDate,
+  maxDate,
+  validate,
+  ...rest
+}) => {
   invariant(name, 'DateField: name argument is mandatory');
 
-  const [{ value, onChange, ...fieldProps }, meta] = useField(name);
+  const [{ value, onChange, ...fieldProps }, meta] = useField({
+    name,
+    validate,
+  });
 
   const { setFieldValue, setFieldTouched } = useFormikContext<any>();
   const { locale } = useIntl();

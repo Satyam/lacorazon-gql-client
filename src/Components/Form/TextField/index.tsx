@@ -7,25 +7,28 @@ import {
   FormText,
   Col,
   Input,
+  InputProps,
 } from 'reactstrap';
-import { ErrorMessage, useField } from 'formik';
+import { ErrorMessage, useField, FieldValidator } from 'formik';
 import invariant from 'invariant';
 
 let counter = 0;
 /**
  * Produces a labeled input box within form
  */
-const TextField: React.FC<{
-  name: string;
-  type?: string;
-  label?: string;
-  id?: string;
-  rows?: number;
-  help?: string;
-}> = ({ name, type, label, id, rows, help, ...rest }) => {
+const TextField: React.FC<
+  {
+    name: string;
+    label?: string;
+    id?: string;
+    rows?: number;
+    help?: string;
+    validate?: FieldValidator;
+  } & InputProps
+> = ({ name, type, label, id, rows, help, validate, ...rest }) => {
   invariant(name, 'TextField: name argument is mandatory');
 
-  const [fieldProps, meta] = useField(name);
+  const [fieldProps, meta] = useField({ name, validate });
   const [actualId] = useState(id || `F_TF_${counter}`);
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
 
@@ -36,7 +39,7 @@ const TextField: React.FC<{
       </Label>
       <Col xs={12} lg={8}>
         <Input
-          type={type || rows ? 'textarea' : 'text'}
+          type={type || (rows ? 'textarea' : 'text')}
           invalid={meta.touched && !!meta.error}
           rows={rows}
           id={actualId}

@@ -7,7 +7,7 @@ import {
   Col,
   Input,
 } from 'reactstrap';
-import { ErrorMessage, useField } from 'formik';
+import { ErrorMessage, useField, FieldValidator } from 'formik';
 import invariant from 'invariant';
 
 let counter = 0;
@@ -22,6 +22,7 @@ const DropdownField: React.FC<{
   id?: string;
   rows?: number;
   help?: string;
+  validate?: FieldValidator;
 }> = ({
   name,
   label,
@@ -31,12 +32,13 @@ const DropdownField: React.FC<{
   optLabel = 'nombre',
   help,
   noOption,
+  validate,
   ...rest
 }) => {
   invariant(name, 'DropdownField: name argument is mandatory');
   invariant(options, 'DropdownField: options argument is mandatory');
 
-  const [fieldProps, meta] = useField(name);
+  const [fieldProps, meta] = useField({ name, validate });
   const [actualId] = useState(id || `F_DDF_${counter}`);
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
 

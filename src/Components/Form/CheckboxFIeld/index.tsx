@@ -7,7 +7,12 @@ import {
   Col,
   Input,
 } from 'reactstrap';
-import { ErrorMessage, useField, useFormikContext } from 'formik';
+import {
+  ErrorMessage,
+  useField,
+  useFormikContext,
+  FieldValidator,
+} from 'formik';
 import invariant from 'invariant';
 
 let counter = 0;
@@ -20,10 +25,14 @@ const CheckboxField: React.FC<{
   id?: string;
   rows?: number;
   help?: string;
-}> = ({ name, label, id, rows, help, ...rest }) => {
+  validate?: FieldValidator;
+}> = ({ name, label, id, rows, help, validate, ...rest }) => {
   invariant(name, 'CheckboxField: name argument is mandatory');
 
-  const [{ value, onChange, ...fieldProps }, meta] = useField(name);
+  const [{ value, onChange, ...fieldProps }, meta] = useField({
+    name,
+    validate,
+  });
   const { setFieldValue } = useFormikContext<any>();
   const [actualId] = useState(id || `F_TF_${counter}`);
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
