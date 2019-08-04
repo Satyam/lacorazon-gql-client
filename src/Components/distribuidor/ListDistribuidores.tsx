@@ -7,9 +7,8 @@ import {
   ButtonIconEdit,
   ButtonIconDelete,
 } from 'Components/Icons';
-import Loading from 'Components/Loading';
 import Page from 'Components/Page';
-import { confirmDelete } from 'Components/shared';
+import { useModals, Loading } from 'Components/modals';
 
 import {
   useListDistribuidores,
@@ -22,6 +21,7 @@ export default function ListDistribuidores() {
   const { history } = useReactRouter();
   const { loading, error, distribuidores } = useListDistribuidores();
   const deleteDistribuidor = useDeleteDistribuidor();
+  const { confirmDelete } = useModals();
 
   if (loading) return <Loading>Cargando distribuidores</Loading>;
 

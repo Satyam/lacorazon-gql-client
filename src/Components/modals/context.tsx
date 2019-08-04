@@ -1,10 +1,10 @@
 import React, { useState, useContext, createContext, useCallback } from 'react';
 
-import Loading from 'Components/Loading';
+import Loading from './Loading';
 
 import ConfirmDelete from './ConfirmDelete';
 
-type PopupsType = {
+type ModalsType = {
   openLoading: (message: string) => void;
   closeLoading: () => void;
   confirmDelete: (descr: string, fn: () => void) => void;
@@ -14,13 +14,13 @@ const notImplemented = () => {
   throw new Error('Popup Context not ready yet');
 };
 
-export const PopupsContext = createContext<PopupsType>({
+export const ModalsContext = createContext<ModalsType>({
   openLoading: notImplemented,
   closeLoading: notImplemented,
   confirmDelete: notImplemented,
 });
 
-export const PopupsProvider: React.FC<{}> = ({ children }) => {
+export const ModalsProvider: React.FC<{}> = ({ children }) => {
   const [t, setLoading] = useState<string | undefined>(undefined);
   const [delParams, setDelParams] = useState<{
     descr?: string;
@@ -43,7 +43,7 @@ export const PopupsProvider: React.FC<{}> = ({ children }) => {
   );
 
   return (
-    <PopupsContext.Provider
+    <ModalsContext.Provider
       value={{
         openLoading: setLoading,
         closeLoading: () => setLoading(undefined),
@@ -53,10 +53,10 @@ export const PopupsProvider: React.FC<{}> = ({ children }) => {
       <Loading isOpen={!!t}>{t}</Loading>
       <ConfirmDelete descr={delParams.descr} onClose={onCloseConfirmDelete} />
       {children}
-    </PopupsContext.Provider>
+    </ModalsContext.Provider>
   );
 };
 
-export function usePopups() {
-  return useContext(PopupsContext);
+export function useModals() {
+  return useContext(ModalsContext);
 }

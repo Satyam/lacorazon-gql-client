@@ -15,10 +15,12 @@ const Loading: React.FC<{
   ...props
 }) => (
   <Modal isOpen={isOpen} {...props}>
-    <ModalHeader className={styles.header}>{title}</ModalHeader>
-    <ModalBody className={styles.container}>
+    <ModalHeader className={styles.loadingHeader}>{title}</ModalHeader>
+    <ModalBody className={styles.loadingContainer}>
       {children}
-      {!noIcon && <img className={styles.img} src={icon} alt="loading..." />}
+      {!noIcon && (
+        <img className={styles.loadingImg} src={icon} alt="loading..." />
+      )}
     </ModalBody>
   </Modal>
 );

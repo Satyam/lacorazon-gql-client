@@ -3,7 +3,7 @@ import useReactRouter from 'use-react-router';
 
 import { LabeledText, LabeledCheckbox } from 'Components/Form';
 import Page from 'Components/Page';
-import Loading from 'Components/Loading';
+import Loading from 'Components/modals/Loading';
 import { Alert } from 'reactstrap';
 import { useIntl } from 'Components/intl';
 

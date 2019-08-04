@@ -6,9 +6,8 @@ import * as yup from 'yup';
 
 import { Form, TextField, SubmitButton } from 'Components/Form';
 import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
-import Loading from 'Components/Loading';
 import Page from 'Components/Page';
-import { usePopups } from 'Components/Popups';
+import { useModals, Loading } from 'Components/modals';
 
 import {
   useCreateDistribuidor,
@@ -57,7 +56,7 @@ export default function EditDistribuidor() {
   const updateDistribuidor = useUpdateDistribuidor();
   const deleteDistribuidor = useDeleteDistribuidor();
 
-  const { openLoading, closeLoading, confirmDelete } = usePopups();
+  const { openLoading, closeLoading, confirmDelete } = useModals();
 
   if (loading) return <Loading>Cargando distribuidor</Loading>;
 

@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 
 import { useGetCurrentUser, useLogout, UserType } from './actions';
-import Loading from 'Components/Loading';
+import { Loading } from 'Components/modals';
 import GqlError from 'Components/GqlError';
 import { ApolloQueryResult } from 'apollo-client';
 

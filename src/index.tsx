@@ -12,7 +12,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 
 import { AuthProvider } from 'Components/auth/context';
 import { IntlProvider } from 'Components/intl';
-import { PopupsProvider } from 'Components/Popups';
+import { ModalsProvider } from 'Components/modals';
 
 import App from 'Components/App';
 import * as serviceWorker from './serviceWorker';
@@ -29,9 +29,9 @@ ReactDOM.render(
   <ApolloProvider client={client}>
     <IntlProvider locale="es-ES">
       <AuthProvider>
-        <PopupsProvider>
+        <ModalsProvider>
           <App />
-        </PopupsProvider>
+        </ModalsProvider>
       </AuthProvider>
     </IntlProvider>
   </ApolloProvider>,

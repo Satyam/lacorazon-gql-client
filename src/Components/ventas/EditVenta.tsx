@@ -12,10 +12,10 @@ import {
   SubmitButton,
 } from 'Components/Form';
 import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
-import Loading from 'Components/Loading';
+import Loading from 'Components/modals/Loading';
 import Page from 'Components/Page';
 import { useIntl } from 'Components/intl';
-import { usePopups } from 'Components/Popups';
+import { useModals } from 'Components/modals';
 
 import {
   useCreateVenta,
@@ -52,7 +52,7 @@ export default function EditVenta() {
   const createVenta = useCreateVenta();
   const updateVenta = useUpdateVenta();
   const deleteVenta = useDeleteVenta();
-  const { openLoading, closeLoading, confirmDelete } = usePopups();
+  const { openLoading, closeLoading, confirmDelete } = useModals();
   const { formatDate } = useIntl();
 
   if (loading) return <Loading>Cargando venta</Loading>;

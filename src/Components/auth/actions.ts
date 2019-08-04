@@ -36,10 +36,9 @@ export function useLogin(): (values: LoginType) => Promise<ID | void> {
     ignoreResults: true,
   });
   return values =>
-    login({ variables: values }).then(status => {
-      debugger;
-      return status && status.data && status.data.login.id;
-    });
+    login({ variables: values }).then(
+      status => status && status.data && status.data.login.id
+    );
 }
 
 export const LOGOUT = gql`

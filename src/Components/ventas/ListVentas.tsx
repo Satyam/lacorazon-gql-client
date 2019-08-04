@@ -9,9 +9,9 @@ import {
   ButtonIconDelete,
 } from 'Components/Icons';
 import { useIntl } from 'Components/intl';
-import Loading from 'Components/Loading';
+import Loading from 'Components/modals/Loading';
 import Page from 'Components/Page';
-import { usePopups } from 'Components/Popups';
+import { useModals } from 'Components/modals';
 
 import { useListVentas, useDeleteVenta, VentaType } from './actions';
 
@@ -24,7 +24,7 @@ const ListVentas: React.FC<{
   const { loading, error, ventas } = useListVentas(idVendedor);
   const deleteVenta = useDeleteVenta();
   const { formatDate, formatCurrency } = useIntl();
-  const { confirmDelete } = usePopups();
+  const { confirmDelete } = useModals();
 
   if (loading) return <Loading>Cargando ventas</Loading>;
 

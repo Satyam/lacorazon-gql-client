@@ -7,9 +7,8 @@ import {
   ButtonIconEdit,
   ButtonIconDelete,
 } from 'Components/Icons';
-import Loading from 'Components/Loading';
 import Page from 'Components/Page';
-import { usePopups } from 'Components/Popups';
+import { useModals, Loading } from 'Components/modals';
 
 import { useListUsers, useDeleteUser, UserType } from './actions';
 
@@ -17,7 +16,7 @@ const ListUsers = () => {
   const { history } = useReactRouter();
   const { loading, error, users } = useListUsers();
   const deleteUser = useDeleteUser();
-  const { confirmDelete } = usePopups();
+  const { confirmDelete } = useModals();
 
   if (loading) return <Loading>Cargando usuarios</Loading>;
 

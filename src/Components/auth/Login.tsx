@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { Form, TextField, SubmitButton } from 'Components/Form';
 import Page from 'Components/Page';
 import { useCreateUser } from 'Components/user/actions';
-import { usePopups } from 'Components/Popups';
+import { useModals } from 'Components/modals';
 
 import { useLogin } from './actions';
 import { useAuth } from './context';
@@ -32,7 +32,7 @@ const Login: React.FC<{}> = () => {
   const { refreshCurrentUser } = useAuth();
   const login = useLogin();
   const createUser = useCreateUser();
-  const { openLoading, closeLoading } = usePopups();
+  const { openLoading, closeLoading } = useModals();
   const register = match.params.register;
 
   return (

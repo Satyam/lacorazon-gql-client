@@ -4,11 +4,10 @@ import { Alert } from 'reactstrap';
 import { FormikHelpers } from 'formik';
 import * as yup from 'yup';
 
-import Loading from 'Components/Loading';
 import { Form, TextField, SubmitButton } from 'Components/Form';
 import Page from 'Components/Page';
 import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
-import { usePopups } from 'Components/Popups';
+import { useModals, Loading } from 'Components/modals';
 
 import {
   useGetUser,
@@ -37,7 +36,7 @@ export default function EditUser() {
   const createUser = useCreateUser();
   const updateUser = useUpdateUser();
   const deleteUser = useDeleteUser();
-  const { openLoading, closeLoading, confirmDelete } = usePopups();
+  const { openLoading, closeLoading, confirmDelete } = useModals();
 
   if (loading) return <Loading>Cargando usuario</Loading>;
 
