@@ -1,8 +1,8 @@
 import React, { useState, useContext, createContext, useCallback } from 'react';
-import Loading from 'Components/Loading';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 
-import styles from './styles.module.css';
+import Loading from 'Components/Loading';
+
+import ConfirmDelete from './ConfirmDelete';
 
 type PopupsType = {
   openLoading: (message: string) => void;
@@ -10,39 +10,15 @@ type PopupsType = {
   confirmDelete: (descr: string, fn: () => void) => void;
 };
 
-export const PopupsContext = createContext<PopupsType>({
-  openLoading: t => undefined,
-  closeLoading: () => undefined,
-  confirmDelete: () => undefined,
-});
+const notImplemented = () => {
+  throw new Error('Popup Context not ready yet');
+};
 
-const ConfirmDelete: React.FC<{
-  descr?: string;
-  onClose: (result: boolean) => void;
-}> = ({ descr, onClose }) => (
-  <Modal isOpen={!!descr}>
-    <ModalHeader className={styles.confirmDeleteHeader}>
-      Confirmación borrado
-    </ModalHeader>
-    <ModalBody className={styles.confirmDeleteBody}>
-      {`¿Está seguro que desea borrar ${descr} ?`}
-    </ModalBody>
-    <ModalFooter>
-      <Button
-        outline
-        color="danger"
-        onClick={() => {
-          onClose(true);
-        }}
-      >
-        Sí
-      </Button>
-      <Button outline onClick={() => onClose(false)}>
-        No
-      </Button>
-    </ModalFooter>
-  </Modal>
-);
+export const PopupsContext = createContext<PopupsType>({
+  openLoading: notImplemented,
+  closeLoading: notImplemented,
+  confirmDelete: notImplemented,
+});
 
 export const PopupsProvider: React.FC<{}> = ({ children }) => {
   const [t, setLoading] = useState<string | undefined>(undefined);

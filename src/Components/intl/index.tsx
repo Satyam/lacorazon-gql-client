@@ -25,14 +25,18 @@ type intlType = {
   formatCurrency: (amount?: number) => string;
 };
 
+const notImplemented = () => {
+  throw new Error('Internationalization Context not ready yet');
+};
+
 export const IntlContext = createContext<intlType>({
   locales: Object.keys(localeTables),
-  setLocale: l => undefined,
+  setLocale: notImplemented,
   locale: navigator.language,
-  formatDate: d => String(d),
+  formatDate: notImplemented,
   currency: 'EUR',
-  setCurrency: c => undefined,
-  formatCurrency: c => String(c),
+  setCurrency: notImplemented,
+  formatCurrency: notImplemented,
 });
 
 export const IntlProvider: React.FC<{

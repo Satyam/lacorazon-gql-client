@@ -11,15 +11,21 @@ import Loading from 'Components/Loading';
 import GqlError from 'Components/GqlError';
 import { ApolloQueryResult } from 'apollo-client';
 
-export const UserContext = createContext<{
+export type UserContextType = {
   currentUser?: UserType;
   refreshCurrentUser: () => Promise<ApolloQueryResult<{
     createUser: UserType;
   }> | void>;
   logout: () => Promise<void>;
-}>({
-  refreshCurrentUser: () => Promise.resolve(),
-  logout: () => Promise.resolve(),
+};
+
+const notImplemented = () => {
+  throw new Error('User Context not ready yet');
+};
+
+export const UserContext = createContext<UserContextType>({
+  refreshCurrentUser: notImplemented,
+  logout: notImplemented,
 });
 
 export const AuthProvider: React.FC<{}> = ({ children }) => {
