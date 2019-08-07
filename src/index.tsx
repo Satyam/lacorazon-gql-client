@@ -17,6 +17,11 @@ import { ModalsProvider } from 'Components/modals';
 import App from 'Components/App';
 import * as serviceWorker from './serviceWorker';
 
+if (process.env.NODE_ENV !== 'production') {
+  const whyDidYouRender = require('@welldone-software/why-did-you-render');
+  whyDidYouRender(React);
+}
+
 const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: createHttpLink({
