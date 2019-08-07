@@ -1,4 +1,11 @@
-import React, { useState, useContext, createContext, useCallback } from 'react';
+import React, {
+  useState,
+  useContext,
+  createContext,
+  useCallback,
+  useRef,
+  useEffect,
+} from 'react';
 
 import Loading from './Loading';
 
@@ -14,25 +21,32 @@ const notImplemented = () => {
   throw new Error('Popup Context not ready yet');
 };
 
-export const ModalsContext = createContext<ModalsType>({
+const initialValue = {
   openLoading: notImplemented,
   closeLoading: notImplemented,
   confirmDelete: notImplemented,
-});
+};
+
+export const ModalsContext = createContext<ModalsType>(initialValue);
 
 export const ModalsProvider: React.FC<{}> = ({ children }) => {
   const [t, setLoading] = useState<string | undefined>(undefined);
+  const ctx = useRef<ModalsType>(initialValue);
+
   const [delParams, setDelParams] = useState<{
     descr?: string;
     fn?: () => void;
   }>({});
 
-  const confirmDelete = useCallback(
-    (descr: string, fn: () => void): void => {
+  useEffect(() => {
+    ctx.current.confirmDelete = (descr: string, fn: () => void): void =>
       setDelParams({ descr, fn });
-    },
-    [setDelParams]
-  );
+  }, [setDelParams]);
+
+  useEffect(() => {
+    ctx.current.closeLoading = () => setLoading(undefined);
+    ctx.current.openLoading = setLoading;
+  }, [setLoading]);
 
   const onCloseConfirmDelete = useCallback(
     (result: boolean) => {
@@ -42,14 +56,12 @@ export const ModalsProvider: React.FC<{}> = ({ children }) => {
     [setDelParams, delParams]
   );
 
+  ctx.current.closeLoading = useCallback(() => setLoading(undefined), [
+    setLoading,
+  ]);
+
   return (
-    <ModalsContext.Provider
-      value={{
-        openLoading: setLoading,
-        closeLoading: () => setLoading(undefined),
-        confirmDelete,
-      }}
-    >
+    <ModalsContext.Provider value={ctx.current}>
       <Loading isOpen={!!t}>{t}</Loading>
       <ConfirmDelete descr={delParams.descr} onClose={onCloseConfirmDelete} />
       {children}

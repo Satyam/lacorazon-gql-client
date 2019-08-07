@@ -2,20 +2,17 @@ import React, {
   createContext,
   useContext,
   useEffect,
-  useState,
   useCallback,
+  useMemo,
 } from 'react';
 
 import { useGetCurrentUser, useLogout, UserType } from './actions';
 import { Loading } from 'Components/modals';
 import GqlError from 'Components/GqlError';
-import { ApolloQueryResult } from 'apollo-client';
 
 export type UserContextType = {
   currentUser?: UserType;
-  refreshCurrentUser: () => Promise<ApolloQueryResult<{
-    createUser: UserType;
-  }> | void>;
+  refreshCurrentUser: () => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -30,31 +27,36 @@ export const UserContext = createContext<UserContextType>({
 
 export const AuthProvider: React.FC<{}> = ({ children }) => {
   const { loading, error, data, refetch } = useGetCurrentUser();
-  const originalUser = data && data.currentUser;
-
-  const [currentUser, setCurrentUser] = useState(originalUser);
   const doLogout = useLogout();
 
+  const currentUser = data && data.currentUser;
+
   const refreshCurrentUser = useCallback(
-    () => refetch().then(({ data }) => setCurrentUser(data.currentUser)),
-    [refetch, setCurrentUser]
+    () => refetch().then(() => undefined),
+    [refetch]
   );
+
+  const logout = useCallback(() => doLogout().then(refreshCurrentUser), [
+    doLogout,
+    refreshCurrentUser,
+  ]);
+
+  const ctx = useMemo(() => ({ currentUser, refreshCurrentUser, logout }), [
+    currentUser,
+    refreshCurrentUser,
+    logout,
+  ]);
 
   useEffect(() => {
     const timer = setInterval(refreshCurrentUser, 10 * 60 * 10000);
     return () => clearInterval(timer);
   }, [refreshCurrentUser]);
 
-  function logout() {
-    return doLogout().then(refreshCurrentUser);
-  }
-
   if (loading) return <Loading>Current User</Loading>;
+
   return (
     <GqlError error={error}>
-      <UserContext.Provider value={{ currentUser, refreshCurrentUser, logout }}>
-        {children}
-      </UserContext.Provider>
+      <UserContext.Provider value={ctx}>{children}</UserContext.Provider>
     </GqlError>
   );
 };

@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useCallback,
-} from 'react';
+import React, { createContext, useContext, useState, useMemo } from 'react';
 
 import { format } from 'date-fns';
 import { enUS, es } from 'date-fns/locale';
@@ -19,7 +13,7 @@ type intlType = {
   locales: string[];
   setLocale: (locale: string) => void;
   locale: string;
-  formatDate: (date?: object) => string;
+  formatDate: (date?: Date, formatStr?: string) => string;
   currency: string;
   setCurrency: (currency: string) => void;
   formatCurrency: (amount?: number) => string;
@@ -29,7 +23,7 @@ const notImplemented = () => {
   throw new Error('Internationalization Context not ready yet');
 };
 
-export const IntlContext = createContext<intlType>({
+const initialValues = {
   locales: Object.keys(localeTables),
   setLocale: notImplemented,
   locale: navigator.language,
@@ -37,7 +31,8 @@ export const IntlContext = createContext<intlType>({
   currency: 'EUR',
   setCurrency: notImplemented,
   formatCurrency: notImplemented,
-});
+};
+export const IntlContext = createContext<intlType>(initialValues);
 
 export const IntlProvider: React.FC<{
   locale?: string;
@@ -45,49 +40,33 @@ export const IntlProvider: React.FC<{
 }> = ({ locale: l = navigator.language, currency: c = 'EUR', children }) => {
   const [locale, setLocale] = useState(l);
   const [currency, setCurrency] = useState(c);
-  const [formatCurrency, setFormatCurrency] = useState<
-    (value?: number) => string
-  >(value => String(value));
 
-  const formatDate = useCallback(
-    (date, formatStr = 'P') =>
-      date
-        ? format(date, formatStr, {
-            locale: localeTables[locale],
-          })
-        : '',
-    [locale]
-  );
-
-  useEffect(() => {
-    setDefaultLocale(locale);
-  }, [locale]);
-
-  useEffect(() => {
+  const ctx = useMemo<intlType>(() => {
     const currFormatter = new Intl.NumberFormat(locale, {
       style: 'currency',
       currency,
     });
-    setFormatCurrency(() => (value?: number) =>
-      value ? currFormatter.format(value) : ''
-    );
-  }, [currency, locale]);
 
-  return (
-    <IntlContext.Provider
-      value={{
-        locales: Object.keys(localeTables),
-        setLocale,
-        locale,
-        formatDate,
-        currency,
-        setCurrency,
-        formatCurrency,
-      }}
-    >
-      {children}
-    </IntlContext.Provider>
-  );
+    setDefaultLocale(locale);
+
+    return {
+      locales: Object.keys(localeTables),
+      setLocale,
+      locale,
+      formatDate: (date?: Date, formatStr: string = 'P') =>
+        date
+          ? format(date, formatStr, {
+              locale: localeTables[locale],
+            })
+          : '',
+      currency,
+      setCurrency,
+      formatCurrency: (value?: number) =>
+        value ? currFormatter.format(value) : '',
+    };
+  }, [locale, currency]);
+
+  return <IntlContext.Provider value={ctx}>{children}</IntlContext.Provider>;
 };
 
 export function useIntl() {
