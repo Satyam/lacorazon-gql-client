@@ -3,8 +3,7 @@ import React, {
   useContext,
   createContext,
   useCallback,
-  useRef,
-  useEffect,
+  useMemo,
 } from 'react';
 
 import Loading from './Loading';
@@ -31,22 +30,11 @@ export const ModalsContext = createContext<ModalsType>(initialValue);
 
 export const ModalsProvider: React.FC<{}> = ({ children }) => {
   const [t, setLoading] = useState<string | undefined>(undefined);
-  const ctx = useRef<ModalsType>(initialValue);
 
   const [delParams, setDelParams] = useState<{
     descr?: string;
     fn?: () => void;
   }>({});
-
-  useEffect(() => {
-    ctx.current.confirmDelete = (descr: string, fn: () => void): void =>
-      setDelParams({ descr, fn });
-  }, [setDelParams]);
-
-  useEffect(() => {
-    ctx.current.closeLoading = () => setLoading(undefined);
-    ctx.current.openLoading = setLoading;
-  }, [setLoading]);
 
   const onCloseConfirmDelete = useCallback(
     (result: boolean) => {
@@ -56,12 +44,25 @@ export const ModalsProvider: React.FC<{}> = ({ children }) => {
     [setDelParams, delParams]
   );
 
-  ctx.current.closeLoading = useCallback(() => setLoading(undefined), [
+  const openLoading = useCallback((message: string) => setLoading(message), [
     setLoading,
   ]);
 
+  const confirmDelete = useCallback(
+    (descr: string, fn: () => void): void => setDelParams({ descr, fn }),
+    [setDelParams]
+  );
+
+  const closeLoading = useCallback(() => setLoading(undefined), [setLoading]);
+
+  const ctx = useMemo(() => ({ openLoading, closeLoading, confirmDelete }), [
+    openLoading,
+    closeLoading,
+    confirmDelete,
+  ]);
+
   return (
-    <ModalsContext.Provider value={ctx.current}>
+    <ModalsContext.Provider value={ctx}>
       <Loading isOpen={!!t}>{t}</Loading>
       <ConfirmDelete descr={delParams.descr} onClose={onCloseConfirmDelete} />
       {children}
