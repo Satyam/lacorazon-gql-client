@@ -3,9 +3,9 @@ import useReactRouter from 'use-react-router';
 
 import { LabeledText, LabeledCheckbox } from 'Components/Form';
 import Page from 'Components/Page';
-import Loading from 'Components/modals/Loading';
+import { Loading } from 'Components/Modals';
 import { Alert } from 'reactstrap';
-import { useIntl } from 'Components/intl';
+import { useIntl } from 'Providers/Intl';
 
 import { useGetVenta } from './actions';
 

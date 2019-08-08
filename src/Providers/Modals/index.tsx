@@ -6,9 +6,7 @@ import React, {
   useMemo,
 } from 'react';
 
-import Loading from './Loading';
-
-import ConfirmDelete from './ConfirmDelete';
+import { Loading, ConfirmDelete } from 'Components/Modals';
 
 type ModalsType = {
   openLoading: (message: string) => void;

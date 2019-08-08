@@ -5,9 +5,9 @@ import * as yup from 'yup';
 import { Form, TextField, SubmitButton } from 'Components/Form';
 import Page from 'Components/Page';
 import { useCreateUser } from 'Components/user/actions';
-import { useModals } from 'Components/modals';
+import { useModals } from 'Providers/Modals';
 
-import { useAuth } from 'Components/auth/context';
+import { useAuth } from 'Providers/Auth';
 
 const loginSchema = yup.object().shape({
   nombre: yup

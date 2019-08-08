@@ -12,10 +12,10 @@ import {
   SubmitButton,
 } from 'Components/Form';
 import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
-import Loading from 'Components/modals/Loading';
+import Loading from 'Components/Modals/Loading';
 import Page from 'Components/Page';
-import { useIntl } from 'Components/intl';
-import { useModals } from 'Components/modals';
+import { useIntl } from 'Providers/Intl';
+import { useModals } from 'Providers/Modals';
 
 import {
   useCreateVenta,

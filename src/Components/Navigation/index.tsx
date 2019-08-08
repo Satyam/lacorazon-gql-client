@@ -14,10 +14,10 @@ import {
   DropdownItem,
 } from 'reactstrap';
 
-import laCorazon from '../../La Corazon.png';
+import laCorazon from 'La Corazon.png';
 
-import { useAuth } from 'Components/auth/context';
-import { useIntl } from 'Components/intl';
+import { useAuth } from 'Providers/Auth';
+import { useIntl } from 'Providers/Intl';
 
 import styles from './styles.module.css';
 

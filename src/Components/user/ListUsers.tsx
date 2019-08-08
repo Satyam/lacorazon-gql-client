@@ -8,7 +8,8 @@ import {
   ButtonIconDelete,
 } from 'Components/Icons';
 import Page from 'Components/Page';
-import { useModals, Loading } from 'Components/modals';
+import { Loading } from 'Components/Modals';
+import { useModals } from 'Providers/Modals';
 
 import { useListUsers, useDeleteUser, UserType } from './actions';
 

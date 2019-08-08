@@ -8,10 +8,10 @@ import {
   ButtonIconEdit,
   ButtonIconDelete,
 } from 'Components/Icons';
-import { useIntl } from 'Components/intl';
-import Loading from 'Components/modals/Loading';
+import { useIntl } from 'Providers/Intl';
+import { Loading } from 'Components/Modals';
 import Page from 'Components/Page';
-import { useModals } from 'Components/modals';
+import { useModals } from 'Providers/Modals';
 
 import { useListVentas, useDeleteVenta, VentaType } from './actions';
 

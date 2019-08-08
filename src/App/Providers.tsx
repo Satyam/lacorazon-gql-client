@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { GqlProvider } from 'Components/Apollo';
-import { AuthProvider } from 'Components/auth/context';
-import { IntlProvider } from 'Components/intl';
-import { ModalsProvider } from 'Components/modals';
+import { GqlProvider } from 'Providers/Apollo';
+import { AuthProvider } from 'Providers/Auth';
+import { IntlProvider } from 'Providers/Intl';
+import { ModalsProvider } from 'Providers/Modals';
 
 const Providers: React.FC<{}> = ({ children }) => (
   <GqlProvider>

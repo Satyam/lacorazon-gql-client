@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 
 import { useGetCurrentUser, useLogout, useLogin, UserType, LoginType } from './actions';
-import { Loading } from 'Components/modals';
+import { Loading } from 'Components/Modals';
 import GqlError from 'Components/GqlError';
 
 export type UserContextType = {

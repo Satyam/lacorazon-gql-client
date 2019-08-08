@@ -12,7 +12,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import classNames from 'classnames';
 
-import { useIntl } from 'Components/intl';
+import { useIntl } from 'Providers/Intl';
 
 let counter = 0;
 

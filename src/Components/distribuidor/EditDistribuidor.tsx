@@ -7,7 +7,8 @@ import * as yup from 'yup';
 import { Form, TextField, SubmitButton } from 'Components/Form';
 import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
 import Page from 'Components/Page';
-import { useModals, Loading } from 'Components/modals';
+import { Loading } from 'Components/Modals';
+import { useModals } from 'Providers/Modals';
 
 import {
   useCreateDistribuidor,

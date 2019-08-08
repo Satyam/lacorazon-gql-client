@@ -4,7 +4,7 @@ import useReactRouter from 'use-react-router';
 
 import { LabeledText } from 'Components/Form';
 import Page from 'Components/Page';
-import { Loading } from 'Components/modals';
+import { Loading } from 'Components/Modals';
 
 import { useGetDistribuidor } from './actions';
 

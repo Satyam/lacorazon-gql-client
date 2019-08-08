@@ -16,5 +16,3 @@ const client = new ApolloClient({
 export const GqlProvider: React.FC<{}> = ({ children }) => (
   <ApolloProvider client={client}>{children}</ApolloProvider>
 );
-
-export default GqlProvider;
