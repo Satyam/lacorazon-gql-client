@@ -29,7 +29,7 @@ export const LOGIN = gql`
   }
 `;
 
-type LoginType = { nombre: string; password: string };
+export type LoginType = { nombre: string; password: string };
 
 export function useLogin(): (values: LoginType) => Promise<ID | void> {
   const [login] = useMutation<{ login: { id: ID } }, LoginType>(LOGIN, {
@@ -37,7 +37,8 @@ export function useLogin(): (values: LoginType) => Promise<ID | void> {
   });
   return values =>
     login({ variables: values }).then(
-      status => status && status.data && status.data.login.id
+      status =>
+        status && status.data && status.data.login && status.data.login.id
     );
 }
 
