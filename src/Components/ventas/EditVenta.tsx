@@ -2,6 +2,7 @@ import React from 'react';
 import useReactRouter from 'use-react-router';
 import * as yup from 'yup';
 import { Alert } from 'reactstrap';
+import { FormikValues } from 'formik';
 
 import {
   Form,
@@ -81,7 +82,16 @@ export default function EditVenta() {
       deleteVenta(id!).then(() => history.replace('/ventas'))
     );
   };
-  if (venta) venta.vendedor = venta.vendedor || { id: '' };
+
+  let values: FormikValues = {};
+  if (venta) {
+    const { vendedor, ...rest } = venta;
+    values = {
+      ...rest,
+      idVendedor: (vendedor && vendedor.id) || '',
+    };
+  }
+
   return (
     <Page
       title={`Venta - ${venta ? venta.fecha : 'nuevo'}`}
@@ -91,12 +101,12 @@ export default function EditVenta() {
       {id && !venta ? (
         <Alert color="danger">La venta no existe o fue borrada</Alert>
       ) : (
-        <Form values={venta} onSubmit={onSubmit} schema={ventaSchema}>
+        <Form values={values} onSubmit={onSubmit} schema={ventaSchema}>
           <DateField name="fecha" label="Fecha" />
           <TextField name="concepto" label="Concepto" />
           {optionVendedoresStatus.optionsVendedores && (
             <DropdownField
-              name="vendedor.id"
+              name="idVendedor"
               label="Vendedor"
               noOption={!id}
               options={optionVendedoresStatus.optionsVendedores}
