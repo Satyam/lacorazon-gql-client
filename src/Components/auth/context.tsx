@@ -6,7 +6,7 @@ import React, {
   useMemo,
 } from 'react';
 
-import { useGetCurrentUser, useLogout, UserType } from './actions';
+import { useGetCurrentUser, useLogout, useLogin, UserType, LoginType } from './actions';
 import { Loading } from 'Components/modals';
 import GqlError from 'Components/GqlError';
 
@@ -14,6 +14,7 @@ export type UserContextType = {
   currentUser?: UserType;
   refreshCurrentUser: () => Promise<void>;
   logout: () => Promise<void>;
+  login: (values: LoginType) => Promise<ID | void>
 };
 
 const notImplemented = () => {
@@ -23,11 +24,13 @@ const notImplemented = () => {
 export const UserContext = createContext<UserContextType>({
   refreshCurrentUser: notImplemented,
   logout: notImplemented,
+  login: notImplemented
 });
 
 export const AuthProvider: React.FC<{}> = ({ children }) => {
   const { loading, error, data, refetch } = useGetCurrentUser();
   const doLogout = useLogout();
+  const doLogin = useLogin();
 
   const currentUser = data && data.currentUser;
 
@@ -41,10 +44,16 @@ export const AuthProvider: React.FC<{}> = ({ children }) => {
     refreshCurrentUser,
   ]);
 
-  const ctx = useMemo(() => ({ currentUser, refreshCurrentUser, logout }), [
+  const login = useCallback((values: LoginType) =>  doLogin(values).then(id => {
+    refreshCurrentUser();
+    return id;
+  }),[doLogin, refreshCurrentUser])
+
+  const ctx = useMemo(() => ({ currentUser, refreshCurrentUser, logout, login }), [
     currentUser,
     refreshCurrentUser,
     logout,
+    login
   ]);
 
   useEffect(() => {

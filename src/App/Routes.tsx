@@ -12,7 +12,7 @@ import ShowDistribuidor from 'Components/distribuidor/ShowDistribuidor';
 import ListVentas from 'Components/ventas/ListVentas';
 import EditVenta from 'Components/ventas/EditVenta';
 import ShowVenta from 'Components/ventas/ShowVenta';
-import Login from 'Components/auth/Login';
+import Login from 'Components/Login';
 
 const Routes = () => (
   <Router>

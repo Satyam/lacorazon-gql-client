@@ -7,8 +7,7 @@ import Page from 'Components/Page';
 import { useCreateUser } from 'Components/user/actions';
 import { useModals } from 'Components/modals';
 
-import { useLogin } from './actions';
-import { useAuth } from './context';
+import { useAuth } from 'Components/auth/context';
 
 const loginSchema = yup.object().shape({
   nombre: yup
@@ -29,8 +28,7 @@ const loginSchema = yup.object().shape({
 
 const Login: React.FC<{}> = () => {
   const { history, match } = useReactRouter<{ register?: string }>();
-  const { refreshCurrentUser } = useAuth();
-  const login = useLogin();
+  const { refreshCurrentUser, login } = useAuth();
   const createUser = useCreateUser();
   const { openLoading, closeLoading } = useModals();
   const register = match.params.register;
@@ -63,13 +61,13 @@ const Login: React.FC<{}> = () => {
           } else {
             openLoading('Accediendo ...');
             return login(values)
-              .then(id =>
-                id
-                  ? refreshCurrentUser().then(() => {
-                      history.goBack();
-                    })
-                  : Promise.reject('User name or password do not exist')
-              )
+              .then(id => {
+                if (id) {
+                  history.goBack();
+                  return Promise.resolve(id);
+                }
+                return Promise.reject('User name or password do not exist');
+              })
               .finally(closeLoading);
           }
         }}
