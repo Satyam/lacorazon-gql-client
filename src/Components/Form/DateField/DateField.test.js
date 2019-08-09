@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, cleanup, act } from '@testing-library/react';
+import { render, fireEvent, cleanup, wait } from '@testing-library/react';
 import * as Yup from 'yup';
 
 import Form from '../Form';
@@ -109,30 +109,25 @@ describe('Form/DateField', () => {
     fireEvent.blur(getByLabelText('one'));
     expect(validate.mock.calls).toEqual([[new Date(2019, 8, 7)]]);
   });
-  it('should reject values below the min in the schema', done => {
+  it('should reject values below the min in the schema', () => {
     // since the out-of-range dates are not enabled, they can't be clicked
     const schema = Yup.object().shape({
       one: Yup.date()
         .min(new Date(2019, 8, 10))
         .default(new Date(2019, 8, 20)),
     });
-    let wrapper;
-    act(() => {
-      wrapper = render(
-        <Form schema={schema}>
-          <DateField label="one" name="one" />
-        </Form>
-      );
+    const { getByLabelText, getByText, container } = render(
+      <Form schema={schema}>
+        <DateField label="one" name="one" />
+      </Form>
+    );
+
+    fireEvent.click(getByLabelText('one'));
+    fireEvent.click(getByText('6'));
+    fireEvent.blur(getByLabelText('one'));
+    return wait(() => {
+      expect(getByLabelText('one')).toHaveClass('is-invalid');
+      expect(container.querySelector('.invalid-feedback')).toBeVisible();
     });
-    fireEvent.click(wrapper.getByLabelText('one'));
-    fireEvent.click(wrapper.getByText('6'));
-    fireEvent.blur(wrapper.getByLabelText('one'));
-    setTimeout(() => {
-      expect(wrapper.getByLabelText('one')).toHaveClass('is-invalid');
-      expect(
-        wrapper.container.querySelector('.invalid-feedback')
-      ).toBeVisible();
-      done();
-    }, 1);
   });
 });
