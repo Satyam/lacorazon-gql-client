@@ -13,7 +13,7 @@ import {
   SubmitButton,
 } from 'Components/Form';
 import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
-import Loading from 'Components/Modals/Loading';
+import {Loading} from 'Components/Modals';
 import Page from 'Components/Page';
 import { useIntl } from 'Providers/Intl';
 import { useModals } from 'Providers/Modals';
