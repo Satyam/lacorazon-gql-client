@@ -10,8 +10,9 @@ const Form: React.FC<{
     values: any,
     formikBag: FormikHelpers<FormikValues>
   ) => any | Promise<any>;
-  formProps?: any;
-}> = ({ schema, values, onSubmit, children, formProps, ...rest }) => (
+  inline?: boolean;
+  className?: string;
+}> = ({ schema, values, onSubmit, children, inline, className, ...rest }) => (
   <Formik
     validationSchema={schema}
     initialValues={schema ? Object.assign(schema.default(), values) : values}
@@ -27,7 +28,12 @@ const Form: React.FC<{
     {...rest}
   >
     {({ status, handleReset, handleSubmit }) => (
-      <BSForm onSubmit={handleSubmit} onReset={handleReset} {...formProps}>
+      <BSForm
+        onSubmit={handleSubmit}
+        onReset={handleReset}
+        inline={inline}
+        className={className}
+      >
         {status && <Alert color="danger">{status}</Alert>}
         {children}
       </BSForm>
