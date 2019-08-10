@@ -61,7 +61,7 @@ export default function EditDistribuidor() {
 
   if (loading) return <Loading>Cargando distribuidor</Loading>;
 
-  const onDeleteClick = (ev: React.MouseEvent<HTMLButtonElement>) => {
+  const onDeleteClick: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
     confirmDelete(
       `al distribuidor ${distribuidor && distribuidor.nombre}`,

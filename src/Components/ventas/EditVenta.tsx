@@ -13,7 +13,7 @@ import {
   SubmitButton,
 } from 'Components/Form';
 import { ButtonIconAdd, ButtonIconDelete, ButtonSet } from 'Components/Icons';
-import {Loading} from 'Components/Modals';
+import { Loading } from 'Components/Modals';
 import Page from 'Components/Page';
 import { useIntl } from 'Providers/Intl';
 import { useModals } from 'Providers/Modals';
@@ -76,7 +76,7 @@ export default function EditVenta() {
     }
   };
 
-  const onDeleteClick = (ev: React.MouseEvent<HTMLButtonElement>) => {
+  const onDeleteClick: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
     confirmDelete(`la venta del ${formatDate(venta && venta.fecha)}`, () =>
       deleteVenta(id!).then(() => history.replace('/ventas'))

@@ -41,7 +41,7 @@ export default function EditUser() {
 
   if (loading) return <Loading>Cargando usuario</Loading>;
 
-  const onDeleteClick = (ev: React.MouseEvent<HTMLButtonElement>) => {
+  const onDeleteClick: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
     const { nombre, id } = ev.currentTarget.dataset;
     confirmDelete(`al usuario ${nombre}`, () =>

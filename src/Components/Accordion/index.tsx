@@ -61,7 +61,7 @@ export const Accordion = ({
     setOpen([elements[0].props.name]);
   }
 
-  const onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
+  const onClick: React.MouseEventHandler<HTMLDivElement> = ev => {
     if (ev.target instanceof HTMLButtonElement && 'name' in ev.target.dataset) {
       ev.stopPropagation();
       const name = String(ev.target.dataset.name);
