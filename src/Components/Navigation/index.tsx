@@ -13,21 +13,23 @@ import {
   DropdownMenu,
   DropdownItem,
 } from 'reactstrap';
+import { FaUser } from 'react-icons/fa';
 
 import laCorazon from 'La Corazon.png';
 
-import { useAuth } from 'Providers/Auth';
+import { useAuth0 } from 'Providers/Auth';
 import { useIntl } from 'Providers/Intl';
 
 import styles from './styles.module.css';
 
 export function Navigation() {
   const [isOpen, setOpen] = useState(false);
-  const { currentUser, logout } = useAuth();
+  const { isAuthenticated, login, logout, user } = useAuth0();
   const { locale, setLocale, locales } = useIntl();
   function toggle() {
     setOpen(!isOpen);
   }
+  console.log(user);
   return (
     <div>
       <Navbar expand="md" light className={styles.navbar}>
@@ -71,15 +73,14 @@ export function Navigation() {
             </UncontrolledDropdown>
             <UncontrolledDropdown nav inNavbar>
               <DropdownToggle nav caret className={styles.user}>
-                {currentUser ? currentUser.nombre : 'guest'}
+                {user ? <img src={user.picture} alt="Profile" /> : <FaUser />}
+                {user ? user.name : 'guest'}
               </DropdownToggle>
               <DropdownMenu right>
-                {currentUser ? (
-                  <DropdownItem onClick={logout}>Logout</DropdownItem>
+                {isAuthenticated ? (
+                  <DropdownItem onClick={() => logout()}>Logout</DropdownItem>
                 ) : (
-                  <DropdownItem tag={Link} to="/login">
-                    Login
-                  </DropdownItem>
+                  <DropdownItem onClick={() => login()}>Login</DropdownItem>
                 )}
                 <DropdownItem divider />
                 <DropdownItem tag={Link} to="/login/register">

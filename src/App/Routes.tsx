@@ -12,7 +12,7 @@ import ShowDistribuidor from 'Components/distribuidor/ShowDistribuidor';
 import ListVentas from 'Components/ventas/ListVentas';
 import EditVenta from 'Components/ventas/EditVenta';
 import ShowVenta from 'Components/ventas/ShowVenta';
-import Login from 'Components/Login';
+// import Login from 'Components/Login';
 
 const Routes = () => (
   <Router>
@@ -35,7 +35,7 @@ const Routes = () => (
       <Route path="/venta/edit/:id" component={EditVenta} />
       <Route path="/venta/:id" component={ShowVenta} />
     </Switch>
-    <Route path="/login/:register?" component={Login} />
+    {/* <Route path="/login/:register?" component={Login} /> */}
   </Router>
 );
 
