@@ -15,10 +15,10 @@
 .user img {
   width: 2em;
   border-radius: 1em;
-  margin-right: 1em;
+  margin-right: 0.3em;
   height: 2em;
 }
 
 .user svg {
-  margin-right: 1em;
+  margin-right: 0.3em;
 }
