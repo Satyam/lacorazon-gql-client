@@ -24,12 +24,12 @@ import styles from './styles.module.css';
 
 export function Navigation() {
   const [isOpen, setOpen] = useState(false);
-  const { isAuthenticated, login, logout, user } = useAuth0();
+  const { isAuthenticated, loginWithPopup, logout, user } = useAuth0();
   const { locale, setLocale, locales } = useIntl();
   function toggle() {
     setOpen(!isOpen);
   }
-  console.log(user);
+
   return (
     <div>
       <Navbar expand="md" light className={styles.navbar}>
@@ -72,21 +72,33 @@ export function Navigation() {
               </DropdownMenu>
             </UncontrolledDropdown>
             <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret className={styles.user}>
-                {user ? <img src={user.picture} alt="Profile" /> : <FaUser />}
-                {user ? user.name : 'guest'}
-              </DropdownToggle>
-              <DropdownMenu right>
-                {isAuthenticated ? (
-                  <DropdownItem onClick={() => logout()}>Logout</DropdownItem>
-                ) : (
-                  <DropdownItem onClick={() => login()}>Login</DropdownItem>
-                )}
-                <DropdownItem divider />
-                <DropdownItem tag={Link} to="/login/register">
-                  Register
-                </DropdownItem>
-              </DropdownMenu>
+              {isAuthenticated && user ? (
+                <>
+                  <DropdownToggle nav caret className={styles.user}>
+                    <img src={user.picture} alt="Profile" />
+                    {user.name}
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem onClick={() => logout()}>Logout</DropdownItem>
+                    <DropdownItem divider />
+                    <DropdownItem tag={Link} to="/profile">
+                      Profile
+                    </DropdownItem>
+                  </DropdownMenu>
+                </>
+              ) : (
+                <>
+                  <DropdownToggle nav caret className={styles.user}>
+                    <FaUser />
+                    guest
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem onClick={() => loginWithPopup()}>
+                      Login
+                    </DropdownItem>
+                  </DropdownMenu>
+                </>
+              )}
             </UncontrolledDropdown>
           </Nav>
         </Collapse>

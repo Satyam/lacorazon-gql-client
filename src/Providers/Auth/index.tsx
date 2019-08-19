@@ -13,8 +13,9 @@ type Auth0ContextType = {
   user: any;
   loading: boolean;
   popupOpen: boolean;
-  login: (options?: PopupLoginOptions) => Promise<void>;
-  handleRedirectCallback: () => Promise<void>;
+  auth0Client?: Auth0Client;
+  loginWithPopup: (options?: Readonly<PopupLoginOptions>) => Promise<void>;
+  handleRedirectCallback(): Promise<any>;
 } & Pick<
   Auth0Client,
   | 'getIdTokenClaims'
@@ -33,7 +34,8 @@ const initialValues = {
   user: null,
   loading: false,
   popupOpen: false,
-  login: notImplemented,
+  auth0Client: undefined,
+  loginWithPopup: notImplemented,
   handleRedirectCallback: notImplemented,
   getIdTokenClaims: notImplemented,
   loginWithRedirect: notImplemented,
@@ -59,6 +61,13 @@ export const Auth0Provider: React.FC<Auth0ClientOptions> = ({
   const [loading, setLoading] = useState(true);
   const [popupOpen, setPopupOpen] = useState(false);
 
+  console.log('state', {
+    isAuthenticated,
+    loading,
+    popupOpen,
+    user,
+    auth0Client,
+  });
   useEffect(() => {
     const initAuth0 = async () => {
       const auth0FromHook = await createAuth0Client({
@@ -66,35 +75,36 @@ export const Auth0Provider: React.FC<Auth0ClientOptions> = ({
         client_id,
         redirect_uri,
       });
-      setAuth0(auth0FromHook);
 
-      if (window.location.search.includes('code=')) {
-        const { appState } = await auth0FromHook.handleRedirectCallback();
-        window.history.replaceState(
-          {},
-          document.title,
-          appState && appState.targetUrl
-            ? appState.targetUrl
-            : window.location.pathname
-        );
-      }
+      // if (window.location.search.includes('code=')) {
+      //   const { appState } = await auth0FromHook.handleRedirectCallback();
+      //   debugger;
+      //   window.history.replaceState(
+      //     {},
+      //     document.title,
+      //     appState && appState.targetUrl
+      //       ? appState.targetUrl
+      //       : window.location.pathname
+      //   );
+      // }
 
       const isAuthenticated = await auth0FromHook.isAuthenticated();
 
       setIsAuthenticated(isAuthenticated);
-
-      if (isAuthenticated) {
-        const user = await auth0FromHook.getUser();
-        setUser(user);
-      }
-
+      setAuth0(auth0FromHook);
       setLoading(false);
     };
     initAuth0();
     // eslint-disable-next-line
   }, []);
 
-  const login = useCallback(
+  useEffect(() => {
+    if (isAuthenticated && auth0Client) {
+      auth0Client.getUser().then(user => setUser(user));
+    } else setUser(undefined);
+  }, [isAuthenticated, auth0Client]);
+
+  const loginWithPopup = useCallback(
     async (params = {}) => {
       if (auth0Client) {
         setPopupOpen(true);
@@ -105,8 +115,8 @@ export const Auth0Provider: React.FC<Auth0ClientOptions> = ({
         } finally {
           setPopupOpen(false);
         }
-        const user = await auth0Client.getUser();
-        setUser(user);
+        // const user = await auth0Client.getUser();
+        // setUser(user);
         setIsAuthenticated(true);
       }
     },
@@ -114,15 +124,17 @@ export const Auth0Provider: React.FC<Auth0ClientOptions> = ({
   );
 
   const handleRedirectCallback = useCallback(async () => {
-    if (auth0Client) {
-      setLoading(true);
-      await auth0Client.handleRedirectCallback();
-      const user = await auth0Client.getUser();
-      setLoading(false);
-      setIsAuthenticated(true);
-      setUser(user);
-    }
-  }, [auth0Client]);
+    if (loading || !auth0Client) return Promise.resolve({});
+
+    debugger;
+    setLoading(true);
+    const { appState } = await auth0Client.handleRedirectCallback();
+    const user = await auth0Client.getUser();
+    setIsAuthenticated(true);
+    setUser(user);
+    setLoading(false);
+    return appState;
+  }, [auth0Client, loading]);
 
   const ctx: Auth0ContextType = useMemo(() => {
     if (auth0Client) {
@@ -131,7 +143,8 @@ export const Auth0Provider: React.FC<Auth0ClientOptions> = ({
         user,
         loading,
         popupOpen,
-        login,
+        auth0Client,
+        loginWithPopup,
         handleRedirectCallback,
         getIdTokenClaims: (...p) => auth0Client.getIdTokenClaims(...p),
         loginWithRedirect: (...p) => auth0Client.loginWithRedirect(...p),
@@ -146,7 +159,7 @@ export const Auth0Provider: React.FC<Auth0ClientOptions> = ({
       user,
       loading,
       popupOpen,
-      login,
+      loginWithPopup,
       handleRedirectCallback,
     };
   }, [
@@ -154,7 +167,7 @@ export const Auth0Provider: React.FC<Auth0ClientOptions> = ({
     user,
     loading,
     popupOpen,
-    login,
+    loginWithPopup,
     handleRedirectCallback,
     auth0Client,
   ]);
