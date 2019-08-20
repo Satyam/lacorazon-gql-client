@@ -7,14 +7,13 @@ export const PrivateRoute: React.FC<{
   component: React.ComponentType;
   path: string;
 }> = ({ component: Component, path, ...rest }) => {
-  const { loading, isAuthenticated, loginWithRedirect } = useAuth0();
+  const { user, login } = useAuth0();
 
   const render = (props: any) => {
-    console.log({ loading, isAuthenticated });
+    console.log({ user, login });
     debugger;
-    if (loading) return null;
-    if (isAuthenticated) return <Component {...props} />;
-    loginWithRedirect({
+    if (user) return <Component {...props} />;
+    login({
       appState: { targetUrl: path },
     });
     return null;
@@ -27,14 +26,15 @@ export default PrivateRoute;
 
 export const PrivateRouteHandler: React.FC<{}> = ({ children }) => {
   const { history, location } = useReactRouter();
-  const { handleRedirectCallback } = useAuth0();
+  console.log('PrivateRouteHandler', location);
+  // const { handleRedirectCallback } = useAuth0();
 
-  if (location.search.includes('code=')) {
-    handleRedirectCallback().then(({ appState }) => {
-      debugger;
-      if (!!appState && appState.targetUrl) history.replace(appState.targetUrl);
-    });
-    return null;
-  }
+  // if (location.search.includes('code=')) {
+  //   handleRedirectCallback().then(({ appState }) => {
+  //     debugger;
+  //     if (!!appState && appState.targetUrl) history.replace(appState.targetUrl);
+  //   });
+  //   return null;
+  // }
   return <>{children}</>;
 };

@@ -24,7 +24,7 @@ import styles from './styles.module.css';
 
 export function Navigation() {
   const [isOpen, setOpen] = useState(false);
-  const { isAuthenticated, loginWithPopup, logout, user } = useAuth0();
+  const { login, logout, user } = useAuth0();
   const { locale, setLocale, locales } = useIntl();
   function toggle() {
     setOpen(!isOpen);
@@ -72,7 +72,7 @@ export function Navigation() {
               </DropdownMenu>
             </UncontrolledDropdown>
             <UncontrolledDropdown nav inNavbar>
-              {isAuthenticated && user ? (
+              {user ? (
                 <>
                   <DropdownToggle nav caret className={styles.user}>
                     <img src={user.picture} alt="Profile" />
@@ -93,9 +93,7 @@ export function Navigation() {
                     guest
                   </DropdownToggle>
                   <DropdownMenu right>
-                    <DropdownItem onClick={() => loginWithPopup()}>
-                      Login
-                    </DropdownItem>
+                    <DropdownItem onClick={() => login()}>Login</DropdownItem>
                   </DropdownMenu>
                 </>
               )}

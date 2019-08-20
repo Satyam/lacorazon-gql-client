@@ -4,9 +4,9 @@ import React from 'react';
 import { useAuth0 } from 'Providers/Auth';
 
 const Profile = () => {
-  const { loading, user } = useAuth0();
+  const { user } = useAuth0();
 
-  if (loading || !user) {
+  if (!user) {
     return <div>Loading...</div>;
   }
 

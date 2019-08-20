@@ -10,8 +10,8 @@ const Providers: React.FC<{}> = ({ children }) => (
     <IntlProvider locale="es-ES">
       <Auth0Provider
         domain={'dev-5ev0q6ua.eu.auth0.com'}
-        client_id={'DBbfOnjfs74eUf3wVFqzHbWeCwkcYkdt'}
-        redirect_uri={window.location.origin}
+        clientID={'DBbfOnjfs74eUf3wVFqzHbWeCwkcYkdt'}
+        redirectUri={window.location.origin}
       >
         <ModalsProvider>{children}</ModalsProvider>
       </Auth0Provider>
