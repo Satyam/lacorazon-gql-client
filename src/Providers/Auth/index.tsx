@@ -61,13 +61,6 @@ export const Auth0Provider: React.FC<Auth0ClientOptions> = ({
   const [popupOpen, setPopupOpen] = useState(false);
   const { history, location } = useReactRouter();
 
-  console.log('state', {
-    isAuthenticated,
-    loading,
-    popupOpen,
-    user,
-    auth0Client,
-  });
   useEffect(() => {
     const initAuth0 = async () => {
       const auth0FromHook = await createAuth0Client({

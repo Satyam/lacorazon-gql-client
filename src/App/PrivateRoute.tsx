@@ -5,11 +5,14 @@ import { useAuth0 } from 'Providers/Auth';
 export const PrivateRoute: React.FC<{
   component: React.ComponentType;
   path: string;
-}> = ({ component: Component, path, ...rest }) => {
+}> & { whyDidYouRender: boolean } = ({
+  component: Component,
+  path,
+  ...rest
+}) => {
   const { loading, isAuthenticated, loginWithRedirect } = useAuth0();
 
   const render = (props: any) => {
-    console.log('PrivateRoute:', { loading, isAuthenticated });
     if (loading) return null;
     if (isAuthenticated) return <Component {...props} />;
     loginWithRedirect({
@@ -22,3 +25,5 @@ export const PrivateRoute: React.FC<{
 };
 
 export default PrivateRoute;
+
+PrivateRoute.whyDidYouRender = true;
