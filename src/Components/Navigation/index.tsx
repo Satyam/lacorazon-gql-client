@@ -75,7 +75,7 @@ export function Navigation() {
               {isAuthenticated && user ? (
                 <>
                   <DropdownToggle nav caret className={styles.user}>
-                    <img src={user.picture} alt="Profile" />
+                    <img src={user.picture} alt="User" />
                     {user.name}
                   </DropdownToggle>
                   <DropdownMenu right>
@@ -106,3 +106,5 @@ export function Navigation() {
     </div>
   );
 }
+
+Navigation.whyDidYouRender = true;
