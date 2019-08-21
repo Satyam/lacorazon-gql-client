@@ -1,7 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-
-import { Navigation } from 'Components/Navigation';
+import { Route, Switch } from 'react-router-dom';
 
 import Users from 'Components/user/ListUsers';
 import EditUser from 'Components/user/EditUser';
@@ -14,33 +12,30 @@ import EditVenta from 'Components/ventas/EditVenta';
 import ShowVenta from 'Components/ventas/ShowVenta';
 import Profile from 'Components/Profile';
 
-import { PrivateRoute, PrivateRouteHandler } from './PrivateRoute';
+import PrivateRoute from './PrivateRoute';
 
 const Routes = () => (
-  <Router>
-    <Navigation />
-    <PrivateRouteHandler>
-      <Route path="/users" component={Users} />
-      <Switch>
-        <Route path="/user/new" component={EditUser} />
-        <Route path="/user/edit/:id" component={EditUser} />
-        <Route path="/user/:id" component={ShowUser} />
-      </Switch>
-      <Route path="/distribuidores" component={Distribuidores} />
-      <Switch>
-        <Route path="/distribuidor/new" component={EditDistribuidor} />
-        <Route path="/distribuidor/edit/:id" component={EditDistribuidor} />
-        <Route path="/distribuidor/:id" component={ShowDistribuidor} />
-      </Switch>
-      <Route path="/ventas" component={ListVentas} />
-      <Switch>
-        <Route path="/venta/new" component={EditVenta} />
-        <Route path="/venta/edit/:id" component={EditVenta} />
-        <Route path="/venta/:id" component={ShowVenta} />
-      </Switch>
-      <PrivateRoute path="/profile" component={Profile} />
-    </PrivateRouteHandler>
-  </Router>
+  <>
+    <Route path="/users" component={Users} />
+    <Switch>
+      <Route path="/user/new" component={EditUser} />
+      <Route path="/user/edit/:id" component={EditUser} />
+      <Route path="/user/:id" component={ShowUser} />
+    </Switch>
+    <Route path="/distribuidores" component={Distribuidores} />
+    <Switch>
+      <Route path="/distribuidor/new" component={EditDistribuidor} />
+      <Route path="/distribuidor/edit/:id" component={EditDistribuidor} />
+      <Route path="/distribuidor/:id" component={ShowDistribuidor} />
+    </Switch>
+    <Route path="/ventas" component={ListVentas} />
+    <Switch>
+      <Route path="/venta/new" component={EditVenta} />
+      <Route path="/venta/edit/:id" component={EditVenta} />
+      <Route path="/venta/:id" component={ShowVenta} />
+    </Switch>
+    <PrivateRoute path="/profile" component={Profile} />
+  </>
 );
 
 export default Routes;
