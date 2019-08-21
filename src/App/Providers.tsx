@@ -18,7 +18,10 @@ const Providers: React.FC<{}> = ({ children }) => (
         redirect_uri={window.location.origin}
       >
         {/* GqlProvider requires Auth0Provider context to exists,
-            to get the authorization token for the user */}
+            so it can get the authorization token for the user.
+            It also depends on Auth0Provider to refresh the tree
+            when the user logs in or out, there is no point in
+            doing it twice */}
         <GqlProvider>
           <ModalsProvider>{children}</ModalsProvider>
         </GqlProvider>

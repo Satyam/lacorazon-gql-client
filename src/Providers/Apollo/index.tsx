@@ -1,43 +1,62 @@
-import React, { useMemo } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 
 import ApolloClient from 'apollo-client';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { createHttpLink } from 'apollo-link-http';
 import { setContext } from 'apollo-link-context';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 
 import { useAuth0 } from 'Providers/Auth';
 
-export const GqlProvider: React.FC<{}> = ({ children }) => {
+export const GqlProvider: React.FC<{}> & { whyDidYouRender?: boolean } = ({
+  children,
+}) => {
   const { loading, getTokenSilently, isAuthenticated } = useAuth0();
+  const httpLink = useMemo(
+    () =>
+      createHttpLink({
+        uri: '/graphql',
+        credentials: 'same-origin',
+      }),
+    []
+  );
 
-  const client = useMemo(() => {
-    const httpLink = createHttpLink({
-      uri: '/graphql',
-      credentials: 'same-origin',
-    });
-    if (!loading && isAuthenticated) {
-      const authLink = setContext(async (_, { headers }) => {
-        // get the authentication token from local storage if it exists
-        const token = await getTokenSilently();
-        // return the headers to the context so httpLink can read them
-        return {
-          headers: {
-            ...headers,
-            authorization: token ? `Bearer ${token}` : '',
-          },
-        };
-      });
-      return new ApolloClient({
+  const plainLink: ApolloClient<NormalizedCacheObject> = useMemo(
+    () =>
+      new ApolloClient({
         cache: new InMemoryCache(),
-        link: authLink.concat(httpLink),
-      });
-    }
-    return new ApolloClient({
-      cache: new InMemoryCache(),
-      link: httpLink,
-    });
-  }, [loading, getTokenSilently, isAuthenticated]);
+        link: httpLink,
+      }),
+    [httpLink]
+  );
 
-  return <ApolloProvider client={client}>{children}</ApolloProvider>;
+  const clientRef = useRef(plainLink);
+
+  useEffect(() => {
+    const newLink = () => {
+      if (loading) return;
+      if (isAuthenticated) {
+        getTokenSilently().then(token => {
+          const authLink = setContext((_, { headers }) => ({
+            headers: {
+              ...headers,
+              authorization: token ? `Bearer ${token}` : '',
+            },
+          }));
+          clientRef.current = new ApolloClient({
+            cache: new InMemoryCache(),
+            link: authLink.concat(httpLink),
+          });
+        });
+      } else {
+        clientRef.current = plainLink;
+      }
+    };
+    newLink();
+    return;
+  }, [loading, getTokenSilently, isAuthenticated, httpLink, plainLink]);
+
+  return <ApolloProvider client={clientRef.current}>{children}</ApolloProvider>;
 };
+
+GqlProvider.whyDidYouRender = true;
