@@ -8,20 +8,23 @@ import { IntlProvider } from 'Providers/Intl';
 import { ModalsProvider } from 'Providers/Modals';
 
 const Providers: React.FC<{}> = ({ children }) => (
-  <GqlProvider>
-    <IntlProvider locale="es-ES">
-      <Router>
-        {/* Auth0Provider requires Router to be available */}
-        <Auth0Provider
-          domain={'dev-5ev0q6ua.eu.auth0.com'}
-          client_id={'DBbfOnjfs74eUf3wVFqzHbWeCwkcYkdt'}
-          redirect_uri={window.location.origin}
-        >
+  <IntlProvider locale="es-ES">
+    <Router>
+      {/* Auth0Provider requires Router to be available 
+          so it can navigate on being redirected from login and logout */}
+      <Auth0Provider
+        domain={'dev-5ev0q6ua.eu.auth0.com'}
+        client_id={'DBbfOnjfs74eUf3wVFqzHbWeCwkcYkdt'}
+        redirect_uri={window.location.origin}
+      >
+        {/* GqlProvider requires Auth0Provider context to exists,
+            to get the authorization token for the user */}
+        <GqlProvider>
           <ModalsProvider>{children}</ModalsProvider>
-        </Auth0Provider>
-      </Router>
-    </IntlProvider>
-  </GqlProvider>
+        </GqlProvider>
+      </Auth0Provider>
+    </Router>
+  </IntlProvider>
 );
 
 export default Providers;
