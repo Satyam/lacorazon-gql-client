@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import { useAuth0 } from 'Providers/Auth';
-import useReactRouter from 'use-react-router';
 
 export const PrivateRoute: React.FC<{
   component: React.ComponentType;
@@ -10,8 +9,7 @@ export const PrivateRoute: React.FC<{
   const { loading, isAuthenticated, loginWithRedirect } = useAuth0();
 
   const render = (props: any) => {
-    console.log({ loading, isAuthenticated });
-    debugger;
+    console.log('PrivateRoute:', { loading, isAuthenticated });
     if (loading) return null;
     if (isAuthenticated) return <Component {...props} />;
     loginWithRedirect({
@@ -24,17 +22,3 @@ export const PrivateRoute: React.FC<{
 };
 
 export default PrivateRoute;
-
-export const PrivateRouteHandler: React.FC<{}> = ({ children }) => {
-  const { history, location } = useReactRouter();
-  const { handleRedirectCallback } = useAuth0();
-
-  if (location.search.includes('code=')) {
-    handleRedirectCallback().then(({ appState }) => {
-      debugger;
-      if (!!appState && appState.targetUrl) history.replace(appState.targetUrl);
-    });
-    return null;
-  }
-  return <>{children}</>;
-};
