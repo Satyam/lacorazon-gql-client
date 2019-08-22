@@ -16,6 +16,7 @@ const Providers: React.FC<{}> = ({ children }) => (
         domain={'dev-5ev0q6ua.eu.auth0.com'}
         client_id={'DBbfOnjfs74eUf3wVFqzHbWeCwkcYkdt'}
         redirect_uri={window.location.origin}
+        audience="https://lacorazon.es"
       >
         {/* GqlProvider requires Auth0Provider context to exists,
             so it can get the authorization token for the user.
