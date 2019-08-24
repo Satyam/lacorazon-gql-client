@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import useReactRouter from 'use-react-router';
-import { Table, ButtonGroup } from 'reactstrap';
+import { Table, ButtonGroup, Alert } from 'reactstrap';
 
 import {
   ButtonIconAdd,
@@ -18,6 +18,7 @@ const ListUsers = () => {
   const { loading, error, users } = useListUsers();
   const deleteUser = useDeleteUser();
   const { confirmDelete } = useModals();
+  const [gqlErr, setGqlErr] = useState<string | false>(false);
 
   if (loading) return <Loading>Cargando usuarios</Loading>;
 
@@ -32,7 +33,13 @@ const ListUsers = () => {
   const onDelete: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
     const { nombre, id } = ev.currentTarget.dataset;
-    confirmDelete(`al usuario ${nombre}`, () => deleteUser(id as string));
+    confirmDelete(`al usuario ${nombre}`, () =>
+      deleteUser(id as string).catch(err => {
+        if (err.message === 'GraphQL error: unauthorized') {
+          setGqlErr('No está autorizado para borrar el usuario');
+        }
+      })
+    );
   };
   const onEdit: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
@@ -78,6 +85,10 @@ const ListUsers = () => {
       }
       error={error}
     >
+      <Alert color="danger" isOpen={!!gqlErr} toggle={() => setGqlErr(false)}>
+        {gqlErr}
+      </Alert>
+
       <Table striped hover size="sm" responsive>
         <thead>
           <tr>
