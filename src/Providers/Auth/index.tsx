@@ -50,9 +50,7 @@ export const useAuth0 = () => useContext(Auth0Context);
 
 export const Auth0Provider: React.FC<Auth0ClientOptions> = ({
   children,
-  domain,
-  client_id,
-  redirect_uri,
+  ...auth0Options
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState();
@@ -63,11 +61,7 @@ export const Auth0Provider: React.FC<Auth0ClientOptions> = ({
 
   useEffect(() => {
     const initAuth0 = async () => {
-      const auth0FromHook = await createAuth0Client({
-        domain,
-        client_id,
-        redirect_uri,
-      });
+      const auth0FromHook = await createAuth0Client(auth0Options);
 
       if (location.search.includes('code=')) {
         const { appState } = await auth0FromHook.handleRedirectCallback();
