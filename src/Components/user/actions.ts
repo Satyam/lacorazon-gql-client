@@ -104,17 +104,19 @@ export function useCreateUser(): (
     createUser({
       variables: { ...values, password: values.nombre },
       update: (cache, { data }) => {
-        const cached = readUsersCache(cache);
-        cached.users.push(data.createUser);
-        cached.users.sort((a: UserType, b: UserType) => {
-          if (a.nombre! < b.nombre!) return -1;
-          if (a.nombre! > b.nombre!) return 1;
-          return 0;
-        });
-        cache.writeQuery({
-          query: LIST_USERS,
-          data: cached,
-        });
+        if (data) {
+          const cached = readUsersCache(cache);
+          cached.users.push(data.createUser);
+          cached.users.sort((a: UserType, b: UserType) => {
+            if (a.nombre! < b.nombre!) return -1;
+            if (a.nombre! > b.nombre!) return 1;
+            return 0;
+          });
+          cache.writeQuery({
+            query: LIST_USERS,
+            data: cached,
+          });
+        }
       },
     }).then(
       // https://github.com/apollographql/react-apollo/issues/2095

@@ -166,17 +166,19 @@ export function useCreateVenta(): (
       variables: gqlValues,
 
       update: (cache, { data }) => {
-        const cached = readVentasCache(cache);
-        cached.ventas.push(data.createVenta);
-        cached.ventas.sort((a: GqlVentaType, b: GqlVentaType) => {
-          if (a.fecha! < b.fecha!) return -1;
-          if (a.fecha! > b.fecha!) return 1;
-          return 0;
-        });
-        cache.writeQuery({
-          query: LIST_VENTAS,
-          data: cached,
-        });
+        if (data) {
+          const cached = readVentasCache(cache);
+          cached.ventas.push(data.createVenta);
+          cached.ventas.sort((a: GqlVentaType, b: GqlVentaType) => {
+            if (a.fecha! < b.fecha!) return -1;
+            if (a.fecha! > b.fecha!) return 1;
+            return 0;
+          });
+          cache.writeQuery({
+            query: LIST_VENTAS,
+            data: cached,
+          });
+        }
       },
     }).then(
       status => (status && status.data && status.data.createVenta.id) || ''
