@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import useReactRouter from 'use-react-router';
 import { Alert } from 'reactstrap';
 import { FormikHelpers } from 'formik';
@@ -17,6 +17,7 @@ import {
   useDeleteUser,
   UserType,
 } from './actions';
+import { useAuth0 } from 'Providers/Auth';
 
 const userSchema = yup.object().shape({
   email: yup
@@ -38,6 +39,8 @@ export default function EditUser() {
   const updateUser = useUpdateUser();
   const deleteUser = useDeleteUser();
   const { openLoading, closeLoading, confirmDelete } = useModals();
+  const [gqlErr, setGqlErr] = useState<string | false>(false);
+  const { can } = useAuth0();
 
   if (loading) return <Loading>Cargando usuario</Loading>;
 
@@ -45,7 +48,13 @@ export default function EditUser() {
     ev.stopPropagation();
     const { nombre, id } = ev.currentTarget.dataset;
     confirmDelete(`al usuario ${nombre}`, () =>
-      deleteUser(id as string).then(() => history.replace('/users'))
+      deleteUser(id as string)
+        .then(() => history.replace('/users'))
+        .catch(err => {
+          if (err.message === 'GraphQL error: unauthorized') {
+            setGqlErr('No está autorizado para borrar el usuario');
+          } else throw err;
+        })
     );
   };
 
@@ -89,6 +98,9 @@ export default function EditUser() {
       heading={`${id ? 'Edit' : 'Add'} Vendedor`}
       error={error}
     >
+      <Alert color="danger" isOpen={!!gqlErr} toggle={() => setGqlErr(false)}>
+        {gqlErr}
+      </Alert>
       {id && !user ? (
         <Alert color="danger">El usuario no existe o fue borrado</Alert>
       ) : (
@@ -99,7 +111,7 @@ export default function EditUser() {
             <SubmitButton component={ButtonIconAdd}>
               {id ? 'Modificar' : 'Agregar'}
             </SubmitButton>
-            {id && (
+            {id && can('user:delete') && (
               <ButtonIconDelete
                 data-id={id}
                 data-nombre={user && user.nombre}

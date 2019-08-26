@@ -10,6 +10,7 @@ import {
 import Page from 'Components/Page';
 import { Loading } from 'Components/Modals';
 import { useModals } from 'Providers/Modals';
+import { useAuth0 } from 'Providers/Auth';
 
 import { useListUsers, useDeleteUser, UserType } from './actions';
 
@@ -19,9 +20,11 @@ const ListUsers = () => {
   const deleteUser = useDeleteUser();
   const { confirmDelete } = useModals();
   const [gqlErr, setGqlErr] = useState<string | false>(false);
+  const { user, can } = useAuth0();
 
   if (loading) return <Loading>Cargando usuarios</Loading>;
 
+  console.log(user);
   const onAdd: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
     history.push(`/user/new`);
@@ -37,7 +40,7 @@ const ListUsers = () => {
       deleteUser(id as string).catch(err => {
         if (err.message === 'GraphQL error: unauthorized') {
           setGqlErr('No está autorizado para borrar el usuario');
-        }
+        } else throw err;
       })
     );
   };
@@ -62,12 +65,14 @@ const ListUsers = () => {
         <td>
           <ButtonGroup size="sm">
             <ButtonIconEdit outline onClick={onEdit} data-id={id} />
-            <ButtonIconDelete
-              outline
-              onClick={onDelete}
-              data-id={id}
-              data-nombre={user.nombre}
-            />
+            {can('user:delete') && (
+              <ButtonIconDelete
+                outline
+                onClick={onDelete}
+                data-id={id}
+                data-nombre={user.nombre}
+              />
+            )}
           </ButtonGroup>
         </td>
       </tr>

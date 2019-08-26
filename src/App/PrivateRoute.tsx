@@ -5,16 +5,21 @@ import { useAuth0 } from 'Providers/Auth';
 export const PrivateRoute: React.FC<{
   component: React.ComponentType;
   path: string;
+  permission?: string;
 }> & { whyDidYouRender: boolean } = ({
   component: Component,
   path,
+  permission,
   ...rest
 }) => {
-  const { loading, isAuthenticated, loginWithRedirect } = useAuth0();
+  const { loading, user, loginWithRedirect, can } = useAuth0();
 
   const render = (props: any) => {
     if (loading) return null;
-    if (isAuthenticated) return <Component {...props} />;
+    if (user) {
+      if (permission && !can(permission)) return null;
+      return <Component {...props} />;
+    }
     loginWithRedirect({
       appState: { targetUrl: path },
     });
