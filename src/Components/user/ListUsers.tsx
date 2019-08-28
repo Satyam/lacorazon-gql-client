@@ -24,7 +24,6 @@ const ListUsers = () => {
 
   if (loading) return <Loading>Cargando usuarios</Loading>;
 
-  console.log(user);
   const onAdd: React.MouseEventHandler<HTMLButtonElement> = ev => {
     ev.stopPropagation();
     history.push(`/user/new`);
@@ -109,3 +108,5 @@ const ListUsers = () => {
 };
 
 export default ListUsers;
+
+ListUsers.whyDidYouRender = true;
