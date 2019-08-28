@@ -29,7 +29,7 @@ const initialValues = {
   isAuthenticated: false,
   user: null,
   can: () => false,
-  loading: false,
+  loading: true,
   popupOpen: false,
   auth0Client: undefined,
   loginWithPopup: notImplemented,
@@ -39,6 +39,8 @@ const initialValues = {
   getTokenWithPopup: notImplemented,
   logout: notImplemented,
 };
+
+// Exporting for test purposes only
 export const Auth0Context = React.createContext<Auth0ContextType>(
   initialValues
 );
@@ -61,6 +63,7 @@ type ActionsType =
       user: any;
     };
 
+// Exporting for test purposes only
 export const reducer = (
   state: Auth0ContextType,
   action: ActionsType
@@ -73,7 +76,7 @@ export const reducer = (
         ...rest,
         auth0Client,
         user,
-        loading: true,
+        loading: false,
         can: (permission: string) =>
           user ? user.permissions.includes(permission) : false,
         getIdTokenClaims: (...p) => auth0Client.getIdTokenClaims(...p),

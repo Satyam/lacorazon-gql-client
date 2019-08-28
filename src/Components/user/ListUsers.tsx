@@ -20,7 +20,7 @@ const ListUsers = () => {
   const deleteUser = useDeleteUser();
   const { confirmDelete } = useModals();
   const [gqlErr, setGqlErr] = useState<string | false>(false);
-  const { user, can } = useAuth0();
+  const { can } = useAuth0();
 
   if (loading) return <Loading>Cargando usuarios</Loading>;
 
@@ -109,4 +109,4 @@ const ListUsers = () => {
 
 export default ListUsers;
 
-ListUsers.whyDidYouRender = true;
+ListUsers.whyDidYouRender = false;
