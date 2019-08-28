@@ -33,8 +33,7 @@ export const reducer = (
   state: ApolloClient<NormalizedCacheObject>,
   action: ActionType
 ): ApolloClient<NormalizedCacheObject> => {
-  console.log(action);
-
+  state.clearStore();
   switch (action.type) {
     case 'withUser': {
       const authLink = setContext((_, { headers }) => ({
