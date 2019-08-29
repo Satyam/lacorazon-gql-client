@@ -20,22 +20,28 @@ const unauthorizedClient: ApolloClient<
   link: httpLink,
 });
 
-type ActionType =
+enum Action {
+  WithUser = 'WithUser',
+  NoUser = 'NoUser',
+}
+
+type ActionsType =
   | {
-      type: 'withUser';
+      type: Action.WithUser;
       token: string;
     }
   | {
-      type: 'noUser';
+      type: Action.NoUser;
     };
 
+// Exporting for test purposes only
 export const reducer = (
   state: ApolloClient<NormalizedCacheObject>,
-  action: ActionType
+  action: ActionsType
 ): ApolloClient<NormalizedCacheObject> => {
   state.clearStore();
   switch (action.type) {
-    case 'withUser': {
+    case Action.WithUser: {
       const authLink = setContext((_, { headers }) => ({
         headers: {
           ...headers,
@@ -47,12 +53,13 @@ export const reducer = (
         link: authLink.concat(httpLink),
       });
     }
-    case 'noUser':
+    case Action.NoUser:
       return unauthorizedClient;
     default:
       return state;
   }
 };
+
 export const GqlProvider: React.FC<{}> & { whyDidYouRender?: boolean } = ({
   children,
 }) => {
@@ -66,15 +73,15 @@ export const GqlProvider: React.FC<{}> & { whyDidYouRender?: boolean } = ({
       getTokenSilently().then(token => {
         if (token) {
           dispatch({
-            type: 'withUser',
+            type: Action.WithUser,
             token,
           });
         } else {
-          dispatch({ type: 'noUser' });
+          dispatch({ type: Action.NoUser });
         }
       });
     } else {
-      dispatch({ type: 'noUser' });
+      dispatch({ type: Action.NoUser });
     }
   }, [loading, getTokenSilently, isAuthenticated]);
 

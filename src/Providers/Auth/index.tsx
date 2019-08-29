@@ -5,13 +5,13 @@ import useReactRouter from 'use-react-router';
 
 type LoginWithPopup = (options?: Readonly<PopupLoginOptions>) => Promise<void>;
 type Auth0ContextType = {
-  isAuthenticated: boolean;
-  user: any;
-  can: (permission: string) => boolean;
-  loading: boolean;
-  popupOpen: boolean;
-  auth0Client?: Auth0Client;
-  loginWithPopup: LoginWithPopup;
+  readonly isAuthenticated: boolean;
+  readonly user: any;
+  readonly can: (permission: string) => boolean;
+  readonly loading: boolean;
+  readonly popupOpen: boolean;
+  readonly auth0Client?: Auth0Client;
+  readonly loginWithPopup: LoginWithPopup;
 } & Pick<
   Auth0Client,
   | 'getIdTokenClaims'
@@ -47,19 +47,25 @@ export const Auth0Context = React.createContext<Auth0ContextType>(
 
 export const useAuth0 = () => useContext(Auth0Context);
 
+enum Action {
+  Init = 'Init',
+  LoginStart = 'LoginStart',
+  LoginEnd = 'LoginEnd',
+}
+
 type ActionsType =
   | {
-      type: 'init';
+      type: Action.Init;
       isAuthenticated: boolean;
       auth0Client: Auth0Client;
       user: any;
       loginWithPopup: LoginWithPopup;
     }
   | {
-      type: 'loginStart';
+      type: Action.LoginStart;
     }
   | {
-      type: 'loginEnd';
+      type: Action.LoginEnd;
       user: any;
     };
 
@@ -69,7 +75,7 @@ export const reducer = (
   action: ActionsType
 ): Auth0ContextType => {
   switch (action.type) {
-    case 'init': {
+    case Action.Init: {
       const { type, auth0Client, user, ...rest } = action;
       return {
         ...state,
@@ -86,9 +92,9 @@ export const reducer = (
         logout: (...p) => auth0Client.logout(...p),
       };
     }
-    case 'loginStart':
+    case Action.LoginStart:
       return { ...state, popupOpen: true };
-    case 'loginEnd': {
+    case Action.LoginEnd: {
       const { user } = action;
       return {
         ...state,
@@ -130,7 +136,7 @@ export const Auth0Provider: React.FC<Auth0ClientOptions> = ({
       const loginWithPopup = async (params = {}) => {
         if (auth0FromHook) {
           dispatch({
-            type: 'loginStart',
+            type: Action.LoginStart,
           });
           try {
             await auth0FromHook.loginWithPopup(params);
@@ -140,13 +146,13 @@ export const Auth0Provider: React.FC<Auth0ClientOptions> = ({
           const user = await getUser(auth0FromHook);
 
           dispatch({
-            type: 'loginEnd',
+            type: Action.LoginEnd,
             user,
           });
         }
       };
       dispatch({
-        type: 'init',
+        type: Action.Init,
         isAuthenticated,
         auth0Client: auth0FromHook,
         user,
