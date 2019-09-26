@@ -61,7 +61,9 @@ const Routes = () => (
         <ShowVenta />
       </Route>
     </Switch>
-    <PrivateRoute path="/profile" component={Profile} />
+    <PrivateRoute path="/profile">
+      <Profile />
+    </PrivateRoute>
   </>
 );
 
