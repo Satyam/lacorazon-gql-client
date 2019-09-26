@@ -5,7 +5,7 @@ declare module '*.gif';
 type BootstrapColor =
   | 'primary'
   | 'secondary'
-  | 'successs'
+  | 'success'
   | 'warning'
   | 'danger'
   | 'info'
