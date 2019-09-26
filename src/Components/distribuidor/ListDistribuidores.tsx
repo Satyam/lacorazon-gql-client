@@ -1,5 +1,5 @@
 import React from 'react';
-import useReactRouter from 'use-react-router';
+import { useHistory } from 'react-router-dom';
 import { Table, ButtonGroup } from 'reactstrap';
 
 import {
@@ -19,7 +19,7 @@ import {
 import styles from './styles.module.css';
 
 export default function ListDistribuidores() {
-  const { history } = useReactRouter();
+  const history = useHistory();
   const { loading, error, distribuidores } = useListDistribuidores();
   const deleteDistribuidor = useDeleteDistribuidor();
   const { confirmDelete } = useModals();

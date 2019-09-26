@@ -1,5 +1,5 @@
 import React from 'react';
-import useReactRouter from 'use-react-router';
+import { useParams } from 'react-router-dom';
 import { Alert } from 'reactstrap';
 
 import { LabeledText } from 'Components/Form';
@@ -11,8 +11,7 @@ import ListVentas from 'Components/ventas/ListVentas';
 import { useGetUser } from './actions';
 
 const ShowUser = () => {
-  const { match } = useReactRouter<{ id: string }>();
-  const id = match.params.id;
+  const { id } = useParams<{ id: ID }>();
   const { loading, error, user } = useGetUser(id);
 
   if (loading) return <Loading>Cargando usuario</Loading>;

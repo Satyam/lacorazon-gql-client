@@ -1,5 +1,5 @@
 import React from 'react';
-import useReactRouter from 'use-react-router';
+import { useParams, useHistory } from 'react-router-dom';
 import * as yup from 'yup';
 import { Alert } from 'reactstrap';
 import { FormikValues } from 'formik';
@@ -46,8 +46,8 @@ const ventaSchema = yup.object().shape({
 });
 
 export default function EditVenta() {
-  const { history, match } = useReactRouter<{ id?: string }>();
-  const id = match.params.id;
+  const history = useHistory();
+  const { id } = useParams<{ id: ID }>();
   const { loading, error, venta } = useGetVenta(id);
   const optionVendedoresStatus = useOptionsVendedores();
   const createVenta = useCreateVenta();

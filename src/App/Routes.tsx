@@ -13,26 +13,53 @@ import ShowVenta from 'Components/ventas/ShowVenta';
 import Profile from 'Components/Profile';
 
 import PrivateRoute from './PrivateRoute';
+/* Update:
+https://reacttraining.com/blog/react-router-v5-1/#staying-ahead-of-the-curve
+*/
 
 const Routes = () => (
   <>
-    <Route path="/users" component={Users} />
+    <Route path="/users">
+      <Users />
+    </Route>
     <Switch>
-      <Route path="/user/new" component={EditUser} />
-      <Route path="/user/edit/:id" component={EditUser} />
-      <Route path="/user/:id" component={ShowUser} />
+      <Route path="/user/new">
+        <EditUser />
+      </Route>
+      <Route path="/user/edit/:id">
+        <EditUser />
+      </Route>
+      <Route path="/user/:id">
+        <ShowUser />
+      </Route>
     </Switch>
-    <Route path="/distribuidores" component={Distribuidores} />
+    <Route path="/distribuidores">
+      <Distribuidores />
+    </Route>
     <Switch>
-      <Route path="/distribuidor/new" component={EditDistribuidor} />
-      <Route path="/distribuidor/edit/:id" component={EditDistribuidor} />
-      <Route path="/distribuidor/:id" component={ShowDistribuidor} />
+      <Route path="/distribuidor/new">
+        <EditDistribuidor />
+      </Route>
+      <Route path="/distribuidor/edit/:id">
+        <EditDistribuidor />
+      </Route>
+      <Route path="/distribuidor/:id">
+        <ShowDistribuidor />
+      </Route>
     </Switch>
-    <Route path="/ventas" component={ListVentas} />
+    <Route path="/ventas">
+      <ListVentas />
+    </Route>
     <Switch>
-      <Route path="/venta/new" component={EditVenta} />
-      <Route path="/venta/edit/:id" component={EditVenta} />
-      <Route path="/venta/:id" component={ShowVenta} />
+      <Route path="/venta/new">
+        <EditVenta />
+      </Route>
+      <Route path="/venta/edit/:id">
+        <EditVenta />
+      </Route>
+      <Route path="/venta/:id">
+        <ShowVenta />
+      </Route>
     </Switch>
     <PrivateRoute path="/profile" component={Profile} />
   </>

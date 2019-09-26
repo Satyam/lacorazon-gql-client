@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert } from 'reactstrap';
-import useReactRouter from 'use-react-router';
+import { useParams } from 'react-router-dom';
 
 import { LabeledText } from 'Components/Form';
 import Page from 'Components/Page';
@@ -9,8 +9,7 @@ import { Loading } from 'Components/Modals';
 import { useGetDistribuidor } from './actions';
 
 export default function ShowDistribuidor() {
-  const { match } = useReactRouter<{ id: ID }>();
-  const id = match.params.id;
+  const { id } = useParams<{ id: ID }>();
   const { loading, error, distribuidor } = useGetDistribuidor(id);
   if (loading) return <Loading>Cargando distribuidor</Loading>;
 

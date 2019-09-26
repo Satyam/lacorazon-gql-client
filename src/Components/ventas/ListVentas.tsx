@@ -1,5 +1,5 @@
 import React from 'react';
-import useReactRouter from 'use-react-router';
+import { useHistory } from 'react-router-dom';
 import { Table, ButtonGroup } from 'reactstrap';
 import { FaRegCheckSquare, FaRegSquare } from 'react-icons/fa';
 
@@ -20,7 +20,7 @@ const ListVentas: React.FC<{
   nombreVendedor?: string;
   wide?: boolean;
 }> = ({ idVendedor, nombreVendedor, wide }) => {
-  const { history } = useReactRouter();
+  const history = useHistory();
   const { loading, error, ventas } = useListVentas(idVendedor);
   const deleteVenta = useDeleteVenta();
   const { formatDate, formatCurrency } = useIntl();

@@ -1,5 +1,5 @@
 import React from 'react';
-import useReactRouter from 'use-react-router';
+import { useParams, useHistory } from 'react-router-dom';
 import { Alert } from 'reactstrap';
 import { FormikHelpers } from 'formik';
 import * as yup from 'yup';
@@ -49,8 +49,8 @@ const distribuidorSchema = yup.object().shape({
 });
 
 export default function EditDistribuidor() {
-  const { history, match } = useReactRouter<{ id: ID }>();
-  const id = match.params.id;
+  const history = useHistory();
+  const { id } = useParams<{ id: ID }>();
   const { loading, error, distribuidor } = useGetDistribuidor(id);
 
   const createDistribuidor = useCreateDistribuidor();
@@ -73,6 +73,7 @@ export default function EditDistribuidor() {
     values: DistribuidorType,
     { setFieldError }: FormikHelpers<DistribuidorType>
   ) => {
+    console.log('onSubmit id: ', id);
     if (id) {
       openLoading('Actualizando Distribuidor');
       updateDistribuidor(id, values)

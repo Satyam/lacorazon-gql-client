@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useReducer } from 'react';
 import createAuth0Client from '@auth0/auth0-spa-js';
 import Auth0Client from '@auth0/auth0-spa-js/dist/typings/Auth0Client';
-import useReactRouter from 'use-react-router';
+import { useHistory, useLocation } from 'react-router-dom';
 
 type LoginWithPopup = (options?: Readonly<PopupLoginOptions>) => Promise<void>;
 type Auth0ContextType = {
@@ -116,7 +116,8 @@ export const Auth0Provider: React.FC<Auth0ClientOptions> = ({
 }) => {
   const [ctx, dispatch] = useReducer(reducer, initialValues);
 
-  const { history, location } = useReactRouter();
+  const history = useHistory();
+  const location = useLocation();
 
   const getUser = (auth0Client: Auth0Client) =>
     auth0Client.getUser().then((user: any) => ({

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import useReactRouter from 'use-react-router';
+import { useParams, useHistory } from 'react-router-dom';
 import { Alert } from 'reactstrap';
 import { FormikHelpers } from 'formik';
 import * as yup from 'yup';
@@ -32,8 +32,8 @@ const userSchema = yup.object().shape({
 });
 
 export default function EditUser() {
-  const { history, match } = useReactRouter<{ id: string }>();
-  const id = match.params.id;
+  const history = useHistory();
+  const { id } = useParams<{ id: ID }>();
   const { loading, error, user } = useGetUser(id);
   const createUser = useCreateUser();
   const updateUser = useUpdateUser();

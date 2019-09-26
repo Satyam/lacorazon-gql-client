@@ -1,5 +1,5 @@
 import React from 'react';
-import useReactRouter from 'use-react-router';
+import { useParams, useHistory } from 'react-router-dom';
 
 import { LabeledText, LabeledCheckbox } from 'Components/Form';
 import Page from 'Components/Page';
@@ -10,8 +10,8 @@ import { useIntl } from 'Providers/Intl';
 import { useGetVenta } from './actions';
 
 export default function ShowVenta() {
-  const { history, match } = useReactRouter<{ id?: string }>();
-  const id = match.params.id;
+  const history = useHistory();
+  const { id } = useParams<{ id: ID }>();
   const { loading, error, venta } = useGetVenta(id);
   const { formatDate, formatCurrency } = useIntl();
 

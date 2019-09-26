@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import useReactRouter from 'use-react-router';
+import { useHistory } from 'react-router-dom';
 import { Table, ButtonGroup, Alert } from 'reactstrap';
 
 import {
@@ -15,7 +15,7 @@ import { useAuth0 } from 'Providers/Auth';
 import { useListUsers, useDeleteUser, UserType } from './actions';
 
 const ListUsers = () => {
-  const { history } = useReactRouter();
+  const history = useHistory();
   const { loading, error, users } = useListUsers();
   const deleteUser = useDeleteUser();
   const { confirmDelete } = useModals();
