@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { FormGroup, Label, FormFeedback, FormText, Col } from 'reactstrap';
 import {
   ErrorMessage,
-  useField,
-  useFormikContext,
+  Field,
   FieldValidator,
+  FieldInputProps,
+  FieldMetaProps,
+  useFormikContext,
 } from 'formik';
 import invariant from 'invariant';
 import DatePicker from 'react-datepicker';
@@ -38,12 +40,6 @@ const DateField: React.FC<{
 }) => {
   invariant(name, 'DateField: name argument is mandatory');
 
-  const [{ value, onChange, ...fieldProps }, meta] = useField({
-    name,
-    validate,
-  });
-
-  const { setFieldValue, setFieldTouched } = useFormikContext<any>();
   const { locale } = useIntl();
 
   const [actualId, setActualId] = useState(id || `F_DF_${counter}`);
@@ -57,6 +53,8 @@ const DateField: React.FC<{
 
   let actualMin = minDate;
   let actualMax = maxDate;
+
+  const { setFieldValue } = useFormikContext();
 
   // if (schema) {
   //   const tests = schema.fields[name].tests;
@@ -74,29 +72,42 @@ const DateField: React.FC<{
   //   }
   // }
   return (
-    <FormGroup row>
-      <Label for={actualId} xs={12} lg={2}>
-        {label}
-      </Label>
-      <Col xs={12} lg={8}>
-        <DatePicker
-          className={classNames('form-control', className, {
-            'is-invalid': meta.touched && meta.error,
-          })}
-          dateFormat="P"
-          id={actualId}
-          onChange={date => setFieldValue(name, date)}
-          minDate={actualMin}
-          maxDate={actualMax}
-          onBlur={() => setFieldTouched(name, true)}
-          selected={value}
-          {...fieldProps}
-          {...rest}
-        />
-        {help && <FormText>{help}</FormText>}
-        <ErrorMessage name={name} component={FormFeedback} />
-      </Col>
-    </FormGroup>
+    <Field name={name} validate={validate}>
+      {({
+        field,
+        meta,
+      }: {
+        field: FieldInputProps<Date>;
+        meta: FieldMetaProps<Date>;
+      }) => {
+        const { name, value, onBlur } = field;
+        return (
+          <FormGroup row>
+            <Label for={actualId} xs={12} lg={2}>
+              {label}
+            </Label>
+            <Col xs={12} lg={8}>
+              <DatePicker
+                className={classNames('form-control', className, {
+                  'is-invalid': meta.touched && meta.error,
+                })}
+                dateFormat="P"
+                id={actualId}
+                minDate={actualMin}
+                maxDate={actualMax}
+                selected={value}
+                name={name}
+                onChange={value => setFieldValue(name as never, value)}
+                onBlur={onBlur}
+                {...rest}
+              />
+              {help && <FormText>{help}</FormText>}
+              <ErrorMessage name={name} component={FormFeedback} />
+            </Col>
+          </FormGroup>
+        );
+      }}
+    </Field>
   );
 };
 

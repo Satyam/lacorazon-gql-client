@@ -9,7 +9,13 @@ import {
   Input,
   InputProps,
 } from 'reactstrap';
-import { ErrorMessage, useField, FieldValidator } from 'formik';
+import {
+  ErrorMessage,
+  Field,
+  FieldValidator,
+  FieldInputProps,
+  FieldMetaProps,
+} from 'formik';
 import invariant from 'invariant';
 
 let counter = 0;
@@ -28,28 +34,37 @@ const TextField: React.FC<
 > = ({ name, type, label, id, rows, help, validate, ...rest }) => {
   invariant(name, 'TextField: name argument is mandatory');
 
-  const [fieldProps, meta] = useField({ name, validate });
   const [actualId] = useState(id || `F_TF_${counter}`);
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
 
   return (
-    <FormGroup row>
-      <Label for={actualId} xs={12} lg={2}>
-        {label}
-      </Label>
-      <Col xs={12} lg={8}>
-        <Input
-          type={type || (rows ? 'textarea' : 'text')}
-          invalid={meta.touched && !!meta.error}
-          rows={rows}
-          id={actualId}
-          {...fieldProps}
-          {...rest}
-        />
-        {help && <FormText>{help}</FormText>}
-        <ErrorMessage name={name} component={FormFeedback} />
-      </Col>
-    </FormGroup>
+    <Field name={name} validate={validate}>
+      {({
+        field,
+        meta,
+      }: {
+        field: FieldInputProps<string>;
+        meta: FieldMetaProps<string>;
+      }) => (
+        <FormGroup row>
+          <Label for={actualId} xs={12} lg={2}>
+            {label}
+          </Label>
+          <Col xs={12} lg={8}>
+            <Input
+              type={type || (rows ? 'textarea' : 'text')}
+              invalid={meta.touched && !!meta.error}
+              rows={rows}
+              id={actualId}
+              {...field}
+              {...rest}
+            />
+            {help && <FormText>{help}</FormText>}
+            <ErrorMessage name={name} component={FormFeedback} />
+          </Col>
+        </FormGroup>
+      )}
+    </Field>
   );
 };
 

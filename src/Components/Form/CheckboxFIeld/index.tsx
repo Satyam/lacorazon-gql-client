@@ -9,9 +9,10 @@ import {
 } from 'reactstrap';
 import {
   ErrorMessage,
-  useField,
-  useFormikContext,
+  Field,
   FieldValidator,
+  FieldInputProps,
+  FieldMetaProps,
 } from 'formik';
 import invariant from 'invariant';
 
@@ -23,40 +24,42 @@ const CheckboxField: React.FC<{
   name: string;
   label?: string;
   id?: string;
-  rows?: number;
   help?: string;
   validate?: FieldValidator;
-}> = ({ name, label, id, rows, help, validate, ...rest }) => {
+}> = ({ name, label, id, help, validate, ...rest }) => {
   invariant(name, 'CheckboxField: name argument is mandatory');
 
-  const [{ value, onChange, ...fieldProps }, meta] = useField({
-    name,
-    validate,
-  });
-  const { setFieldValue } = useFormikContext<any>();
   const [actualId] = useState(id || `F_TF_${counter}`);
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
 
   return (
-    <FormGroup row>
-      <Label for={actualId} xs={12} lg={2}>
-        {label}
-      </Label>
-      <Col xs={12} lg={8}>
-        <Input
-          type="checkbox"
-          invalid={meta.touched && !!meta.error}
-          id={actualId}
-          style={{ marginLeft: '0' }}
-          checked={value}
-          onChange={ev => setFieldValue(name, ev.target.checked)}
-          {...fieldProps}
-          {...rest}
-        />
-        {help && <FormText>{help}</FormText>}
-        <ErrorMessage name={name} component={FormFeedback} />
-      </Col>
-    </FormGroup>
+    <Field name={name} type="checkbox" validate={validate}>
+      {({
+        field,
+        meta,
+      }: {
+        field: FieldInputProps<any>;
+        meta: FieldMetaProps<any>;
+      }) => (
+        <FormGroup row>
+          <Label for={actualId} xs={12} lg={2}>
+            {label}
+          </Label>
+          <Col xs={12} lg={8}>
+            <Input
+              type="checkbox"
+              invalid={meta.touched && !!meta.error}
+              id={actualId}
+              style={{ marginLeft: '0' }}
+              {...field}
+              {...rest}
+            />
+            {help && <FormText>{help}</FormText>}
+            <ErrorMessage name={name} component={FormFeedback} />
+          </Col>
+        </FormGroup>
+      )}
+    </Field>
   );
 };
 
