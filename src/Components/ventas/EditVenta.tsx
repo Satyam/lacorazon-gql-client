@@ -29,7 +29,7 @@ import {
 
 const ventaSchema = yup.object().shape({
   fecha: yup
-    .date()
+    .mixed()
     .required()
     .default(new Date()),
   concepto: yup
