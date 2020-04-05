@@ -16,37 +16,37 @@ export const AccordionPanel: React.FC<AccordionPanelProps> = ({
   open,
   children,
 }) => (
-  <div className="card">
-    <div className="card-header p-0">
-      <Button color="secondary" size="sm" block data-name={name}>
-        {label}
-        {open ? (
-          <FaCaretUp className="float-right" />
-        ) : (
-          <FaCaretDown className="float-right" />
-        )}
-      </Button>
-    </div>
+    <div className="card">
+      <div className="card-header p-0">
+        <Button color="secondary" size="sm" block data-name={name}>
+          {label}
+          {open ? (
+            <FaCaretUp className="float-right" />
+          ) : (
+              <FaCaretDown className="float-right" />
+            )}
+        </Button>
+      </div>
 
-    <div className={classNames('collapse', { show: open })}>
-      {open && <div className="card-body p-1">{children} </div>}
+      <div className={classNames('collapse', { show: open })}>
+        {open && <div className="card-body p-1">{children} </div>}
+      </div>
     </div>
-  </div>
-);
+  );
 
 type AccordionProps = {
   mutuallyExclusive?: boolean;
   allClose?: boolean;
   initiallyOpen?: string[];
-  children: React.ReactElement<AccordionPanelProps>[];
+  // children: React.ReactElement<AccordionPanelProps>[];
 };
 
-export const Accordion = ({
+export const Accordion: React.FC<AccordionProps> = ({
   mutuallyExclusive = true,
   allClose = true,
   initiallyOpen = [],
   children,
-}: AccordionProps) => {
+}) => {
   const [nowOpen, setOpen] = useState<string[]>(initiallyOpen);
 
   const elements = Children.toArray(children);
@@ -57,8 +57,10 @@ export const Accordion = ({
     setOpen([nowOpen[0]]);
   }
 
-  if (!allClose && nowOpen.length === 0) {
-    setOpen([elements[0].props.name]);
+  if (React.isValidElement<AccordionPanelProps>(elements[0])) {
+    if (!allClose && nowOpen.length === 0) {
+      setOpen([elements[0].props.name]);
+    }
   }
 
   const onClick: React.MouseEventHandler<HTMLDivElement> = ev => {
@@ -81,8 +83,11 @@ export const Accordion = ({
   return (
     <div className="accordion" onClick={onClick}>
       {elements.map(child => {
-        const name = child.props.name;
-        return cloneElement(child, { key: name, open: nowOpen.includes(name) });
+        if (React.isValidElement<AccordionPanelProps>(child)) {
+          const name = child.props.name;
+          return cloneElement(child, { key: name, open: nowOpen.includes(name) });
+        }
+        return child;
       })}
     </div>
   );
