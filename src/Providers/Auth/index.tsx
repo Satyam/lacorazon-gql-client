@@ -1,5 +1,8 @@
 import React, { useEffect, useContext, useReducer } from 'react';
-import createAuth0Client from '@auth0/auth0-spa-js';
+import createAuth0Client, {
+  PopupLoginOptions,
+  Auth0ClientOptions,
+} from '@auth0/auth0-spa-js';
 import Auth0Client from '@auth0/auth0-spa-js/dist/typings/Auth0Client';
 import { useHistory, useLocation } from 'react-router-dom';
 

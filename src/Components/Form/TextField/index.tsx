@@ -9,13 +9,7 @@ import {
   Input,
   InputProps,
 } from 'reactstrap';
-import {
-  ErrorMessage,
-  Field,
-  FieldValidator,
-  FieldInputProps,
-  FieldMetaProps,
-} from 'formik';
+import { useFormContext, ErrorMessage } from 'react-hook-form';
 import invariant from 'invariant';
 
 let counter = 0;
@@ -29,42 +23,32 @@ const TextField: React.FC<
     id?: string;
     rows?: number;
     help?: string;
-    validate?: FieldValidator;
   } & InputProps
-> = ({ name, type, label, id, rows, help, validate, ...rest }) => {
+> = ({ name, type, label, id, rows, help, ...rest }) => {
   invariant(name, 'TextField: name argument is mandatory');
 
   const [actualId] = useState(id || `F_TF_${counter}`);
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
-
+  const { register, errors } = useFormContext();
   return (
-    <Field name={name} validate={validate}>
-      {({
-        field,
-        meta,
-      }: {
-        field: FieldInputProps<string>;
-        meta: FieldMetaProps<string>;
-      }) => (
-        <FormGroup row>
-          <Label for={actualId} xs={12} lg={2}>
-            {label}
-          </Label>
-          <Col xs={12} lg={8}>
-            <Input
-              type={type || (rows ? 'textarea' : 'text')}
-              invalid={meta.touched && !!meta.error}
-              rows={rows}
-              id={actualId}
-              {...field}
-              {...rest}
-            />
-            {help && <FormText>{help}</FormText>}
-            <ErrorMessage name={name} component={FormFeedback} />
-          </Col>
-        </FormGroup>
-      )}
-    </Field>
+    <FormGroup row>
+      <Label for={actualId} xs={12} lg={2}>
+        {label}
+      </Label>
+      <Col xs={12} lg={8}>
+        <Input
+          name={name}
+          type={type || (rows ? 'textarea' : 'text')}
+          invalid={!!errors[name]}
+          rows={rows}
+          id={actualId}
+          innerRef={register}
+          {...rest}
+        />
+        {help && <FormText>{help}</FormText>}
+        <ErrorMessage name={name} as={FormFeedback} />
+      </Col>
+    </FormGroup>
   );
 };
 

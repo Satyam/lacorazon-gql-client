@@ -1,14 +1,16 @@
 import React from 'react';
 import { Button } from 'reactstrap';
-import { useFormikContext } from 'formik';
 import { MyButtonProps } from 'Components/Icons';
+import { useFormContext } from 'react-hook-form';
 
 const SubmitButton: React.FC<
   MyButtonProps & {
     component?: React.ComponentType<MyButtonProps>;
   }
 > = ({ component: Component = Button, ...rest }) => {
-  const { isSubmitting, isValid, dirty } = useFormikContext();
+  const {
+    formState: { isSubmitting, isValid, dirty },
+  } = useFormContext();
   return (
     <Component
       type="submit"

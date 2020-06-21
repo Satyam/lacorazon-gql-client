@@ -1,44 +1,64 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form as BSForm, Alert } from 'reactstrap';
-import { Formik, FormikValues, FormikHelpers } from 'formik';
-import { Schema } from 'yup';
+import { ObjectSchema } from 'yup';
+import { useForm, FormContext, FormContextValues } from 'react-hook-form';
 
-const Form: React.FC<{
-  schema?: Schema<any>;
-  values?: FormikValues;
+// we are now able to to write our function component with generics
+// function CollapsableDataList<T>({ collapsed, listOfData }: IProps<T> & { children?: React.ReactNode }): React.ReactElement {
+//   // logic etc.
+//   return (
+//   // JSX output
+//   );
+// }
+export default function Form<V extends Record<string, any>>({
+  schema,
+  values,
+  onSubmit,
+  children,
+  inline,
+  className,
+  ...rest
+}: {
+  schema?: ObjectSchema;
+  values?: Record<string, any>;
   onSubmit: (
-    values: any,
-    formikBag: FormikHelpers<FormikValues>
-  ) => any | Promise<any>;
+    values: V,
+    formContext: FormContextValues<V>
+  ) => Promise<void> | void;
   inline?: boolean;
   className?: string;
-}> = ({ schema, values, onSubmit, children, inline, className, ...rest }) => (
-  <Formik
-    validationSchema={schema}
-    initialValues={schema ? Object.assign(schema.default(), values) : values}
-    onSubmit={(values, formikBag) => {
-      const result = onSubmit(schema ? schema.cast(values) : values, formikBag);
-      if (result && typeof result.then === 'function') {
-        return result.catch((err: any) => {
-          formikBag.setStatus(err);
-        });
-      }
-      return result;
-    }}
-    {...rest}
-  >
-    {({ status, handleReset, handleSubmit }) => (
+  children?: React.ReactNode;
+}): React.ReactElement {
+  const methods = useForm<V>({
+    defaultValues: (schema
+      ? Object.assign(schema.default(), values)
+      : values) as V,
+    validationSchema: schema,
+  });
+
+  const [status, setStatus] = useState<string | undefined>();
+
+  const mySubmit = (values: V) => {
+    const result = onSubmit(values as V, methods);
+    if (result instanceof Promise) {
+      return result.catch((err: any) => {
+        setStatus(err);
+      });
+    }
+    return;
+  };
+  return (
+    <FormContext {...methods}>
       <BSForm
-        onSubmit={handleSubmit}
-        onReset={handleReset}
+        onSubmit={methods.handleSubmit(mySubmit)}
+        onReset={() => methods.reset()}
         inline={inline}
         className={className}
+        {...rest}
       >
         {status && <Alert color="danger">{status}</Alert>}
         {children}
       </BSForm>
-    )}
-  </Formik>
-);
-
-export default Form;
+    </FormContext>
+  );
+}

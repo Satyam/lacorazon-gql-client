@@ -7,13 +7,7 @@ import {
   Col,
   Input,
 } from 'reactstrap';
-import {
-  ErrorMessage,
-  Field,
-  FieldValidator,
-  FieldInputProps,
-  FieldMetaProps,
-} from 'formik';
+import { useFormContext, ErrorMessage } from 'react-hook-form';
 import invariant from 'invariant';
 
 let counter = 0;
@@ -25,41 +19,32 @@ const CheckboxField: React.FC<{
   label?: string;
   id?: string;
   help?: string;
-  validate?: FieldValidator;
-}> = ({ name, label, id, help, validate, ...rest }) => {
+}> = ({ name, label, id, help, ...rest }) => {
   invariant(name, 'CheckboxField: name argument is mandatory');
 
   const [actualId] = useState(id || `F_TF_${counter}`);
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
+  const { register, errors } = useFormContext();
 
   return (
-    <Field name={name} type="checkbox" validate={validate}>
-      {({
-        field,
-        meta,
-      }: {
-        field: FieldInputProps<any>;
-        meta: FieldMetaProps<any>;
-      }) => (
-        <FormGroup row>
-          <Label for={actualId} xs={12} lg={2}>
-            {label}
-          </Label>
-          <Col xs={12} lg={8}>
-            <Input
-              type="checkbox"
-              invalid={meta.touched && !!meta.error}
-              id={actualId}
-              style={{ marginLeft: '0' }}
-              {...field}
-              {...rest}
-            />
-            {help && <FormText>{help}</FormText>}
-            <ErrorMessage name={name} component={FormFeedback} />
-          </Col>
-        </FormGroup>
-      )}
-    </Field>
+    <FormGroup row>
+      <Label for={actualId} xs={12} lg={2}>
+        {label}
+      </Label>
+      <Col xs={12} lg={8}>
+        <Input
+          type="checkbox"
+          name={name}
+          invalid={!!errors[name]}
+          id={actualId}
+          style={{ marginLeft: '0' }}
+          innerRef={register}
+          {...rest}
+        />
+        {help && <FormText>{help}</FormText>}
+        <ErrorMessage name={name} as={FormFeedback} />
+      </Col>
+    </FormGroup>
   );
 };
 

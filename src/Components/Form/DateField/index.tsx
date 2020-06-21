@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { FormGroup, Label, FormFeedback, FormText, Col } from 'reactstrap';
-import {
-  ErrorMessage,
-  Field,
-  FieldValidator,
-  FieldInputProps,
-  FieldMetaProps,
-  useFormikContext,
-} from 'formik';
+import { Controller, useFormContext, ErrorMessage } from 'react-hook-form';
 import invariant from 'invariant';
-import DatePicker from 'react-datepicker';
+import ReactDatePicker from 'react-datepicker';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import classNames from 'classnames';
@@ -26,8 +19,7 @@ const DateField: React.FC<{
   className?: string;
   minDate?: Date;
   maxDate?: Date;
-  validate?: FieldValidator;
-}> = ({
+}> & { whyDidYouRender: boolean } = ({
   name,
   label,
   help,
@@ -35,26 +27,25 @@ const DateField: React.FC<{
   id,
   minDate,
   maxDate,
-  validate,
   ...rest
 }) => {
   invariant(name, 'DateField: name argument is mandatory');
 
   const { locale } = useIntl();
+  const { errors, getValues, control } = useFormContext();
 
   const [actualId, setActualId] = useState(id || `F_DF_${counter}`);
 
+  console.log({ name, errors, values: getValues(name) });
   // I'm using setActualId as a means of forcing a
   // refresh of the component so it takes the new locale
   // In the end, it doesn't really changes the id at all.
-  useEffect(() => setActualId(id => id), [locale]);
+  useEffect(() => setActualId((id) => id), [locale]);
 
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
 
   let actualMin = minDate;
   let actualMax = maxDate;
-
-  const { setFieldValue } = useFormikContext();
 
   // if (schema) {
   //   const tests = schema.fields[name].tests;
@@ -72,43 +63,39 @@ const DateField: React.FC<{
   //   }
   // }
   return (
-    <Field name={name} validate={validate}>
-      {({
-        field,
-        meta,
-      }: {
-        field: FieldInputProps<Date>;
-        meta: FieldMetaProps<Date>;
-      }) => {
-        const { name, value, onBlur } = field;
-        return (
-          <FormGroup row>
-            <Label for={actualId} xs={12} lg={2}>
-              {label}
-            </Label>
-            <Col xs={12} lg={8}>
-              <DatePicker
-                className={classNames('form-control', className, {
-                  'is-invalid': meta.touched && meta.error,
-                })}
-                dateFormat="P"
-                id={actualId}
-                minDate={actualMin}
-                maxDate={actualMax}
-                selected={value}
-                name={name}
-                onChange={value => setFieldValue(name as never, value)}
-                onBlur={onBlur}
-                {...rest}
-              />
-              {help && <FormText>{help}</FormText>}
-              <ErrorMessage name={name} component={FormFeedback} />
-            </Col>
-          </FormGroup>
-        );
-      }}
-    </Field>
+    <FormGroup row>
+      <Label for={actualId} xs={12} lg={2}>
+        {label}
+      </Label>
+      <Col xs={12} lg={8}>
+        <Controller
+          as={
+            <ReactDatePicker
+              className={classNames('form-control', className, {
+                'is-invalid': !!errors[name],
+              })}
+              onChange={() => null}
+              dateFormat="P"
+              id={actualId}
+              minDate={actualMin}
+              maxDate={actualMax}
+              {...rest}
+            />
+          }
+          name={name}
+          control={control}
+          valueName="selected" // DateSelect value's name is selected
+          defaultValue={getValues(name)}
+          onChange={([selected]: Date[]) => {
+            return selected;
+          }}
+        />
+        {help && <FormText>{help}</FormText>}
+        <ErrorMessage name={name} as={FormFeedback} />
+      </Col>
+    </FormGroup>
   );
 };
+DateField.whyDidYouRender = true;
 
 export default DateField;

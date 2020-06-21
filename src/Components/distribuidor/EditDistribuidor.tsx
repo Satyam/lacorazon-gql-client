@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { Alert } from 'reactstrap';
-import { FormikHelpers } from 'formik';
 import * as yup from 'yup';
 
 import { Form, TextField, SubmitButton } from 'Components/Form';
@@ -17,35 +16,19 @@ import {
   useGetDistribuidor,
   DistribuidorType,
 } from './actions';
+import { FormContextValues } from 'react-hook-form';
 
 const distribuidorSchema = yup.object().shape({
-  nombre: yup
-    .string()
-    .required()
-    .trim()
-    .default(''),
-  localidad: yup
-    .string()
-    .trim()
-    .default(''),
-  contacto: yup
-    .string()
-    .trim()
-    .default(''),
+  nombre: yup.string().required().trim().default(''),
+  localidad: yup.string().trim().default(''),
+  contacto: yup.string().trim().default(''),
   telefono: yup
     .string()
     .trim()
     .matches(/[\d\s\-()]+/, { excludeEmptyString: true })
     .default(''),
-  email: yup
-    .string()
-    .trim()
-    .email()
-    .default(''),
-  direccion: yup
-    .string()
-    .trim()
-    .default(''),
+  email: yup.string().trim().email().default(''),
+  direccion: yup.string().trim().default(''),
 });
 
 export default function EditDistribuidor() {
@@ -61,7 +44,7 @@ export default function EditDistribuidor() {
 
   if (loading) return <Loading>Cargando distribuidor</Loading>;
 
-  const onDeleteClick: React.MouseEventHandler<HTMLButtonElement> = ev => {
+  const onDeleteClick: React.MouseEventHandler<HTMLButtonElement> = (ev) => {
     ev.stopPropagation();
     confirmDelete(
       `al distribuidor ${distribuidor && distribuidor.nombre}`,
@@ -69,35 +52,43 @@ export default function EditDistribuidor() {
         deleteDistribuidor(id).then(() => history.replace('/distribuidores'))
     );
   };
-  const onSubmit = (
+  const onSubmit = async (
     values: DistribuidorType,
-    { setFieldError }: FormikHelpers<DistribuidorType>
-  ) => {
+    formContext: FormContextValues
+  ): Promise<void> => {
     console.log('onSubmit id: ', id);
     if (id) {
       openLoading('Actualizando Distribuidor');
-      updateDistribuidor(id, values)
-        .catch(err => {
+      await updateDistribuidor(id, values)
+        .catch((err) => {
           if (
             err.message ===
             'GraphQL error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.nombre'
           ) {
-            setFieldError('nombre', 'Ese distribuidor ya existe');
+            formContext.setError(
+              'nombre',
+              'duplicate',
+              'Ese distribuidor ya existe'
+            );
           } else throw err;
         })
         .finally(closeLoading);
     } else {
       openLoading('Creando distribuidor');
-      createDistribuidor(values)
-        .then(id => {
+      await createDistribuidor(values)
+        .then((id) => {
           history.replace(`/distribuidor/edit/${id}`);
         })
-        .catch(err => {
+        .catch((err) => {
           if (
             err.message ===
             'GraphQL error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.nombre'
           ) {
-            setFieldError('nombre', 'Ese distribuidor ya existe');
+            formContext.setError(
+              'nombre',
+              'duplicate',
+              'Ese distribuidor ya existe'
+            );
           } else throw err;
         })
         .finally(closeLoading);
@@ -113,7 +104,7 @@ export default function EditDistribuidor() {
       {id && !distribuidor ? (
         <Alert color="danger">El distribuidor no existe o fue borrado</Alert>
       ) : (
-        <Form
+        <Form<DistribuidorType>
           values={distribuidor}
           onSubmit={onSubmit}
           schema={distribuidorSchema}

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { Alert } from 'reactstrap';
-import { FormikHelpers } from 'formik';
 import * as yup from 'yup';
 
 import { Form, TextField, SubmitButton } from 'Components/Form';
@@ -18,17 +17,11 @@ import {
   UserType,
 } from './actions';
 import { useAuth0 } from 'Providers/Auth';
+import { FormContextValues } from 'react-hook-form';
 
 const userSchema = yup.object().shape({
-  email: yup
-    .string()
-    .trim()
-    .email()
-    .default(''),
-  nombre: yup
-    .string()
-    .trim()
-    .default(''),
+  email: yup.string().trim().email().default(''),
+  nombre: yup.string().trim().default(''),
 });
 
 export default function EditUser() {
@@ -44,13 +37,13 @@ export default function EditUser() {
 
   if (loading) return <Loading>Cargando usuario</Loading>;
 
-  const onDeleteClick: React.MouseEventHandler<HTMLButtonElement> = ev => {
+  const onDeleteClick: React.MouseEventHandler<HTMLButtonElement> = (ev) => {
     ev.stopPropagation();
     const { nombre, id } = ev.currentTarget.dataset;
     confirmDelete(`al usuario ${nombre}`, () =>
       deleteUser(id as string)
         .then(() => history.replace('/users'))
-        .catch(err => {
+        .catch((err) => {
           if (err.message === 'GraphQL error: unauthorized') {
             setGqlErr('No está autorizado para borrar el usuario');
           } else throw err;
@@ -58,40 +51,47 @@ export default function EditUser() {
     );
   };
 
-  const onSubmit = (
+  const onSubmit = async (
     values: UserType,
-    { setFieldError }: FormikHelpers<UserType>
-  ) => {
+    formContext: FormContextValues
+  ): Promise<void> => {
     if (id) {
       openLoading('Actualizando usuario');
-      return updateUser(id, values)
-        .catch(err => {
+      await updateUser(id, values)
+        .catch((err) => {
           if (
             err.message ===
             'GraphQL error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.nombre'
           ) {
-            setFieldError('nombre', 'Ese usuario ya existe');
+            formContext.setError(
+              'nombre',
+              'duplicate',
+              'Ese usuario ya existe'
+            );
           } else throw err;
         })
         .finally(closeLoading);
     } else {
       openLoading('Creando usuario');
-      return createUser({ ...values, password: values.nombre })
-        .then(id => {
+      await createUser({ ...values, password: values.nombre })
+        .then((id) => {
           history.replace(`/user/edit/${id}`);
         })
-        .catch(err => {
+        .catch((err) => {
           if (
             err.message ===
             'GraphQL error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.nombre'
           ) {
-            setFieldError('nombre', 'Ese usuario ya existe');
+            formContext.setError(
+              'nombre',
+              'duplicate',
+              'Ese usuario ya existe'
+            );
           } else throw err;
         })
         .finally(closeLoading);
     }
   };
-
   return (
     <Page
       title={`Vendedor - ${user ? user.nombre : 'nuevo'}`}
@@ -104,7 +104,7 @@ export default function EditUser() {
       {id && !user ? (
         <Alert color="danger">El usuario no existe o fue borrado</Alert>
       ) : (
-        <Form values={user} onSubmit={onSubmit} schema={userSchema}>
+        <Form<UserType> values={user} onSubmit={onSubmit} schema={userSchema}>
           <TextField name="email" label="eMail" />
           <TextField name="nombre" label="Nombre" />
           <ButtonSet>

@@ -2,7 +2,6 @@ import React from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import * as yup from 'yup';
 import { Alert } from 'reactstrap';
-import { FormikValues } from 'formik';
 
 import {
   Form,
@@ -28,19 +27,9 @@ import {
 } from './actions';
 
 const ventaSchema = yup.object().shape({
-  fecha: yup
-    .mixed()
-    .required()
-    .default(new Date()),
-  concepto: yup
-    .string()
-    .trim()
-    .default(''),
-  cantidad: yup
-    .number()
-    .integer()
-    .positive()
-    .default(1),
+  fecha: yup.mixed().required().default(new Date()),
+  concepto: yup.string().trim().default(''),
+  cantidad: yup.number().integer().positive().default(1),
   iva: yup.boolean().default(false),
   precioUnitario: yup.number().default(10),
 });
@@ -60,30 +49,30 @@ export default function EditVenta() {
   if (optionVendedoresStatus.loading)
     return <Loading>Cargando vendedores</Loading>;
 
-  const onSubmit = (
-    values: Omit<VentaType, 'vendedor'> & { idVendedor: ID }
-  ) => {
+  type VentaValues = Omit<VentaType, 'vendedor'> & { idVendedor: ID };
+
+  const onSubmit = async (values: VentaValues): Promise<void> => {
     if (id) {
       openLoading('Actualizando Venta');
-      return updateVenta(id, values).finally(closeLoading);
+      await updateVenta(id, values).finally(closeLoading);
     } else {
       openLoading('Creando Venta');
-      return createVenta(values)
-        .then(id => {
+      await createVenta(values)
+        .then((id) => {
           history.replace(`/venta/edit/${id}`);
         })
         .finally(closeLoading);
     }
   };
 
-  const onDeleteClick: React.MouseEventHandler<HTMLButtonElement> = ev => {
+  const onDeleteClick: React.MouseEventHandler<HTMLButtonElement> = (ev) => {
     ev.stopPropagation();
     confirmDelete(`la venta del ${formatDate(venta && venta.fecha)}`, () =>
       deleteVenta(id!).then(() => history.replace('/ventas'))
     );
   };
 
-  let values: FormikValues = {};
+  let values: Partial<VentaValues> = {};
   if (venta) {
     const { vendedor, ...rest } = venta;
     values = {
@@ -101,7 +90,11 @@ export default function EditVenta() {
       {id && !venta ? (
         <Alert color="danger">La venta no existe o fue borrada</Alert>
       ) : (
-        <Form values={values} onSubmit={onSubmit} schema={ventaSchema}>
+        <Form<VentaValues>
+          values={values}
+          onSubmit={onSubmit}
+          schema={ventaSchema}
+        >
           <DateField name="fecha" label="Fecha" />
           <TextField name="concepto" label="Concepto" />
           {optionVendedoresStatus.optionsVendedores && (
