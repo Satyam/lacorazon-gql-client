@@ -28,7 +28,7 @@ import {
 
 const ventaSchema = yup.object().shape({
   fecha: yup.mixed().required().default(new Date()),
-  concepto: yup.string().trim().default(''),
+  concepto: yup.string().trim().required().default(''),
   cantidad: yup.number().integer().positive().default(1),
   iva: yup.boolean().default(false),
   precioUnitario: yup.number().default(10),

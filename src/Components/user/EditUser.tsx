@@ -21,7 +21,7 @@ import { FormContextValues } from 'react-hook-form';
 
 const userSchema = yup.object().shape({
   email: yup.string().trim().email().default(''),
-  nombre: yup.string().trim().default(''),
+  nombre: yup.string().trim().required().default(''),
 });
 
 export default function EditUser() {
@@ -105,8 +105,8 @@ export default function EditUser() {
         <Alert color="danger">El usuario no existe o fue borrado</Alert>
       ) : (
         <Form<UserType> values={user} onSubmit={onSubmit} schema={userSchema}>
-          <TextField name="email" label="eMail" />
           <TextField name="nombre" label="Nombre" />
+          <TextField name="email" label="eMail" />
           <ButtonSet>
             <SubmitButton component={ButtonIconAdd}>
               {id ? 'Modificar' : 'Agregar'}
