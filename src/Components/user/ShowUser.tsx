@@ -31,7 +31,8 @@ const ShowUser = () => {
               <ListVentas idVendedor={id} nombreVendedor={user.nombre} wide />
             </AccordionPanel>
             <AccordionPanel label="Consigna" name="consigna">
-              Aqui iría los libros en consigna en las librerías de este vendedor
+              Aquí irían los libros que este vendedor tiene en consigna en las
+              librerías
             </AccordionPanel>
           </Accordion>
         </>
