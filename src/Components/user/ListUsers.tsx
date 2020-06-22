@@ -24,26 +24,26 @@ const ListUsers = () => {
 
   if (loading) return <Loading>Cargando usuarios</Loading>;
 
-  const onAdd: React.MouseEventHandler<HTMLButtonElement> = ev => {
+  const onAdd: React.MouseEventHandler<HTMLButtonElement> = (ev) => {
     ev.stopPropagation();
     history.push(`/user/new`);
   };
-  const onShow: React.MouseEventHandler<HTMLTableCellElement> = ev => {
+  const onShow: React.MouseEventHandler<HTMLTableCellElement> = (ev) => {
     ev.stopPropagation();
     history.push(`/user/${ev.currentTarget.dataset.id}`);
   };
-  const onDelete: React.MouseEventHandler<HTMLButtonElement> = ev => {
+  const onDelete: React.MouseEventHandler<HTMLButtonElement> = (ev) => {
     ev.stopPropagation();
     const { nombre, id } = ev.currentTarget.dataset;
     confirmDelete(`al usuario ${nombre}`, () =>
-      deleteUser(id as string).catch(err => {
+      deleteUser(id as string).catch((err) => {
         if (err.message === 'GraphQL error: unauthorized') {
           setGqlErr('No está autorizado para borrar el usuario');
         } else throw err;
       })
     );
   };
-  const onEdit: React.MouseEventHandler<HTMLButtonElement> = ev => {
+  const onEdit: React.MouseEventHandler<HTMLButtonElement> = (ev) => {
     ev.stopPropagation();
     history.push(`/user/edit/${ev.currentTarget.dataset.id}`);
   };
@@ -61,7 +61,7 @@ const ListUsers = () => {
           {user.nombre}
         </td>
         <td>{user.email}</td>
-        <td>
+        <td align="center">
           <ButtonGroup size="sm">
             <ButtonIconEdit outline onClick={onEdit} data-id={id} />
             {can('user:delete') && (
@@ -93,7 +93,7 @@ const ListUsers = () => {
         {gqlErr}
       </Alert>
 
-      <Table striped hover size="sm" responsive>
+      <Table striped hover size="sm" responsive bordered>
         <thead>
           <tr>
             <th>Nombre</th>

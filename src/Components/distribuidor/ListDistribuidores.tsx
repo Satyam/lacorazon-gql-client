@@ -26,22 +26,22 @@ export default function ListDistribuidores() {
 
   if (loading) return <Loading>Cargando distribuidores</Loading>;
 
-  const onEdit: React.MouseEventHandler<HTMLButtonElement> = ev => {
+  const onEdit: React.MouseEventHandler<HTMLButtonElement> = (ev) => {
     ev.stopPropagation();
     history.push(`/distribuidor/edit/${ev.currentTarget.dataset.id}`);
   };
-  const onShow: React.MouseEventHandler<HTMLTableCellElement> = ev => {
+  const onShow: React.MouseEventHandler<HTMLTableCellElement> = (ev) => {
     ev.stopPropagation();
     history.push(`/distribuidor/${ev.currentTarget.dataset.id}`);
   };
-  const onDelete: React.MouseEventHandler<HTMLButtonElement> = ev => {
+  const onDelete: React.MouseEventHandler<HTMLButtonElement> = (ev) => {
     ev.stopPropagation();
     const { nombre, id } = ev.currentTarget.dataset;
     confirmDelete(`al distribuidor ${nombre}`, () =>
       deleteDistribuidor(id as ID)
     );
   };
-  const onAdd: React.MouseEventHandler<HTMLButtonElement> = ev => {
+  const onAdd: React.MouseEventHandler<HTMLButtonElement> = (ev) => {
     ev.stopPropagation();
     history.push('/distribuidor/new');
   };
@@ -69,7 +69,7 @@ export default function ListDistribuidores() {
         </td>
         <td align="right">{distribuidor.entregados}</td>
         <td align="right">{distribuidor.existencias}</td>
-        <td>
+        <td align="center">
           <ButtonGroup size="sm">
             <ButtonIconEdit outline onClick={onEdit} data-id={id} />
             <ButtonIconDelete
@@ -96,7 +96,7 @@ export default function ListDistribuidores() {
       }
       error={error}
     >
-      <Table striped hover size="sm" responsive>
+      <Table striped hover size="sm" responsive bordered>
         <thead>
           <tr>
             <th>Nombre</th>

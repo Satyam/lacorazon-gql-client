@@ -28,24 +28,24 @@ const ListVentas: React.FC<{
 
   if (loading) return <Loading>Cargando ventas</Loading>;
 
-  const onAdd: React.MouseEventHandler<HTMLButtonElement> = ev => {
+  const onAdd: React.MouseEventHandler<HTMLButtonElement> = (ev) => {
     ev.stopPropagation();
     history.push('/venta/new');
   };
-  const onShow: React.MouseEventHandler<HTMLElement> = ev => {
+  const onShow: React.MouseEventHandler<HTMLElement> = (ev) => {
     ev.stopPropagation();
     history.push(`/venta/${ev.currentTarget.dataset.id}`);
   };
-  const onDelete: React.MouseEventHandler<HTMLButtonElement> = ev => {
+  const onDelete: React.MouseEventHandler<HTMLButtonElement> = (ev) => {
     ev.stopPropagation();
     const { fecha, id } = ev.currentTarget.dataset;
     confirmDelete(`la venta del ${fecha}`, () => deleteVenta(id!));
   };
-  const onEdit: React.MouseEventHandler<HTMLButtonElement> = ev => {
+  const onEdit: React.MouseEventHandler<HTMLButtonElement> = (ev) => {
     ev.stopPropagation();
     history.push(`/venta/edit/${ev.currentTarget.dataset.id}`);
   };
-  const onShowVendedor: React.MouseEventHandler<HTMLElement> = ev => {
+  const onShowVendedor: React.MouseEventHandler<HTMLElement> = (ev) => {
     ev.stopPropagation();
     history.push(`/user/${ev.currentTarget.dataset.id}`);
   };
@@ -85,7 +85,7 @@ const ListVentas: React.FC<{
         <td align="right">
           {formatCurrency(venta.cantidad! * venta.precioUnitario!)}
         </td>
-        <td>
+        <td align="center">
           <ButtonGroup size="sm">
             <ButtonIconEdit
               outline
@@ -112,7 +112,7 @@ const ListVentas: React.FC<{
       }
       error={error}
     >
-      <Table striped hover size="sm" responsive>
+      <Table striped hover size="sm" responsive bordered>
         <thead>
           <tr>
             <th>Fecha</th>
