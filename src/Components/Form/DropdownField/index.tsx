@@ -50,13 +50,12 @@ const DropdownField: React.FC<{
           invalid={!!errors[name]}
           name={name}
           id={actualId}
-          ref={register}
+          innerRef={register}
           {...rest}
         >
           {noOption && (
             <option key=" " value="">
-              {' '}
-              ----{' '}
+              {' ----   '}
             </option>
           )}
           {options.map((o) => (
