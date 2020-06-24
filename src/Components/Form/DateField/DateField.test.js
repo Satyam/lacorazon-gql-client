@@ -27,7 +27,7 @@ class ErrorBoundary extends React.PureComponent {
 describe('Form/DateField', () => {
   it('should throw with no props as name argument is mandatory', () => {
     const e = console.error;
-    console.error = msg => {};
+    console.error = (msg) => {};
     const { container } = render(
       <ErrorBoundary>
         <Form>
@@ -41,7 +41,7 @@ describe('Form/DateField', () => {
   });
   it('should throw with any extra property but name as argument is mandatory', () => {
     const e = console.error;
-    console.error = msg => {};
+    console.error = (msg) => {};
     const { container } = render(
       <ErrorBoundary>
         <Form>
@@ -102,7 +102,7 @@ describe('Form/DateField', () => {
     });
     const validate = jest.fn(() => '');
     const { getByLabelText } = render(
-      <Form schema={schema}>
+      <Form validationSchema={schema}>
         <DateField label="one" name="one" validate={validate} />
       </Form>
     );
@@ -112,12 +112,10 @@ describe('Form/DateField', () => {
   it('should reject values below the min in the schema', () => {
     // since the out-of-range dates are not enabled, they can't be clicked
     const schema = Yup.object().shape({
-      one: Yup.date()
-        .min(new Date(2019, 8, 10))
-        .default(new Date(2019, 8, 20)),
+      one: Yup.date().min(new Date(2019, 8, 10)).default(new Date(2019, 8, 20)),
     });
     const { getByLabelText, getByText, container } = render(
-      <Form schema={schema}>
+      <Form validationSchema={schema}>
         <DateField label="one" name="one" />
       </Form>
     );

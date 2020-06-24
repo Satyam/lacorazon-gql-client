@@ -23,7 +23,7 @@ describe('Form / Form', () => {
       const validate = jest.fn(() => ({}));
 
       const { getByText, getByLabelText } = render(
-        <TestForm onSubmit={submitHandler} validate={validate} />
+        <TestForm onSubmit={submitHandler} validationResolver={validate} />
       );
       expect(getByText('Submit')).toBeDisabled();
 
@@ -98,15 +98,12 @@ describe('Form / Form', () => {
   });
   describe('with validation schema', () => {
     const schema = Yup.object().shape({
-      one: Yup.number()
-        .integer()
-        .truncate()
-        .default(99),
+      one: Yup.number().integer().truncate().default(99),
     });
     it('should submit form', () => {
       const submitHandler = jest.fn();
       const { getByText, getByLabelText } = render(
-        <TestForm onSubmit={submitHandler} schema={schema} />
+        <TestForm onSubmit={submitHandler} validationSchema={schema} />
       );
       expect(getByText('Submit')).toBeDisabled();
       fireEvent.change(getByLabelText('one'), {
@@ -125,7 +122,7 @@ describe('Form / Form', () => {
     });
     it('should take default values from schema', () => {
       const { getByText, getByLabelText } = render(
-        <Form schema={schema}>
+        <Form validationSchema={schema}>
           <TextField label="one" name="one" />
           <SubmitButton>Submit</SubmitButton>
         </Form>

@@ -1,26 +1,28 @@
 import React, { useState } from 'react';
 import { Form as BSForm, Alert } from 'reactstrap';
-import { ObjectSchema } from 'yup';
-import { useForm, FormContext, FormContextValues } from 'react-hook-form';
+//import { ObjectSchema } from 'yup';
+import {
+  useForm,
+  FormContext,
+  FormContextValues,
+  UseFormOptions,
+} from 'react-hook-form';
 
-// we are now able to to write our function component with generics
-// function CollapsableDataList<T>({ collapsed, listOfData }: IProps<T> & { children?: React.ReactNode }): React.ReactElement {
-//   // logic etc.
-//   return (
-//   // JSX output
-//   );
-// }
 export default function Form<V extends Record<string, any>>({
-  schema,
-  values,
+  mode,
+  reValidateMode,
+  defaultValues,
+  validationSchema, // Note: will be deprecated in the next major version with validationResolver
+  // validationResolver,
+  validationContext,
+  validateCriteriaMode,
+  submitFocusError,
   onSubmit,
   children,
   inline,
   className,
   ...rest
-}: {
-  schema?: ObjectSchema;
-  values?: Record<string, any>;
+}: UseFormOptions & {
   onSubmit: (
     values: V,
     formContext: FormContextValues<V>
@@ -30,10 +32,16 @@ export default function Form<V extends Record<string, any>>({
   children?: React.ReactNode;
 }): React.ReactElement {
   const methods = useForm<V>({
-    defaultValues: (schema
-      ? Object.assign(schema.default(), values)
-      : values) as V,
-    validationSchema: schema,
+    defaultValues: (validationSchema
+      ? Object.assign(validationSchema.default(), defaultValues)
+      : defaultValues) as V,
+    validationSchema,
+    mode,
+    reValidateMode,
+    // validationResolver,
+    validationContext,
+    validateCriteriaMode,
+    submitFocusError,
   });
 
   const [status, setStatus] = useState<string | undefined>();

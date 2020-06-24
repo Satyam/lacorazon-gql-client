@@ -107,7 +107,7 @@ export default function EditDistribuidor() {
         <Form<DistribuidorType>
           values={distribuidor}
           onSubmit={onSubmit}
-          schema={distribuidorSchema}
+          validationSchema={distribuidorSchema}
         >
           <TextField name="nombre" label="Nombre" />
           <TextField name="email" label="eMail" />

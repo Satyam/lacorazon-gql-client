@@ -104,7 +104,11 @@ export default function EditUser() {
       {id && !user ? (
         <Alert color="danger">El usuario no existe o fue borrado</Alert>
       ) : (
-        <Form<UserType> values={user} onSubmit={onSubmit} schema={userSchema}>
+        <Form<UserType>
+          values={user}
+          onSubmit={onSubmit}
+          validationSchema={userSchema}
+        >
           <TextField name="nombre" label="Nombre" />
           <TextField name="email" label="eMail" />
           <ButtonSet>

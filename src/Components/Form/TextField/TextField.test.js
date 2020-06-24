@@ -27,7 +27,7 @@ afterEach(cleanup);
 describe('Form/TextField', () => {
   it('should throw with no props as name argument is mandatory', () => {
     const e = console.error;
-    console.error = msg => {};
+    console.error = (msg) => {};
     const { container } = render(
       <ErrorBoundary>
         <Form>
@@ -41,7 +41,7 @@ describe('Form/TextField', () => {
   });
   it('should throw with any extra property but name as argument is mandatory', () => {
     const e = console.error;
-    console.error = msg => {};
+    console.error = (msg) => {};
     const { container } = render(
       <ErrorBoundary>
         <Form>
@@ -85,14 +85,11 @@ describe('Form/TextField', () => {
 
   it('should cast value to an integer before validate with schema on field change', () => {
     const schema = Yup.object().shape({
-      one: Yup.number()
-        .integer()
-        .truncate()
-        .default(0),
+      one: Yup.number().integer().truncate().default(0),
     });
     const validate = jest.fn(() => '');
     const { getByLabelText } = render(
-      <Form values={{ one: 1 }} schema={schema}>
+      <Form values={{ one: 1 }} validationSchema={schema}>
         <TextField label="one" name="one" validate={validate} />
       </Form>
     );

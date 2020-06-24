@@ -47,8 +47,8 @@ const DateField: React.FC<{
   let actualMin = minDate;
   let actualMax = maxDate;
 
-  // if (schema) {
-  //   const tests = schema.fields[name].tests;
+  // if (validationSchema) {
+  //   const tests = validationSchema.fields[name].tests;
   //   if (!actualMin) {
   //     const minTest = tests.filter(t => t.TEST_NAME === 'min')[0];
   //     if (minTest) {
