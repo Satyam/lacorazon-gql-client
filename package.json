@@ -63,6 +63,7 @@
     "@types/reactstrap": "^8.4.3",
     "@types/yup": "^0.29.3",
     "@welldone-software/why-did-you-render": "^4.2.5",
+    "mutationobserver-shim": "^0.3.7",
     "snapshot-diff": "^0.8.0",
     "source-map-explorer": "^2.4.2",
     "typescript": "^3.9.5"
