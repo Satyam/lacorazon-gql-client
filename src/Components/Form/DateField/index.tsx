@@ -36,7 +36,6 @@ const DateField: React.FC<{
 
   const [actualId, setActualId] = useState(id || `F_DF_${counter}`);
 
-  console.log({ name, errors, values: getValues(name) });
   // I'm using setActualId as a means of forcing a
   // refresh of the component so it takes the new locale
   // In the end, it doesn't really changes the id at all.
