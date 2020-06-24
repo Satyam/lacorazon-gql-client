@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Form as BSForm, Alert } from 'reactstrap';
-//import { ObjectSchema } from 'yup';
 import {
   useForm,
   FormContext,
   FormContextValues,
   UseFormOptions,
+  ValidationResolver,
 } from 'react-hook-form';
 
 export default function Form<V extends Record<string, any>>({
@@ -13,7 +13,7 @@ export default function Form<V extends Record<string, any>>({
   reValidateMode,
   defaultValues,
   validationSchema, // Note: will be deprecated in the next major version with validationResolver
-  // validationResolver,
+  validationResolver,
   validationContext,
   validateCriteriaMode,
   submitFocusError,
@@ -22,7 +22,8 @@ export default function Form<V extends Record<string, any>>({
   inline,
   className,
   ...rest
-}: UseFormOptions & {
+}: UseFormOptions<V> & {
+  validationResolver: ValidationResolver<V>;
   onSubmit: (
     values: V,
     formContext: FormContextValues<V>
@@ -38,7 +39,7 @@ export default function Form<V extends Record<string, any>>({
     validationSchema,
     mode,
     reValidateMode,
-    // validationResolver,
+    validationResolver,
     validationContext,
     validateCriteriaMode,
     submitFocusError,
