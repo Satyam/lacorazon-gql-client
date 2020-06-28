@@ -23,7 +23,7 @@ export default function Form<V extends Record<string, any>>({
   className,
   ...rest
 }: UseFormOptions<V> & {
-  validationResolver: ValidationResolver<V>;
+  validationResolver?: ValidationResolver<V>;
   onSubmit: (
     values: V,
     formContext: FormContextValues<V>
