@@ -105,7 +105,7 @@ export default function EditUser() {
         <Alert color="danger">El usuario no existe o fue borrado</Alert>
       ) : (
         <Form<UserType>
-          values={user}
+          defaultValues={user}
           onSubmit={onSubmit}
           validationSchema={userSchema}
         >

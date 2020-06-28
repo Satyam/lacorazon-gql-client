@@ -91,7 +91,7 @@ export default function EditVenta() {
         <Alert color="danger">La venta no existe o fue borrada</Alert>
       ) : (
         <Form<VentaValues>
-          values={values}
+          defaultValues={values}
           onSubmit={onSubmit}
           validationSchema={ventaSchema}
         >

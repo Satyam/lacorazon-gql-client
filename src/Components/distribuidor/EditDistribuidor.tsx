@@ -105,7 +105,7 @@ export default function EditDistribuidor() {
         <Alert color="danger">El distribuidor no existe o fue borrado</Alert>
       ) : (
         <Form<DistribuidorType>
-          values={distribuidor}
+          defaultValues={distribuidor}
           onSubmit={onSubmit}
           validationSchema={distribuidorSchema}
         >
