@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FormGroup, Label, FormFeedback, FormText, Col } from 'reactstrap';
-import { Controller, useFormContext, ErrorMessage } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import invariant from 'invariant';
 import ReactDatePicker from 'react-datepicker';
 
@@ -90,7 +90,7 @@ const DateField: React.FC<{
           }}
         />
         {help && <FormText>{help}</FormText>}
-        <ErrorMessage name={name} as={FormFeedback} />
+        <FormFeedback>{errors[name]?.message}</FormFeedback>
       </Col>
     </FormGroup>
   );

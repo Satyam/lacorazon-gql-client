@@ -7,7 +7,7 @@ import {
   Col,
   Input,
 } from 'reactstrap';
-import { useFormContext, ErrorMessage } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import invariant from 'invariant';
 
 let counter = 0;
@@ -42,7 +42,7 @@ const CheckboxField: React.FC<{
           {...rest}
         />
         {help && <FormText>{help}</FormText>}
-        <ErrorMessage name={name} as={FormFeedback} />
+        <FormFeedback>{errors[name]?.message}</FormFeedback>
       </Col>
     </FormGroup>
   );
