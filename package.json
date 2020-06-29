@@ -27,7 +27,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "test:debug": "react-scripts --inspect-brk test --runInBand",
+    "test:debug": "react-scripts --inspect-brk  test --runInBand --watchAll=false",
     "eject": "react-scripts eject",
     "server": "cd ../lacorazon-gql-server && npm start",
     "lint": "eslint src/**/*.js",
