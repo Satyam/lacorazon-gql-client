@@ -7,7 +7,7 @@ import {
   Col,
   Input,
 } from 'reactstrap';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, ValidationOptions } from 'react-hook-form';
 import invariant from 'invariant';
 
 let counter = 0;
@@ -22,6 +22,7 @@ const DropdownField: React.FC<{
   id?: string;
   rows?: number;
   help?: string;
+  validation?: ValidationOptions;
 }> = ({
   name,
   label,
@@ -31,6 +32,7 @@ const DropdownField: React.FC<{
   optLabel = 'nombre',
   help,
   noOption,
+  validation,
   ...rest
 }) => {
   invariant(name, 'DropdownField: name argument is mandatory');
@@ -39,6 +41,10 @@ const DropdownField: React.FC<{
   const [actualId] = useState(id || `F_DDF_${counter}`);
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
   const { register, errors } = useFormContext();
+
+  const hasError = name in errors;
+  const error = hasError && (errors[name]?.message || errors[name]);
+
   return (
     <FormGroup row>
       <Label for={actualId} xs={12} lg={2}>
@@ -47,10 +53,10 @@ const DropdownField: React.FC<{
       <Col xs={12} lg={8}>
         <Input
           type="select"
-          invalid={!!errors[name]}
+          invalid={hasError}
           name={name}
           id={actualId}
-          innerRef={register}
+          innerRef={validation ? register(validation) : register}
           {...rest}
         >
           {noOption && (
@@ -66,7 +72,7 @@ const DropdownField: React.FC<{
         </Input>
 
         {help && <FormText>{help}</FormText>}
-        <FormFeedback>{errors[name]?.message}</FormFeedback>
+        <FormFeedback>{error}</FormFeedback>
       </Col>
     </FormGroup>
   );

@@ -7,7 +7,7 @@ import {
   Col,
   Input,
 } from 'reactstrap';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, ValidationOptions } from 'react-hook-form';
 import invariant from 'invariant';
 
 let counter = 0;
@@ -19,12 +19,16 @@ const CheckboxField: React.FC<{
   label?: string;
   id?: string;
   help?: string;
-}> = ({ name, label, id, help, ...rest }) => {
+  validation?: ValidationOptions;
+}> = ({ name, label, id, help, validation, ...rest }) => {
   invariant(name, 'CheckboxField: name argument is mandatory');
 
   const [actualId] = useState(id || `F_TF_${counter}`);
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
   const { register, errors } = useFormContext();
+
+  const hasError = name in errors;
+  const error = hasError && (errors[name]?.message || errors[name]);
 
   return (
     <FormGroup row>
@@ -35,14 +39,14 @@ const CheckboxField: React.FC<{
         <Input
           type="checkbox"
           name={name}
-          invalid={!!errors[name]}
+          invalid={hasError}
           id={actualId}
           style={{ marginLeft: '0' }}
-          innerRef={register}
+          innerRef={validation ? register(validation) : register}
           {...rest}
         />
         {help && <FormText>{help}</FormText>}
-        <FormFeedback>{errors[name]?.message}</FormFeedback>
+        <FormFeedback>{error}</FormFeedback>
       </Col>
     </FormGroup>
   );

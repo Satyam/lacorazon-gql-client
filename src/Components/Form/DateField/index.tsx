@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FormGroup, Label, FormFeedback, FormText, Col } from 'reactstrap';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, useFormContext, ValidationOptions } from 'react-hook-form';
 import invariant from 'invariant';
 import ReactDatePicker from 'react-datepicker';
 
@@ -19,6 +19,7 @@ const DateField: React.FC<{
   className?: string;
   minDate?: Date;
   maxDate?: Date;
+  validation?: ValidationOptions;
 }> & { whyDidYouRender: boolean } = ({
   name,
   label,
@@ -27,12 +28,16 @@ const DateField: React.FC<{
   id,
   minDate,
   maxDate,
+  validation,
   ...rest
 }) => {
   invariant(name, 'DateField: name argument is mandatory');
 
   const { locale } = useIntl();
   const { errors, getValues, control } = useFormContext();
+
+  const hasError = name in errors;
+  const error = hasError && (errors[name]?.message || errors[name]);
 
   const [actualId, setActualId] = useState(id || `F_DF_${counter}`);
 
@@ -71,7 +76,7 @@ const DateField: React.FC<{
           as={
             <ReactDatePicker
               className={classNames('form-control', className, {
-                'is-invalid': !!errors[name],
+                'is-invalid': hasError,
               })}
               onChange={() => null}
               dateFormat="P"
@@ -83,6 +88,7 @@ const DateField: React.FC<{
           }
           name={name}
           control={control}
+          rules={validation}
           valueName="selected" // DateSelect value's name is selected
           defaultValue={getValues(name)}
           onChange={([selected]: Date[]) => {
@@ -90,7 +96,7 @@ const DateField: React.FC<{
           }}
         />
         {help && <FormText>{help}</FormText>}
-        <FormFeedback>{errors[name]?.message}</FormFeedback>
+        <FormFeedback>{error}</FormFeedback>
       </Col>
     </FormGroup>
   );

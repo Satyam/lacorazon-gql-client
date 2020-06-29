@@ -9,7 +9,7 @@ import {
   Input,
   InputProps,
 } from 'reactstrap';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, ValidationOptions } from 'react-hook-form';
 import invariant from 'invariant';
 
 let counter = 0;
@@ -23,13 +23,18 @@ const TextField: React.FC<
     id?: string;
     rows?: number;
     help?: string;
+    validation?: ValidationOptions;
   } & InputProps
-> = ({ name, type, label, id, rows, help, ...rest }) => {
+> = ({ name, type, label, id, rows, help, validation, ...rest }) => {
   invariant(name, 'TextField: name argument is mandatory');
 
   const [actualId] = useState(id || `F_TF_${counter}`);
   counter = (counter + 1) % Number.MAX_SAFE_INTEGER;
   const { register, errors } = useFormContext();
+
+  const hasError = name in errors;
+  const error = hasError && (errors[name]?.message || errors[name]);
+
   return (
     <FormGroup row>
       <Label for={actualId} xs={12} lg={2}>
@@ -39,14 +44,14 @@ const TextField: React.FC<
         <Input
           name={name}
           type={type || (rows ? 'textarea' : 'text')}
-          invalid={!!errors[name]}
+          invalid={hasError}
           rows={rows}
           id={actualId}
-          innerRef={register}
+          innerRef={validation ? register(validation) : register}
           {...rest}
         />
         {help && <FormText>{help}</FormText>}
-        <FormFeedback>{errors[name]?.message}</FormFeedback>
+        <FormFeedback>{error}</FormFeedback>
       </Col>
     </FormGroup>
   );
