@@ -7,6 +7,7 @@ import {
   UseFormOptions,
   ValidationResolver,
 } from 'react-hook-form';
+import invariant from 'invariant';
 
 export default function Form<V extends Record<string, any>>({
   mode,
@@ -44,7 +45,10 @@ export default function Form<V extends Record<string, any>>({
     validateCriteriaMode,
     submitFocusError,
   });
-
+  invariant(
+    typeof onSubmit === 'function',
+    'Form should have an onSubmit function'
+  );
   const [status, setStatus] = useState<string | undefined>();
 
   const mySubmit = (values: V) => {
