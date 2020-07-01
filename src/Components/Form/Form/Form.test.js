@@ -15,10 +15,15 @@ import { FormContext, getContextById } from '../index.test';
 
 const queries = { ...stdQueries, getContextById };
 afterEach(cleanup);
-
+const nullSubmit = () => undefined;
 function TestForm(props) {
   return (
-    <Form values={{ one: 1 }} submitFocusError={false} {...props}>
+    <Form
+      values={{ one: 1 }}
+      submitFocusError={false}
+      onSubmit={nullSubmit}
+      {...props}
+    >
       <TextField label="one" name="one" />
       <SubmitButton>Submit</SubmitButton>
       <FormContext id="context" />
@@ -246,7 +251,7 @@ describe('Form / Form', () => {
     });
     it('should take default values from schema', () => {
       const { getByText, getByLabelText } = render(
-        <Form validationSchema={schema}>
+        <Form validationSchema={schema} onSubmit={nullSubmit}>
           <TextField label="one" name="one" />
           <SubmitButton>Submit</SubmitButton>
         </Form>

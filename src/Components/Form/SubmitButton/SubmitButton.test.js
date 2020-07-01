@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, cleanup, wait } from '@testing-library/react';
+import { render, fireEvent, cleanup, waitFor } from '@testing-library/react';
 
 import Form from '../Form';
 import TextField from '../TextField';
@@ -7,9 +7,11 @@ import SubmitButton from '.';
 
 afterEach(cleanup);
 
+const nullSubmit = () => undefined;
+
 function TestForm(props) {
   return (
-    <Form values={{ one: 1 }} {...props}>
+    <Form values={{ one: 1 }} onSubmit={nullSubmit} {...props}>
       <TextField label="one" name="one" />
       <SubmitButton>Submit</SubmitButton>
     </Form>
@@ -24,29 +26,43 @@ describe('Form / SubmitButton', () => {
   it('when a field is changed, it should be enabled', () => {
     const { getByText, getByLabelText } = render(<TestForm />);
     expect(getByText('Submit')).toBeDisabled();
-    fireEvent.change(getByLabelText('one'), {
+    fireEvent.input(getByLabelText('one'), {
       target: { name: 'one', value: '2' },
     });
     expect(getByText('Submit')).not.toBeDisabled();
   });
   it('when a field is changed to an invalid value, it should be disabled', () => {
-    const validate = jest.fn(() => 'some error');
+    const errMsg = 'some error';
+    const validate = jest.fn((values) => ({
+      values,
+      errors: { one: errMsg },
+    }));
     const { getByText, getByLabelText } = render(
-      <Form values={{ one: 1 }}>
-        <TextField label="one" name="one" validate={validate} />
+      <Form
+        defaultValues={{ one: 1 }}
+        validationResolver={validate}
+        onSubmit={nullSubmit}
+      >
+        <TextField label="one" name="one" />
         <SubmitButton>Submit</SubmitButton>
       </Form>
     );
     expect(getByText('Submit')).toBeDisabled();
-    fireEvent.change(getByLabelText('one'), {
+    fireEvent.input(getByLabelText('one'), {
       target: { name: 'one', value: '2' },
     });
-    // Validation is always Promise-based so it is asynchronous
-    // we have to wait for it to happen
-    return wait(() => {
-      expect(validate).toBeCalledWith('2');
-      expect(validate.mock.results[0].value).toEqual('some error');
+    expect(getByText('Submit')).not.toBeDisabled();
+    fireEvent.click(getByText('Submit'));
+
+    return waitFor(() => {
+      expect(validate).toBeCalled();
+      expect(validate).toBeCalledWith({ one: '2' }, undefined);
+      expect(validate).toReturnWith({
+        values: { one: '2' },
+        errors: { one: 'some error' },
+      });
       expect(getByText('Submit')).toBeDisabled();
+      expect(getByText(errMsg)).not.toBeNull();
     });
   });
 });
