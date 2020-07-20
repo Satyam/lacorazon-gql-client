@@ -2,48 +2,46 @@ import React, { useState } from 'react';
 import { Form as BSForm, Alert } from 'reactstrap';
 import {
   useForm,
-  FormContext,
-  FormContextValues,
+  FormProvider,
+  UseFormMethods,
   UseFormOptions,
-  ValidationResolver,
+  SubmitHandler,
 } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers';
 import invariant from 'invariant';
+import { ObjectSchema } from 'yup';
 
 export default function Form<V extends Record<string, any>>({
   mode,
   reValidateMode,
   defaultValues,
-  validationSchema, // Note: will be deprecated in the next major version with validationResolver
-  validationResolver,
-  validationContext,
-  validateCriteriaMode,
-  submitFocusError,
+  schema, // Note: will be deprecated in the next major version with validationResolver
+  context,
+  criteriaMode,
+  shouldFocusError,
   onSubmit,
   children,
   inline,
   className,
   ...rest
 }: UseFormOptions<V> & {
-  validationResolver?: ValidationResolver<V>;
-  onSubmit: (
-    values: V,
-    formContext: FormContextValues<V>
-  ) => Promise<void> | void;
+  schema: ObjectSchema;
+  onSubmit: (values: V, formMethods: UseFormMethods<V>) => Promise<void> | void;
   inline?: boolean;
   className?: string;
   children?: React.ReactNode;
 }): React.ReactElement {
   const methods = useForm<V>({
-    defaultValues: (validationSchema
-      ? Object.assign(validationSchema.default(), defaultValues)
-      : defaultValues) as V,
-    validationSchema,
+    // defaultValues: (schema
+    //   ? Object.assign(schema.default(), defaultValues)
+    //   : defaultValues) as V,
+    defaultValues,
+    resolver: yupResolver(schema),
     mode,
     reValidateMode,
-    validationResolver,
-    validationContext,
-    validateCriteriaMode,
-    submitFocusError,
+    context,
+    criteriaMode,
+    shouldFocusError,
   });
   invariant(
     typeof onSubmit === 'function',
@@ -51,7 +49,7 @@ export default function Form<V extends Record<string, any>>({
   );
   const [status, setStatus] = useState<string | undefined>();
 
-  const mySubmit = (values: V) => {
+  const mySubmit: SubmitHandler<V> = (values) => {
     const result = onSubmit(values as V, methods);
     if (result instanceof Promise) {
       return result.catch((err: any) => {
@@ -61,7 +59,7 @@ export default function Form<V extends Record<string, any>>({
     return;
   };
   return (
-    <FormContext {...methods}>
+    <FormProvider {...methods}>
       <BSForm
         onSubmit={methods.handleSubmit(mySubmit)}
         onReset={() => methods.reset()}
@@ -72,6 +70,6 @@ export default function Form<V extends Record<string, any>>({
         {status && <Alert color="danger">{status}</Alert>}
         {children}
       </BSForm>
-    </FormContext>
+    </FormProvider>
   );
 }

@@ -116,7 +116,7 @@ describe('Form/DateField', () => {
       one: Yup.date().default(new Date(2019, 8, 7)),
     });
     const { getContextById } = render(
-      <Form validationSchema={schema} onSubmit={nullSubmit}>
+      <Form schema={schema} onSubmit={nullSubmit}>
         <DateField label="one" name="one" />
         <FormContext id="context" />
       </Form>,
@@ -138,7 +138,7 @@ describe('Form/DateField', () => {
       one: Yup.date().min(new Date(2019, 8, 10)).default(new Date(2019, 8, 20)),
     });
     const { getByLabelText, getByText, container } = render(
-      <Form validationSchema={schema} onSubmit={nullSubmit}>
+      <Form schema={schema} onSubmit={nullSubmit}>
         <DateField label="one" name="one" />
         <SubmitButton>Submit</SubmitButton>
       </Form>

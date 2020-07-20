@@ -17,7 +17,7 @@ import {
   UserType,
 } from './actions';
 import { useAuth0 } from 'Providers/Auth';
-import { FormContextValues } from 'react-hook-form';
+import { UseFormMethods } from 'react-hook-form';
 
 const userSchema = yup.object().shape({
   email: yup.string().trim().email().default(''),
@@ -53,7 +53,7 @@ export default function EditUser() {
 
   const onSubmit = async (
     values: UserType,
-    formContext: FormContextValues
+    formMethods: UseFormMethods
   ): Promise<void> => {
     if (id) {
       openLoading('Actualizando usuario');
@@ -63,11 +63,10 @@ export default function EditUser() {
             err.message ===
             'GraphQL error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.nombre'
           ) {
-            formContext.setError(
-              'nombre',
-              'duplicate',
-              'Ese usuario ya existe'
-            );
+            formMethods.setError('nombre', {
+              type: 'duplicate',
+              message: 'Ese usuario ya existe',
+            });
           } else throw err;
         })
         .finally(closeLoading);
@@ -82,11 +81,10 @@ export default function EditUser() {
             err.message ===
             'GraphQL error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.nombre'
           ) {
-            formContext.setError(
-              'nombre',
-              'duplicate',
-              'Ese usuario ya existe'
-            );
+            formMethods.setError('nombre', {
+              type: 'duplicate',
+              message: 'Ese usuario ya existe',
+            });
           } else throw err;
         })
         .finally(closeLoading);
@@ -107,7 +105,7 @@ export default function EditUser() {
         <Form<UserType>
           defaultValues={user}
           onSubmit={onSubmit}
-          validationSchema={userSchema}
+          schema={userSchema}
         >
           <TextField name="nombre" label="Nombre" />
           <TextField name="email" label="eMail" />

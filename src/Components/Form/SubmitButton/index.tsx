@@ -10,13 +10,13 @@ const SubmitButton: React.FC<
 > = ({ component: Component = Button, ...rest }) => {
   const {
     errors,
-    formState: { isSubmitting, dirty },
+    formState: { isSubmitting, isDirty },
   } = useFormContext();
 
   return (
     <Component
       type="submit"
-      disabled={isSubmitting || !dirty || !!Object.keys(errors).length}
+      disabled={isSubmitting || !isDirty || !!Object.keys(errors).length}
       {...rest}
     />
   );

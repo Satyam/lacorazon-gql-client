@@ -99,7 +99,7 @@ describe('Form/TextField', () => {
     const { getByLabelText, getByText } = render(
       <Form
         values={{ one: 1 }}
-        validationSchema={schema}
+        schema={schema}
         mode="onChange"
         onSubmit={nullSubmit}
       >

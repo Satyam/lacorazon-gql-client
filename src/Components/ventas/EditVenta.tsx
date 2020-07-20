@@ -93,7 +93,7 @@ export default function EditVenta() {
         <Form<VentaValues>
           defaultValues={values}
           onSubmit={onSubmit}
-          validationSchema={ventaSchema}
+          schema={ventaSchema}
         >
           <DateField name="fecha" label="Fecha" />
           <TextField name="concepto" label="Concepto" />

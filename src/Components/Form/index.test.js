@@ -25,7 +25,7 @@ export const FormContext = ({ id }) => {
     errors,
     getValues,
     formState: {
-      dirty,
+      isDirty,
       dirtyFields,
       isSubmitted,
       touched,
@@ -39,7 +39,7 @@ export const FormContext = ({ id }) => {
       {JSON.stringify({
         errors,
         values: getValues(),
-        dirty,
+        isDirty,
         dirtyFields,
         isSubmitted,
         touched,

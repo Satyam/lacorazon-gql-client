@@ -34,7 +34,7 @@ describe('Form / Form', () => {
   const contextBefore = {
     errors: {},
     values: {},
-    dirty: false,
+    isDirty: false,
     dirtyFields: {},
     isSubmitted: false,
     touched: {},
@@ -45,7 +45,7 @@ describe('Form / Form', () => {
   const contextAfterInput = {
     errors: {},
     values: { one: '2' },
-    dirty: true,
+    isDirty: true,
     dirtyFields: {},
     isSubmitted: false,
     touched: {},
@@ -94,7 +94,7 @@ describe('Form / Form', () => {
         expect(getContextById('context')).toEqual({
           values: { one: '2' },
           errors: {},
-          dirty: true,
+          isDirty: true,
           dirtyFields: {},
           isSubmitted: true,
           touched: {},
@@ -147,7 +147,7 @@ describe('Form / Form', () => {
         expect(getContextById('context')).toEqual({
           values: { one: '2' },
           errors: { one: 'some error' },
-          dirty: true,
+          isDirty: true,
           dirtyFields: {},
           isSubmitted: true,
           touched: {},
@@ -208,7 +208,7 @@ describe('Form / Form', () => {
     it('should submit form', async () => {
       const submitHandler = jest.fn();
       const { getByText, getByLabelText, getContextById } = render(
-        <TestForm onSubmit={submitHandler} validationSchema={schema} />,
+        <TestForm onSubmit={submitHandler} schema={schema} />,
         { queries }
       );
       await waitFor(() => {
@@ -236,7 +236,7 @@ describe('Form / Form', () => {
         expect(getContextById('context')).toEqual({
           values: { one: '2.5' },
           errors: {},
-          dirty: true,
+          isDirty: true,
           dirtyFields: {},
           isSubmitted: true,
           touched: {},
@@ -251,7 +251,7 @@ describe('Form / Form', () => {
     });
     it('should take default values from schema', () => {
       const { getByText, getByLabelText } = render(
-        <Form validationSchema={schema} onSubmit={nullSubmit}>
+        <Form schema={schema} onSubmit={nullSubmit}>
           <TextField label="one" name="one" />
           <SubmitButton>Submit</SubmitButton>
         </Form>

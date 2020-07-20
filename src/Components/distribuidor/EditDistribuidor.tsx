@@ -16,7 +16,7 @@ import {
   useGetDistribuidor,
   DistribuidorType,
 } from './actions';
-import { FormContextValues } from 'react-hook-form';
+import { UseFormMethods } from 'react-hook-form';
 
 const distribuidorSchema = yup.object().shape({
   nombre: yup.string().required().trim().default(''),
@@ -54,7 +54,7 @@ export default function EditDistribuidor() {
   };
   const onSubmit = async (
     values: DistribuidorType,
-    formContext: FormContextValues
+    formMethods: UseFormMethods
   ): Promise<void> => {
     console.log('onSubmit id: ', id);
     if (id) {
@@ -65,11 +65,10 @@ export default function EditDistribuidor() {
             err.message ===
             'GraphQL error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.nombre'
           ) {
-            formContext.setError(
-              'nombre',
-              'duplicate',
-              'Ese distribuidor ya existe'
-            );
+            formMethods.setError('nombre', {
+              type: 'duplicate',
+              message: 'Ese distribuidor ya existe',
+            });
           } else throw err;
         })
         .finally(closeLoading);
@@ -84,11 +83,10 @@ export default function EditDistribuidor() {
             err.message ===
             'GraphQL error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.nombre'
           ) {
-            formContext.setError(
-              'nombre',
-              'duplicate',
-              'Ese distribuidor ya existe'
-            );
+            formMethods.setError('nombre', {
+              type: 'duplicate',
+              message: 'Ese distribuidor ya existe',
+            });
           } else throw err;
         })
         .finally(closeLoading);
@@ -107,7 +105,7 @@ export default function EditDistribuidor() {
         <Form<DistribuidorType>
           defaultValues={distribuidor}
           onSubmit={onSubmit}
-          validationSchema={distribuidorSchema}
+          schema={distribuidorSchema}
         >
           <TextField name="nombre" label="Nombre" />
           <TextField name="email" label="eMail" />

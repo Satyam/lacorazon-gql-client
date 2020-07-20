@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FormGroup, Label, FormFeedback, FormText, Col } from 'reactstrap';
-import { Controller, useFormContext, ValidationOptions } from 'react-hook-form';
+import { Controller, useFormContext, ValidationRules } from 'react-hook-form';
 import invariant from 'invariant';
 import ReactDatePicker from 'react-datepicker';
 
@@ -19,7 +19,7 @@ const DateField: React.FC<{
   className?: string;
   minDate?: Date;
   maxDate?: Date;
-  validation?: ValidationOptions;
+  validation?: ValidationRules;
 }> & { whyDidYouRender: boolean } = ({
   name,
   label,
@@ -73,27 +73,25 @@ const DateField: React.FC<{
       </Label>
       <Col xs={12} lg={8}>
         <Controller
-          as={
+          render={({ onChange, onBlur, value }) => (
             <ReactDatePicker
               className={classNames('form-control', className, {
                 'is-invalid': hasError,
               })}
-              onChange={() => null}
+              onChange={onChange}
+              onBlur={onBlur}
+              selected={value}
               dateFormat="P"
               id={actualId}
               minDate={actualMin}
               maxDate={actualMax}
               {...rest}
             />
-          }
+          )}
           name={name}
           control={control}
           rules={validation}
-          valueName="selected" // DateSelect value's name is selected
           defaultValue={getValues(name)}
-          onChange={([selected]: Date[]) => {
-            return selected;
-          }}
         />
         {help && <FormText>{help}</FormText>}
         <FormFeedback>{error}</FormFeedback>
