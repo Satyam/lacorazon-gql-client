@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col } from 'reactstrap';
-import { ApolloError } from 'apollo-client';
+import { ApolloError } from '@apollo/client';
 
 import GqlError from 'Components/GqlError';
 import styles from './styles.module.css';

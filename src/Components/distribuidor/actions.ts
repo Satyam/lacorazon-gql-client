@@ -1,7 +1,10 @@
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import gql from 'graphql-tag';
-import { ApolloError } from 'apollo-client';
-import { DataProxy } from 'apollo-cache';
+import {
+  gql,
+  useQuery,
+  useMutation,
+  ApolloError,
+  DataProxy,
+} from '@apollo/client';
 
 export type DistribuidorType = {
   id?: ID;
@@ -148,7 +151,7 @@ export function useCreateDistribuidor(): (
       },
     }).then(
       // https://github.com/apollographql/react-apollo/issues/2095
-      status => (status && status.data && status.data.createUser.id) || ''
+      (status) => (status && status.data && status.data.createUser.id) || ''
     );
 }
 
@@ -195,7 +198,7 @@ export function useUpdateDistribuidor(): (
     updateDistribuidor({
       variables: { id, ...values },
     }).then(
-      status => (status && status.data && status.data.updateUser.id) || ''
+      (status) => (status && status.data && status.data.updateUser.id) || ''
     );
 }
 
@@ -211,20 +214,20 @@ export function useDeleteDistribuidor(): (id: ID) => Promise<ID> {
   const [delDistribuidor] = useMutation(DELETE_DISTRIBUIDOR, {
     ignoreResults: true,
   });
-  return id =>
+  return (id) =>
     delDistribuidor({
       variables: { id },
-      update: cache => {
+      update: (cache) => {
         const cached = readDistribuidoresCache(cache);
 
         cache.writeQuery({
           query: LIST_DISTRIBUIDORES,
           data: {
-            distribuidores: cached.distribuidores.filter(d => d.id !== id),
+            distribuidores: cached.distribuidores.filter((d) => d.id !== id),
           },
         });
       },
     }).then(
-      status => (status && status.data && status.data.deleteUser.id) || ''
+      (status) => (status && status.data && status.data.deleteUser.id) || ''
     );
 }

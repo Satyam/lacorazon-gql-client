@@ -1,24 +1,25 @@
 import React, { useEffect, useReducer } from 'react';
 
-import ApolloClient from 'apollo-client';
-import { ApolloProvider } from '@apollo/react-hooks';
-import { createHttpLink } from 'apollo-link-http';
-import { setContext } from 'apollo-link-context';
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
+import {
+  ApolloClient,
+  ApolloProvider,
+  InMemoryCache,
+  NormalizedCacheObject,
+  createHttpLink,
+} from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 
 import { useAuth0 } from 'Providers/Auth';
 
-const httpLink = createHttpLink({
-  uri: '/graphql',
-  credentials: 'same-origin',
-});
-
-const unauthorizedClient: ApolloClient<
-  NormalizedCacheObject
-> = new ApolloClient({
-  cache: new InMemoryCache(),
-  link: httpLink,
-});
+const unauthorizedClient: ApolloClient<NormalizedCacheObject> = new ApolloClient(
+  {
+    cache: new InMemoryCache(),
+    uri: '/graphql',
+    headers: {
+      credentials: 'same-origin',
+    },
+  }
+);
 
 enum Action {
   WithUser = 'WithUser',
@@ -45,12 +46,18 @@ export const reducer = (
       const authLink = setContext((_, { headers }) => ({
         headers: {
           ...headers,
+          credentials: 'same-origin',
           authorization: `Bearer ${action.token}`,
         },
       }));
       return new ApolloClient({
         cache: new InMemoryCache(),
-        link: authLink.concat(httpLink),
+        link: authLink.concat(
+          createHttpLink({
+            uri: '/graphql',
+            credentials: 'same-origin',
+          })
+        ),
       });
     }
     case Action.NoUser:
@@ -70,7 +77,7 @@ export const GqlProvider: React.FC<{}> & { whyDidYouRender?: boolean } = ({
   useEffect(() => {
     if (loading) return;
     if (isAuthenticated) {
-      getTokenSilently().then(token => {
+      getTokenSilently().then((token) => {
         if (token) {
           dispatch({
             type: Action.WithUser,

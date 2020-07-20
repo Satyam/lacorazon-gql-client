@@ -1,8 +1,10 @@
-import { useQuery, useMutation } from '@apollo/react-hooks';
-
-import gql from 'graphql-tag';
-import { ApolloError } from 'apollo-client';
-import { DataProxy } from 'apollo-cache';
+import {
+  gql,
+  useQuery,
+  useMutation,
+  DataProxy,
+  ApolloError,
+} from '@apollo/client';
 
 export type UserType = {
   id?: ID;
@@ -120,7 +122,7 @@ export function useCreateUser(): (
       },
     }).then(
       // https://github.com/apollographql/react-apollo/issues/2095
-      status => (status && status.data && status.data.createUser.id) || ''
+      (status) => (status && status.data && status.data.createUser.id) || ''
     );
 }
 
@@ -144,7 +146,7 @@ export function useUpdateUser(): (
   >(UPDATE_USER, { ignoreResults: true });
   return (id: ID, values: UserType & { password?: string }) =>
     updateUser({ variables: { id, ...values } }).then(
-      status => (status && status.data && status.data.updateUser.id) || ''
+      (status) => (status && status.data && status.data.updateUser.id) || ''
     );
 }
 
@@ -165,19 +167,19 @@ export function useDeleteUser(): (id: ID) => Promise<ID> {
     },
     { id: ID }
   >(DELETE_USER, { ignoreResults: true });
-  return id =>
+  return (id) =>
     deleteUser({
       variables: { id },
-      update: cache => {
+      update: (cache) => {
         const cached = readUsersCache(cache);
         cache.writeQuery({
           query: LIST_USERS,
           data: {
-            users: cached.users.filter(u => u.id !== id),
+            users: cached.users.filter((u) => u.id !== id),
           },
         });
       },
     }).then(
-      status => (status && status.data && status.data.deleteUser.id) || ''
+      (status) => (status && status.data && status.data.deleteUser.id) || ''
     );
 }

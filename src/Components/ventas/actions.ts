@@ -1,8 +1,10 @@
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import gql from 'graphql-tag';
-import { ApolloError } from 'apollo-client';
-import { DataProxy } from 'apollo-cache';
-
+import {
+  gql,
+  useQuery,
+  useMutation,
+  DataProxy,
+  ApolloError,
+} from '@apollo/client';
 import { UserType } from 'Components/user/actions';
 
 export interface GqlVentaType {
@@ -156,7 +158,7 @@ export function useCreateVenta(): (
     CREATE_VENTA,
     { ignoreResults: true }
   );
-  return values => {
+  return (values) => {
     const { fecha, ...rest } = values;
     const gqlValues = {
       fecha: fecha && fecha.toISOString(),
@@ -181,7 +183,7 @@ export function useCreateVenta(): (
         }
       },
     }).then(
-      status => (status && status.data && status.data.createVenta.id) || ''
+      (status) => (status && status.data && status.data.createVenta.id) || ''
     );
   };
 }
@@ -239,7 +241,7 @@ export function useUpdateVenta(): (
     return updateVenta({
       variables: gqlValues,
     }).then(
-      status => (status && status.data && status.data.updateVenta.id) || ''
+      (status) => (status && status.data && status.data.updateVenta.id) || ''
     );
   };
 }
@@ -257,20 +259,20 @@ export function useDeleteVenta(): (id: ID) => Promise<ID> {
     DELETE_VENTA,
     { ignoreResults: true }
   );
-  return id =>
+  return (id) =>
     delVenta({
       variables: { id },
-      update: cache => {
+      update: (cache) => {
         const cached = readVentasCache(cache);
         cache.writeQuery({
           query: LIST_VENTAS,
           data: {
-            ventas: cached.ventas.filter(d => d.id !== id),
+            ventas: cached.ventas.filter((d) => d.id !== id),
           },
         });
       },
     }).then(
-      status => (status && status.data && status.data.deleteVenta.id) || ''
+      (status) => (status && status.data && status.data.deleteVenta.id) || ''
     );
 }
 
@@ -304,7 +306,7 @@ export function useOptionsVendedores(): {
           if (a.nombre! > b.nombre!) return 1;
           return 0;
         })
-        .map(v => ({
+        .map((v) => ({
           id: v.id,
           nombre: v.nombre,
         })),
