@@ -53,7 +53,8 @@ export default function Form<V extends Record<string, any>>({
     const result = onSubmit(values as V, methods);
     if (result instanceof Promise) {
       return result.catch((err: any) => {
-        setStatus(err);
+        console.error(err);
+        setStatus(err.toString());
       });
     }
     return;
