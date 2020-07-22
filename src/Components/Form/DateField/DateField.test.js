@@ -7,7 +7,7 @@ import {
   queries as stdQueries,
 } from '@testing-library/react';
 import * as Yup from 'yup';
-
+import * as dateFns from 'date-fns';
 import Form from '../Form';
 import DateField from './';
 import SubmitButton from '../SubmitButton';
@@ -67,7 +67,7 @@ describe('Form/DateField', () => {
   xit('should validate on field change', () => {
     const validate = jest.fn(() => '');
     const { getByLabelText, getByText } = render(
-      <Form values={{ one: new Date(2019, 8, 7) }} onSubmit={nullSubmit}>
+      <Form defaultValues={{ one: new Date(2019, 8, 7) }} onSubmit={nullSubmit}>
         <DateField label="one" name="one" validation={validate} />
         <SubmitButton>Submit</SubmitButton>
       </Form>
@@ -84,7 +84,7 @@ describe('Form/DateField', () => {
   xit('should validate on field blur', () => {
     const validate = jest.fn(() => '');
     const { getByLabelText } = render(
-      <Form values={{ one: new Date(2019, 8, 7) }} onSubmit={nullSubmit}>
+      <Form defaultValues={{ one: new Date(2019, 8, 7) }} onSubmit={nullSubmit}>
         <DateField label="one" name="one" validation={validate} />
       </Form>
     );
@@ -95,7 +95,7 @@ describe('Form/DateField', () => {
 
   it('should generate an id when no id provided', () => {
     const { getByLabelText } = render(
-      <Form values={{ one: new Date(2019, 8, 7) }} onSubmit={nullSubmit}>
+      <Form defaultValues={{ one: new Date(2019, 8, 7) }} onSubmit={nullSubmit}>
         <DateField label="one" name="one" />
       </Form>
     );
@@ -104,33 +104,31 @@ describe('Form/DateField', () => {
 
   it('should respect the id provided', () => {
     const { getByLabelText } = render(
-      <Form values={{ one: new Date(2019, 8, 7) }} onSubmit={nullSubmit}>
+      <Form defaultValues={{ one: new Date(2019, 8, 7) }} onSubmit={nullSubmit}>
         <DateField label="one" name="one" id="abcd" />
       </Form>
     );
     expect(getByLabelText('one').id).toBe('abcd');
   });
 
-  it('should take values from the schema', () => {
+  it('should take values from the schema', async () => {
+    const date = new Date(2019, 8, 7);
+    const onSubmit = jest.fn();
     const schema = Yup.object().shape({
-      one: Yup.date().default(new Date(2019, 8, 7)),
+      one: Yup.date().default(date),
     });
-    const { getContextById } = render(
-      <Form schema={schema} onSubmit={nullSubmit}>
+    const { getContextById, getByLabelText, getByText } = render(
+      <Form schema={schema} onSubmit={onSubmit}>
         <DateField label="one" name="one" />
         <FormContext id="context" />
+        <button type="submit">Submit</button>
       </Form>,
       { queries }
     );
-    return waitFor(() => {
-      expect(getContextById('context')).toEqual(
-        expect.objectContaining({
-          values: {
-            one: '2019-09-06T22:00:00.000Z',
-          },
-        })
-      );
-    });
+    expect(getByLabelText('one').value).toBe(dateFns.format(date, 'P'));
+    fireEvent.click(getByText('Submit'));
+    await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+    expect(onSubmit.mock.calls[0][0]).toEqual({ one: date });
   });
   it('should reject values below the min in the schema', () => {
     // since the out-of-range dates are not enabled, they can't be clicked

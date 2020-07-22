@@ -60,7 +60,7 @@ describe('Form/TextField', () => {
     const errorMessage = 'some error';
     const validate = jest.fn(() => errorMessage);
     const { getByLabelText, getByText } = render(
-      <Form values={{ one: 1 }} mode="onChange" onSubmit={nullSubmit}>
+      <Form defaultValues={{ one: 1 }} mode="onChange" onSubmit={nullSubmit}>
         <TextField label="one" name="one" validation={{ validate }} />
       </Form>
     );
@@ -75,7 +75,7 @@ describe('Form/TextField', () => {
 
   it('should generate an id when no id provided', () => {
     const { getByLabelText } = render(
-      <Form values={{ one: 1 }} onSubmit={nullSubmit}>
+      <Form defaultValues={{ one: 1 }} onSubmit={nullSubmit}>
         <TextField label="one" name="one" />
       </Form>
     );
@@ -84,7 +84,7 @@ describe('Form/TextField', () => {
 
   it('should respect the id provided', () => {
     const { getByLabelText } = render(
-      <Form values={{ one: 1 }} onSubmit={nullSubmit}>
+      <Form defaultValues={{ one: 1 }} onSubmit={nullSubmit}>
         <TextField label="one" name="one" id="abcd" />
       </Form>
     );
@@ -98,7 +98,7 @@ describe('Form/TextField', () => {
     });
     const { getByLabelText, getByText } = render(
       <Form
-        values={{ one: 1 }}
+        defaultValues={{ one: 1 }}
         schema={schema}
         mode="onChange"
         onSubmit={nullSubmit}

@@ -11,7 +11,7 @@ const nullSubmit = () => undefined;
 
 function TestForm(props) {
   return (
-    <Form values={{ one: 1 }} onSubmit={nullSubmit} {...props}>
+    <Form defaultValues={{ one: 1 }} onSubmit={nullSubmit} {...props}>
       <TextField label="one" name="one" />
       <SubmitButton>Submit</SubmitButton>
     </Form>
@@ -31,38 +31,40 @@ describe('Form / SubmitButton', () => {
     });
     expect(getByText('Submit')).not.toBeDisabled();
   });
-  it('when a field is changed to an invalid value, it should be disabled', () => {
+  it('when a field is changed to an invalid value, it should be disabled', async () => {
     const errMsg = 'some error';
-    const validate = jest.fn((values) => ({
-      values,
-      errors: { one: errMsg },
-    }));
+    const validate = jest.fn((values) =>
+      Promise.resolve({
+        values,
+        errors: { one: errMsg },
+      })
+    );
     const { getByText, getByLabelText } = render(
       <Form
         defaultValues={{ one: 1 }}
-        validationResolver={validate}
+        resolver={validate}
         onSubmit={nullSubmit}
       >
         <TextField label="one" name="one" />
         <SubmitButton>Submit</SubmitButton>
       </Form>
     );
+
     expect(getByText('Submit')).toBeDisabled();
+
     fireEvent.input(getByLabelText('one'), {
       target: { name: 'one', value: '2' },
     });
+
     expect(getByText('Submit')).not.toBeDisabled();
+
     fireEvent.click(getByText('Submit'));
 
-    return waitFor(() => {
-      expect(validate).toBeCalled();
-      expect(validate).toBeCalledWith({ one: '2' }, undefined);
-      expect(validate).toReturnWith({
-        values: { one: '2' },
-        errors: { one: 'some error' },
-      });
-      expect(getByText('Submit')).toBeDisabled();
-      expect(getByText(errMsg)).not.toBeNull();
-    });
+    await waitFor(() => expect(validate).toBeCalled());
+
+    expect(validate).toBeCalledWith({ one: '2' }, undefined, false);
+
+    expect(getByText('Submit')).toBeDisabled();
+    expect(getByText(errMsg)).not.toBeNull();
   });
 });

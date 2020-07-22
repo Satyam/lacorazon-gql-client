@@ -15,7 +15,8 @@ export default function Form<V extends Record<string, any>>({
   mode,
   reValidateMode,
   defaultValues,
-  schema, // Note: will be deprecated in the next major version with validationResolver
+  schema,
+  resolver,
   context,
   criteriaMode,
   shouldFocusError,
@@ -25,18 +26,17 @@ export default function Form<V extends Record<string, any>>({
   className,
   ...rest
 }: UseFormOptions<V> & {
-  schema: ObjectSchema;
+  schema?: ObjectSchema;
   onSubmit: (values: V, formMethods: UseFormMethods<V>) => Promise<void> | void;
   inline?: boolean;
   className?: string;
   children?: React.ReactNode;
 }): React.ReactElement {
   const methods = useForm<V>({
-    // defaultValues: (schema
-    //   ? Object.assign(schema.default(), defaultValues)
-    //   : defaultValues) as V,
-    defaultValues,
-    resolver: yupResolver(schema),
+    defaultValues: schema
+      ? Object.assign(schema.default(), defaultValues)
+      : defaultValues,
+    resolver: schema ? yupResolver(schema) : resolver,
     mode,
     reValidateMode,
     context,

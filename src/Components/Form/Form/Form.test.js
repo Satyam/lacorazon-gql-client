@@ -19,8 +19,8 @@ const nullSubmit = () => undefined;
 function TestForm(props) {
   return (
     <Form
-      values={{ one: 1 }}
-      submitFocusError={false}
+      defaultValues={{ one: 1 }}
+      shouldFocusError={false}
       onSubmit={nullSubmit}
       {...props}
     >
@@ -46,7 +46,7 @@ describe('Form / Form', () => {
     errors: {},
     values: { one: '2' },
     isDirty: true,
-    dirtyFields: {},
+    dirtyFields: { one: true },
     isSubmitted: false,
     touched: {},
     isSubmitting: false,
@@ -56,65 +56,59 @@ describe('Form / Form', () => {
   describe('with no validationSchema', () => {
     it('should submit form', async () => {
       const submitHandler = jest.fn();
-      const validate = jest.fn((values) => ({
-        values,
-        errors: {},
-      }));
+      const validate = jest.fn((values) =>
+        Promise.resolve({
+          values,
+          errors: {},
+        })
+      );
 
       const { getByText, getByLabelText, getContextById } = render(
-        <TestForm onSubmit={submitHandler} validationResolver={validate} />,
+        <TestForm onSubmit={submitHandler} resolver={validate} />,
         { queries }
       );
 
-      await waitFor(() => {
-        expect(getByText('Submit')).toBeDisabled();
-        expect(getContextById('context')).toEqual(contextBefore);
-      });
+      await waitFor(() => expect(getByText('Submit')).toBeDisabled());
+      expect(getContextById('context')).toEqual(contextBefore);
 
       fireEvent.input(getByLabelText('one'), {
         target: { name: 'one', value: '2' },
       });
 
-      await waitFor(() => {
-        expect(getByText('Submit')).not.toBeDisabled();
-        expect(getContextById('context')).toEqual(contextAfterInput);
-      });
+      await waitFor(() => expect(getByText('Submit')).not.toBeDisabled());
+      expect(getContextById('context')).toEqual(contextAfterInput);
 
       jest.clearAllMocks();
       fireEvent.click(getByText('Submit'));
 
-      expect(validate).toBeCalledWith({ one: '2' }, undefined);
+      await waitFor(() => expect(validate).toBeCalled());
+      expect(validate).toBeCalledWith({ one: '2' }, undefined, false);
       expect(validate).toBeCalledTimes(1);
-      expect(validate).toReturnWith({
-        errors: {},
+      expect(getContextById('context')).toEqual({
         values: { one: '2' },
+        errors: {},
+        isDirty: true,
+        dirtyFields: { one: true },
+        isSubmitted: true,
+        touched: {},
+        isSubmitting: false,
+        submitCount: 1,
+        isValid: true,
       });
-      // validation is always async, so we have to waitFor for it
-      return waitFor(() => {
-        expect(getContextById('context')).toEqual({
-          values: { one: '2' },
-          errors: {},
-          isDirty: true,
-          dirtyFields: {},
-          isSubmitted: true,
-          touched: {},
-          isSubmitting: false,
-          submitCount: 1,
-          isValid: true,
-        });
-        expect(submitHandler).toBeCalled();
-        expect(submitHandler.mock.calls[0][0]).toEqual({ one: '2' });
-      });
+      expect(submitHandler).toBeCalled();
+      expect(submitHandler.mock.calls[0][0]).toEqual({ one: '2' });
     });
 
     it('should not submit form on validation error', async () => {
       const submitHandler = jest.fn();
-      const validate = jest.fn((values) => ({
-        values,
-        errors: { one: 'some error' },
-      }));
+      const validate = jest.fn((values) =>
+        Promise.resolve({
+          values,
+          errors: { one: 'some error' },
+        })
+      );
       const { getByText, getByLabelText, getContextById } = render(
-        <TestForm onSubmit={submitHandler} validationResolver={validate} />,
+        <TestForm onSubmit={submitHandler} resolver={validate} />,
         { queries }
       );
 
@@ -127,47 +121,41 @@ describe('Form / Form', () => {
         target: { name: 'one', value: '2' },
       });
 
-      await waitFor(() => {
-        expect(getByText('Submit')).not.toBeDisabled();
-        expect(getContextById('context')).toEqual(contextAfterInput);
-      });
+      await waitFor(() => expect(getByText('Submit')).not.toBeDisabled());
+      expect(getContextById('context')).toEqual(contextAfterInput);
 
       jest.clearAllMocks();
       fireEvent.click(getByText('Submit'));
 
-      expect(validate).toBeCalledWith({ one: '2' }, undefined);
+      await waitFor(() => expect(validate).toBeCalled());
+
+      expect(validate).toBeCalledWith({ one: '2' }, undefined, false);
       expect(validate).toBeCalledTimes(1);
-      expect(validate).toReturnWith({
+      expect(getContextById('context')).toEqual({
         values: { one: '2' },
         errors: { one: 'some error' },
+        isDirty: true,
+        dirtyFields: { one: true },
+        isSubmitted: true,
+        touched: {},
+        isSubmitting: false,
+        submitCount: 1,
+        isValid: false,
       });
-      // validation is always async, so we have to waitFor for it
-      // however, since it fails, it is not going to happen
-      return waitFor(() => {
-        expect(getContextById('context')).toEqual({
-          values: { one: '2' },
-          errors: { one: 'some error' },
-          isDirty: true,
-          dirtyFields: {},
-          isSubmitted: true,
-          touched: {},
-          isSubmitting: false,
-          submitCount: 1,
-          isValid: false,
-        });
-        expect(getByText('Submit')).toBeDisabled();
-        expect(submitHandler).not.toBeCalled();
-      });
+      expect(getByText('Submit')).toBeDisabled();
+      expect(submitHandler).not.toBeCalled();
     });
 
     it('should submit form asynchronously (with Promise)', async () => {
       const submitHandler = jest.fn(() => Promise.resolve());
-      const validate = jest.fn((values) => ({
-        values,
-        errors: {},
-      }));
+      const validate = jest.fn((values) =>
+        Promise.resolve({
+          values,
+          errors: {},
+        })
+      );
       const { getByText, getByLabelText, getContextById } = render(
-        <TestForm onSubmit={submitHandler} validationResolver={validate} />,
+        <TestForm onSubmit={submitHandler} resolver={validate} />,
         { queries }
       );
 
@@ -180,25 +168,18 @@ describe('Form / Form', () => {
         target: { name: 'one', value: '2' },
       });
 
-      await waitFor(() => {
-        expect(getByText('Submit')).not.toBeDisabled();
-        expect(getContextById('context')).toEqual(contextAfterInput);
-      });
+      await waitFor(() => expect(getByText('Submit')).not.toBeDisabled());
+      expect(getContextById('context')).toEqual(contextAfterInput);
 
       jest.clearAllMocks();
       fireEvent.click(getByText('Submit'));
 
-      expect(validate).toBeCalledWith({ one: '2' }, undefined);
+      await waitFor(() => expect(validate).toBeCalled());
+      expect(validate).toBeCalledWith({ one: '2' }, undefined, false);
       expect(validate).toBeCalledTimes(1);
-      expect(validate).toReturnWith({
-        errors: {},
-        values: { one: '2' },
-      });
-      // validation is always async, so we have to waitFor for it
-      return waitFor(() => {
-        expect(submitHandler).toBeCalled();
-        expect(submitHandler.mock.calls[0][0]).toEqual({ one: '2' });
-      });
+
+      expect(submitHandler).toBeCalled();
+      expect(submitHandler.mock.calls[0][0]).toEqual({ one: '2' });
     });
   });
   describe('with validation schema', () => {
@@ -211,23 +192,18 @@ describe('Form / Form', () => {
         <TestForm onSubmit={submitHandler} schema={schema} />,
         { queries }
       );
-      await waitFor(() => {
-        expect(getByText('Submit')).toBeDisabled();
-        expect(getContextById('context')).toEqual({
-          ...contextBefore,
-          values: { one: 99 },
-        });
-      });
+      // await waitFor(() => {
+      expect(getByText('Submit')).toBeDisabled();
+
       fireEvent.input(getByLabelText('one'), {
         target: { name: 'one', value: '2.5' },
       });
-      await waitFor(() => {
-        expect(getByText('Submit')).not.toBeDisabled();
-        expect(getContextById('context')).toEqual({
-          ...contextAfterInput,
-          values: { one: '2.5' },
-        });
+      await waitFor(() => expect(getByText('Submit')).not.toBeDisabled());
+      expect(getContextById('context')).toEqual({
+        ...contextAfterInput,
+        values: { one: '2.5' },
       });
+
       jest.clearAllMocks();
       fireEvent.click(getByText('Submit'));
 
@@ -237,7 +213,7 @@ describe('Form / Form', () => {
           values: { one: '2.5' },
           errors: {},
           isDirty: true,
-          dirtyFields: {},
+          dirtyFields: { one: true },
           isSubmitted: true,
           touched: {},
           isSubmitting: false,
