@@ -6,7 +6,7 @@ The only required property is `name`
 
 ```js
 <Form
-  values={{
+  defaultValues={{
     one: 1
   }}
 >
@@ -20,7 +20,7 @@ while in wider screens, it will show to its left.
 
 ```js
 <Form
-  values={{
+  defaultValues={{
     one: 1
   }}
 >
@@ -32,7 +32,7 @@ If `rows` is provided, a `<textarea>` box will be provided
 
 ```js
 <Form
-  values={{
+  defaultValues={{
     multi: "I'm a child\nspread over\na few lines"
   }}
 >
@@ -44,7 +44,7 @@ Some help text is convenient
 
 ```js
 <Form
-  values={{
+  defaultValues={{
     one: 1
   }}
 >
@@ -56,7 +56,7 @@ Some activity
 
 ```js
 <Form
-  values={{
+  defaultValues={{
     one: 1
   }}
   onSubmit={values => {
@@ -72,7 +72,7 @@ Error message (enter some number greater than 5)
 
 ```js
 <Form
-  values={{
+  defaultValues={{
     one: 1
   }}
   onSubmit={values => {
