@@ -151,7 +151,8 @@ export function useCreateDistribuidor(): (
       },
     }).then(
       // https://github.com/apollographql/react-apollo/issues/2095
-      (status) => (status && status.data && status.data.createUser.id) || ''
+      (status) =>
+        (status && status.data && status.data.createDistribuidor.id) || ''
     );
 }
 
@@ -197,9 +198,10 @@ export function useUpdateDistribuidor(): (
   return (id, values) =>
     updateDistribuidor({
       variables: { id, ...values },
-    }).then(
-      (status) => (status && status.data && status.data.updateUser.id) || ''
-    );
+    }).then((status) => {
+      debugger;
+      return (status && status.data && status.data.updateDistribuidor.id) || '';
+    });
 }
 
 export const DELETE_DISTRIBUIDOR = gql`
@@ -228,6 +230,7 @@ export function useDeleteDistribuidor(): (id: ID) => Promise<ID> {
         });
       },
     }).then(
-      (status) => (status && status.data && status.data.deleteUser.id) || ''
+      (status) =>
+        (status && status.data && status.data.deleteDistribuidor.id) || ''
     );
 }
