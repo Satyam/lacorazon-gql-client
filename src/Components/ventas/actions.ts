@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
   gql,
   useQuery,
@@ -285,31 +286,35 @@ export const OPTIONS_VENDEDORES = gql`
   }
 `;
 
+type OptionsVendedores = Omit<Required<UserType>, 'email'>[];
+
 export function useOptionsVendedores(): {
   loading: boolean;
   error?: ApolloError;
-  optionsVendedores?: { [index: string]: string | number }[];
+  optionsVendedores?: OptionsVendedores;
 } {
-  const { error, loading, data } = useQuery<
-    { users: Required<UserType>[] },
-    {}
-  >(OPTIONS_VENDEDORES);
-  if (!data || loading || error) return { error, loading };
-  return {
-    error,
-    loading,
-    optionsVendedores: [
-      { id: '', nombre: ' ---- ' },
-      ...data.users
-        .sort((a: UserType, b: UserType) => {
-          if (a.nombre! < b.nombre!) return -1;
-          if (a.nombre! > b.nombre!) return 1;
-          return 0;
-        })
-        .map((v) => ({
-          id: v.id,
-          nombre: v.nombre,
-        })),
-    ],
-  };
+  const { error, loading, data } = useQuery<{ users: OptionsVendedores }, {}>(
+    OPTIONS_VENDEDORES
+  );
+
+  return useMemo(
+    () => ({
+      error,
+      loading,
+      optionsVendedores: data
+        ? data.users
+            .concat({ id: '', nombre: ' ---- ' })
+            .sort((a: UserType, b: UserType) => {
+              if (a.nombre! < b.nombre!) return -1;
+              if (a.nombre! > b.nombre!) return 1;
+              return 0;
+            })
+            .map((v) => ({
+              id: v.id,
+              nombre: v.nombre,
+            }))
+        : [],
+    }),
+    [error, loading, data]
+  );
 }
