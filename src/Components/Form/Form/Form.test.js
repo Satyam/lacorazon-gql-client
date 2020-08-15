@@ -43,16 +43,18 @@ describe('Form / Form', () => {
     isValid: false,
   };
   const contextAfterInput = {
-    errors: {},
+    ...contextBefore,
     values: { one: '2' },
     isDirty: true,
     dirtyFields: { one: true },
-    isSubmitted: false,
-    touched: {},
-    isSubmitting: false,
-    submitCount: 0,
-    isValid: false,
   };
+
+  const contextAfterSubmit = {
+    ...contextAfterInput,
+    isSubmitted: true,
+    submitCount: 1,
+  };
+
   describe('with no validationSchema', () => {
     it('should submit form', async () => {
       const submitHandler = jest.fn();
@@ -85,14 +87,7 @@ describe('Form / Form', () => {
       expect(validate).toBeCalledWith({ one: '2' }, undefined, false);
       expect(validate).toBeCalledTimes(1);
       expect(getContextById('context')).toEqual({
-        values: { one: '2' },
-        errors: {},
-        isDirty: true,
-        dirtyFields: { one: true },
-        isSubmitted: true,
-        touched: {},
-        isSubmitting: false,
-        submitCount: 1,
+        ...contextAfterSubmit,
         isValid: true,
       });
       expect(submitHandler).toBeCalled();
@@ -132,15 +127,8 @@ describe('Form / Form', () => {
       expect(validate).toBeCalledWith({ one: '2' }, undefined, false);
       expect(validate).toBeCalledTimes(1);
       expect(getContextById('context')).toEqual({
-        values: { one: '2' },
+        ...contextAfterSubmit,
         errors: { one: 'some error' },
-        isDirty: true,
-        dirtyFields: { one: true },
-        isSubmitted: true,
-        touched: {},
-        isSubmitting: false,
-        submitCount: 1,
-        isValid: false,
       });
       expect(getByText('Submit')).toBeDisabled();
       expect(submitHandler).not.toBeCalled();
@@ -210,14 +198,8 @@ describe('Form / Form', () => {
       // validation is always async, so we have to waitFor for it
       return waitFor(() => {
         expect(getContextById('context')).toEqual({
+          ...contextAfterSubmit,
           values: { one: '2.5' },
-          errors: {},
-          isDirty: true,
-          dirtyFields: { one: true },
-          isSubmitted: true,
-          touched: {},
-          isSubmitting: false,
-          submitCount: 1,
           isValid: true,
         });
         expect(submitHandler).toBeCalled();
