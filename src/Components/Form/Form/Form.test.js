@@ -33,14 +33,14 @@ function TestForm(props) {
 describe('Form / Form', () => {
   const contextBefore = {
     errors: {},
-    values: {},
+    values: { one: '1' },
     isDirty: false,
     dirtyFields: {},
     isSubmitted: false,
     touched: {},
     isSubmitting: false,
     submitCount: 0,
-    isValid: false,
+    isValid: true,
   };
   const contextAfterInput = {
     ...contextBefore,
@@ -107,10 +107,12 @@ describe('Form / Form', () => {
         { queries }
       );
 
-      await waitFor(() => {
-        expect(getByText('Submit')).toBeDisabled();
-        expect(getContextById('context')).toEqual(contextBefore);
-      });
+      await waitFor(() => expect(getByText('Submit')).toBeDisabled());
+
+      // Something funny happening here
+      // The code this far is exactly the same as in the previous test
+      // however, this one fails.
+      expect(getContextById('context')).toEqual(contextBefore);
 
       fireEvent.input(getByLabelText('one'), {
         target: { name: 'one', value: '2' },
