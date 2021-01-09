@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FormGroup, Label, FormFeedback, FormText, Col } from 'reactstrap';
-import { Controller, useFormContext, ValidationRules } from 'react-hook-form';
+import { Controller, useFormContext, RegisterOptions } from 'react-hook-form';
 import invariant from 'invariant';
 import ReactDatePicker from 'react-datepicker';
 
@@ -19,7 +19,7 @@ const DateField: React.FC<{
   className?: string;
   minDate?: Date;
   maxDate?: Date;
-  validation?: ValidationRules;
+  validation?: RegisterOptions;
 }> & { whyDidYouRender: boolean } = ({
   name,
   label,

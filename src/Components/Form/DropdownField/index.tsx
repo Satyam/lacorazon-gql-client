@@ -7,7 +7,7 @@ import {
   Col,
   Input,
 } from 'reactstrap';
-import { useFormContext, ValidationRules } from 'react-hook-form';
+import { useFormContext, RegisterOptions } from 'react-hook-form';
 import invariant from 'invariant';
 
 let counter = 0;
@@ -22,7 +22,7 @@ const DropdownField: React.FC<{
   id?: string;
   rows?: number;
   help?: string;
-  validation?: ValidationRules;
+  validation?: RegisterOptions;
 }> = ({
   name,
   label,

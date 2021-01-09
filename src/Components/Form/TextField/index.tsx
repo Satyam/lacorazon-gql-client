@@ -9,7 +9,7 @@ import {
   Input,
   InputProps,
 } from 'reactstrap';
-import { useFormContext, ValidationRules } from 'react-hook-form';
+import { useFormContext, RegisterOptions } from 'react-hook-form';
 import invariant from 'invariant';
 
 let counter = 0;
@@ -23,7 +23,7 @@ const TextField: React.FC<
     id?: string;
     rows?: number;
     help?: string;
-    validation?: ValidationRules;
+    validation?: RegisterOptions;
   } & InputProps
 > = ({ name, type, label, id, rows, help, validation, ...rest }) => {
   invariant(name, 'TextField: name argument is mandatory');

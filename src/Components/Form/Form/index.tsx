@@ -7,9 +7,9 @@ import {
   UseFormOptions,
   SubmitHandler,
 } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers';
+import { yupResolver } from '@hookform/resolvers/yup';
 import invariant from 'invariant';
-import { ObjectSchema } from 'yup';
+import { AnyObjectSchema } from 'yup';
 
 export default function Form<V extends Record<string, any>>({
   mode,
@@ -26,7 +26,7 @@ export default function Form<V extends Record<string, any>>({
   className,
   ...rest
 }: UseFormOptions<V> & {
-  schema?: ObjectSchema;
+  schema?: AnyObjectSchema;
   onSubmit: (values: V, formMethods: UseFormMethods<V>) => Promise<void> | void;
   inline?: boolean;
   className?: string;
@@ -34,7 +34,7 @@ export default function Form<V extends Record<string, any>>({
 }): React.ReactElement {
   const methods = useForm<V>({
     defaultValues: schema
-      ? Object.assign(schema.default(), defaultValues)
+      ? Object.assign(schema.getDefault(), defaultValues)
       : defaultValues,
     resolver: schema ? yupResolver(schema) : resolver,
     mode,

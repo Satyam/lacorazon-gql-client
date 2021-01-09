@@ -7,7 +7,7 @@ import {
   Col,
   Input,
 } from 'reactstrap';
-import { useFormContext, ValidationRules } from 'react-hook-form';
+import { useFormContext, RegisterOptions } from 'react-hook-form';
 import invariant from 'invariant';
 
 let counter = 0;
@@ -19,7 +19,7 @@ const CheckboxField: React.FC<{
   label?: string;
   id?: string;
   help?: string;
-  validation?: ValidationRules;
+  validation?: RegisterOptions;
 }> = ({ name, label, id, help, validation, ...rest }) => {
   invariant(name, 'CheckboxField: name argument is mandatory');
 
